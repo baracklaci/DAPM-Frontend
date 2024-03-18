@@ -23,48 +23,9 @@ import SaveIcon from '@mui/icons-material/Save';
 import MinerIcon from '@mui/icons-material/Hardware';
 import ConformanceIcon from '@mui/icons-material/Balance';
 import CustomOperatorIcon from '@mui/icons-material/AutoFixHigh';
+import AppBar from '@mui/material/AppBar';
 
 const drawerWidth = 240;
-
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
-  open?: boolean;
-}>(({ theme, open }) => ({
-  flexGrow: 1,
-  padding: theme.spacing(3),
-  transition: theme.transitions.create('margin', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  marginLeft: `-${drawerWidth}px`,
-  ...(open && {
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    marginLeft: 0,
-  }),
-}));
-
-interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
-}
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})<AppBarProps>(({ theme, open }) => ({
-  transition: theme.transitions.create(['margin', 'width'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: `${drawerWidth}px`,
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -79,69 +40,45 @@ export default function PersistentDrawerLeft() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar sx={{backgroundColor: '#292929'}} position="fixed" open={open}>
-        <Toolbar sx={{flexGrow: 1}}>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{ mr: 2, ...(open && { display: 'none' }) }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography sx={{width: '100%', textAlign: 'center'}} variant="h6" noWrap component="div">
-            very cool DAPM pipeline maker
-          </Typography>
-        </Toolbar>
-      </AppBar>
       <Drawer
         PaperProps={{
             sx: {
-                backgroundColor: '#191919',
-                color: '#ffffff'
+                backgroundColor: '#292929',
+                // color: '#fff',
+                position: 'fixed',
+                top: '64px',
             }
         }}
         sx={{
           width: drawerWidth,
-          flexShrink: 0,
+          position: 'static',
+          flexGrow: 1,
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
           },
         }}
-        variant="persistent"
+        variant="permanent"
         anchor="left"
         open={open}
       >
+        <Divider />
         <DrawerHeader>
         <Typography sx={{width: '100%', textAlign: 'center'}} variant="h6" noWrap component="div">
             Nodes
           </Typography>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon sx={{color: '#fff'}}/> : <ChevronRightIcon sx={{color: '#fff'}}/>}
-          </IconButton>
         </DrawerHeader>
-        <Divider />
+        <Divider/>
         <List>
             {[
-                {text: 'Data source', icon: <SourceIcon sx={{color: '#fff'}}/>}, 
-                {text: 'Data sink', icon: <SaveIcon sx={{color: '#fff'}}/>},
-                {text: 'Miner', icon: <MinerIcon sx={{color: '#fff'}}/>},
-                {text: 'Conformance checking', icon: <ConformanceIcon sx={{color: '#fff'}}/>},
-                {text: 'Custom operator', icon: <CustomOperatorIcon sx={{color: '#fff'}}/>},
+                {text: 'Data source', icon: <SourceIcon/>}, 
+                {text: 'Data sink', icon: <SaveIcon/>},
+                {text: 'Miner', icon: <MinerIcon/>},
+                {text: 'Conformance checking', icon: <ConformanceIcon/>},
+                {text: 'Custom operator', icon: <CustomOperatorIcon/>},
             ].map(({text, icon}) => (
+                <>
                 <ListItem key={text} disablePadding>
                     <ListItemButton>
                         <ListItemIcon>
@@ -150,12 +87,9 @@ export default function PersistentDrawerLeft() {
                         <ListItemText primary={text} />
                     </ListItemButton>
                 </ListItem>
+                </>
             ))}
         </List>
       </Drawer>
-      <Main open={open}>
-        <DrawerHeader />
-      </Main>
-    </Box>
   );
 }

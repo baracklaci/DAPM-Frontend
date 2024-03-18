@@ -56,6 +56,7 @@ const BasicFlow = () => {
 
   return (
     <ReactFlowStyled
+      style={{ flexGrow: 1}}
       nodes={nodes}
       edges={edges}
       onNodesChange={onNodesChange}
