@@ -18,6 +18,11 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import SourceIcon from '@mui/icons-material/Source';
+import SaveIcon from '@mui/icons-material/Save';
+import MinerIcon from '@mui/icons-material/Hardware';
+import ConformanceIcon from '@mui/icons-material/Balance';
+import CustomOperatorIcon from '@mui/icons-material/AutoFixHigh';
 
 const drawerWidth = 240;
 
@@ -82,24 +87,11 @@ export default function PersistentDrawerLeft() {
     setOpen(false);
   };
 
-  const appBarVars = {
-    'background-color': '#292929',
-  } as React.CSSProperties;
-
-  const containerVars = {
-    'flexGrow': '1',
-  } as React.CSSProperties;
-
-  const titleVars = {
-    'width': '100%',
-    'text-align': 'center',
-  } as React.CSSProperties;
-
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open} style={appBarVars}>
-        <Toolbar style={containerVars}>
+      <AppBar sx={{backgroundColor: '#292929'}} position="fixed" open={open}>
+        <Toolbar sx={{flexGrow: 1}}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -109,12 +101,18 @@ export default function PersistentDrawerLeft() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography style={titleVars} variant="h6" noWrap component="div">
+          <Typography sx={{width: '100%', textAlign: 'center'}} variant="h6" noWrap component="div">
             very cool DAPM pipeline maker
           </Typography>
         </Toolbar>
       </AppBar>
       <Drawer
+        PaperProps={{
+            sx: {
+                backgroundColor: '#191919',
+                color: '#ffffff'
+            }
+        }}
         sx={{
           width: drawerWidth,
           flexShrink: 0,
@@ -128,35 +126,31 @@ export default function PersistentDrawerLeft() {
         open={open}
       >
         <DrawerHeader>
+        <Typography sx={{width: '100%', textAlign: 'center'}} variant="h6" noWrap component="div">
+            Nodes
+          </Typography>
           <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            {theme.direction === 'ltr' ? <ChevronLeftIcon sx={{color: '#fff'}}/> : <ChevronRightIcon sx={{color: '#fff'}}/>}
           </IconButton>
         </DrawerHeader>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+            {[
+                {text: 'Data source', icon: <SourceIcon sx={{color: '#fff'}}/>}, 
+                {text: 'Data sink', icon: <SaveIcon sx={{color: '#fff'}}/>},
+                {text: 'Miner', icon: <MinerIcon sx={{color: '#fff'}}/>},
+                {text: 'Conformance checking', icon: <ConformanceIcon sx={{color: '#fff'}}/>},
+                {text: 'Custom operator', icon: <CustomOperatorIcon sx={{color: '#fff'}}/>},
+            ].map(({text, icon}) => (
+                <ListItem key={text} disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            {icon}
+                        </ListItemIcon>
+                        <ListItemText primary={text} />
+                    </ListItemButton>
+                </ListItem>
+            ))}
         </List>
       </Drawer>
       <Main open={open}>
