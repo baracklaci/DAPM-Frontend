@@ -40,6 +40,11 @@ export default function PersistentDrawerLeft() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
+  const onDragStart = (event: React.DragEvent, nodeType: string) => {
+    event.dataTransfer.setData('application/reactflow', nodeType);
+    event.dataTransfer.effectAllowed = 'move';
+  };
+
   return (
       <Drawer
         PaperProps={{
@@ -79,7 +84,7 @@ export default function PersistentDrawerLeft() {
                 {text: 'Custom operator', icon: <CustomOperatorIcon/>},
             ].map(({text, icon}) => (
                 <>
-                <ListItem key={text} disablePadding>
+                <ListItem key={text} disablePadding onDragStart={(event) => onDragStart(event, 'input')} draggable>
                     <ListItemButton>
                         <ListItemIcon>
                             {icon}

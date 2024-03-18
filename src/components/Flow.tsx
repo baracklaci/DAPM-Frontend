@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import React, { useCallback, useRef } from "react"
 import ReactFlow, {
   Node,
   addEdge,
@@ -8,7 +8,8 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   BackgroundVariant,
-  Controls
+  Controls,
+  useReactFlow
 } from "reactflow";
 
 import CustomNode from "./CustomNode";
@@ -46,13 +47,58 @@ const ReactFlowStyled = styled(ReactFlow)`
   background-color: #333;
 `;
 
+let id = 0;
+const getId = () => `dndnode_${id++}`;
+
+
 const BasicFlow = () => {
-  const [nodes, , onNodesChange] = useNodesState(initialNodes);
+  const reactFlowWrapper = useRef(null);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const reactFlow = useReactFlow();
+
+
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((els) => addEdge(params, els)),
     [setEdges]
   );
+
+  const onDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  const onDrop = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+
+      const type = event.dataTransfer.getData('application/reactflow');
+
+      // check if the dropped element is valid
+      if (typeof type === 'undefined' || !type) {
+        return;
+      }
+
+      // reactFlowInstance.project was renamed to reactFlowInstance.screenToFlowPosition
+      // and you don't need to subtract the reactFlowBounds.left/top anymore
+      // details: https://reactflow.dev/whats-new/2023-11-10
+      const position = reactFlow.screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+      const newNode = {
+        id: getId(),
+        type,
+        position,
+        data: { label: `${type} node` },
+      };
+
+      setNodes((nds) => nds.concat(newNode));
+    },
+    [reactFlow],
+  );
+  
+
 
   return (
     <ReactFlowStyled
@@ -63,6 +109,8 @@ const BasicFlow = () => {
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
       nodeTypes={nodeTypes}
+      onDrop={onDrop}
+      onDragOver={onDragOver}
       fitView
     >
       <Background variant={BackgroundVariant.Dots} color="#d9d9d9"/>
