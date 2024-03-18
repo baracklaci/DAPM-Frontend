@@ -12,26 +12,20 @@ import ReactFlow, {
   useReactFlow
 } from "reactflow";
 
-import CustomNode from "./CustomNode";
+import CustomNode from "./Nodes/CustomNode";
 
 import "reactflow/dist/style.css";
 import styled from "styled-components";
+import DataSourceNode from "./Nodes/DataSourceNode";
+import DataSinkNode from "./Nodes/DataSinkNode";
 
 const initialNodes: Node[] = [
   {
     id: "1",
-    type: "input",
-    data: { label: "Node 1" },
+    type: "custom",
+    data: { label: "Custom node" },
     position: { x: 250, y: 5 }
   },
-  { id: "2", data: { label: "Node 2" }, position: { x: 100, y: 100 } },
-  { id: "3", data: { label: "Node 3" }, position: { x: 400, y: 100 } },
-  {
-    id: "4",
-    type: "custom",
-    data: { label: "Custom Node" },
-    position: { x: 400, y: 200 }
-  }
 ];
 
 const initialEdges: Edge[] = [
@@ -40,7 +34,9 @@ const initialEdges: Edge[] = [
 ];
 
 const nodeTypes = {
-  custom: CustomNode
+  custom: CustomNode,
+  dataSource: DataSourceNode,
+  dataSink: DataSinkNode,
 };
 
 const ReactFlowStyled = styled(ReactFlow)`
@@ -72,7 +68,7 @@ const BasicFlow = () => {
     (event: React.DragEvent) => {
       event.preventDefault();
 
-      const type = event.dataTransfer.getData('application/reactflow');
+      const {type, data} = JSON.parse(event.dataTransfer.getData('application/reactflow'));
 
       // check if the dropped element is valid
       if (typeof type === 'undefined' || !type) {
@@ -90,7 +86,7 @@ const BasicFlow = () => {
         id: getId(),
         type,
         position,
-        data: { label: `${type} node` },
+        data: { label: `${data}` },
       };
 
       setNodes((nds) => nds.concat(newNode));

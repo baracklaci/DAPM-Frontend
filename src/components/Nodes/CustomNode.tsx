@@ -1,26 +1,23 @@
+import { Box } from "@mui/material";
 import { memo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
+import styled from "styled-components";
 
 const CustomNode = ({
   data,
-  isConnectable,
-  targetPosition = Position.Top,
-  sourcePosition = Position.Bottom
 }: NodeProps) => {
   return (
-    <>
+    <Box sx={{backgroundColor: '#556677', padding: '10px', color: 'white'}}>
       <Handle
         type="target"
-        position={targetPosition}
-        isConnectable={isConnectable}
+        position={Position.Left}
       />
       {data?.label}
       <Handle
         type="source"
-        position={sourcePosition}
-        isConnectable={isConnectable}
+        position={Position.Right}
       />
-    </>
+    </Box>
   );
 };
 

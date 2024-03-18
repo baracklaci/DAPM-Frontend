@@ -40,8 +40,8 @@ export default function PersistentDrawerLeft() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
-  const onDragStart = (event: React.DragEvent, nodeType: string) => {
-    event.dataTransfer.setData('application/reactflow', nodeType);
+  const onDragStart = (event: React.DragEvent, nodeType: string, data: string) => {
+    event.dataTransfer.setData('application/reactflow', JSON.stringify({type: nodeType, data: data}));
     event.dataTransfer.effectAllowed = 'move';
   };
 
@@ -77,14 +77,14 @@ export default function PersistentDrawerLeft() {
         <Divider/>
         <List>
             {[
-                {text: 'Data source', icon: <SourceIcon/>}, 
-                {text: 'Data sink', icon: <SaveIcon/>},
-                {text: 'Miner', icon: <MinerIcon/>},
-                {text: 'Conformance checking', icon: <ConformanceIcon/>},
-                {text: 'Custom operator', icon: <CustomOperatorIcon/>},
-            ].map(({text, icon}) => (
+                {text: 'Data source', icon: <SourceIcon/>, nodeType: 'dataSource', label: ""}, 
+                {text: 'Data sink', icon: <SaveIcon/>, nodeType: 'dataSink', label: ""},
+                {text: 'Miner', icon: <MinerIcon/>, nodeType: 'custom', label: "Miner"},
+                {text: 'Conformance checking', icon: <ConformanceIcon/>, nodeType: 'custom', label: "Conformance checker"},
+                {text: 'Custom operator', icon: <CustomOperatorIcon/>, nodeType: 'custom', label: "Custom operator"},
+            ].map(({text, icon, nodeType, label}) => (
                 <>
-                <ListItem key={text} disablePadding onDragStart={(event) => onDragStart(event, 'input')} draggable>
+                <ListItem key={text} disablePadding onDragStart={(event) => onDragStart(event, nodeType, label)} draggable>
                     <ListItemButton>
                         <ListItemIcon>
                             {icon}
