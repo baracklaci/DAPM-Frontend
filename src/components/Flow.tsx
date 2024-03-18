@@ -6,12 +6,15 @@ import ReactFlow, {
   Edge,
   Connection,
   useNodesState,
-  useEdgesState
+  useEdgesState,
+  BackgroundVariant,
+  Controls
 } from "reactflow";
 
 import CustomNode from "./CustomNode";
 
 import "reactflow/dist/style.css";
+import styled from "styled-components";
 
 const initialNodes: Node[] = [
   {
@@ -39,6 +42,10 @@ const nodeTypes = {
   custom: CustomNode
 };
 
+const ReactFlowStyled = styled(ReactFlow)`
+  background-color: #333;
+`;
+
 const BasicFlow = () => {
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -48,7 +55,7 @@ const BasicFlow = () => {
   );
 
   return (
-    <ReactFlow
+    <ReactFlowStyled
       nodes={nodes}
       edges={edges}
       onNodesChange={onNodesChange}
@@ -57,8 +64,9 @@ const BasicFlow = () => {
       nodeTypes={nodeTypes}
       fitView
     >
-      <Background />
-    </ReactFlow>
+      <Background variant={BackgroundVariant.Dots} color="#d9d9d9"/>
+      <Controls />
+    </ReactFlowStyled>
   );
 };
 
