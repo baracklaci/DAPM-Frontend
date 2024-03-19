@@ -5,10 +5,11 @@ import SourceIcon from '@mui/icons-material/Source';
 
 const DataSourceNode = ({
     data,
+    selected
 }: NodeProps) => {
 
     return (
-        <Box sx={{ backgroundColor: '#556677', padding: '10px', color: 'white' }}>
+        <Box sx={{ backgroundColor: '#556677', padding: '10px', color: 'white', border: selected ? '2px solid red' : 'none' }}>
             <SourceIcon/>
             <Handle
                 type="source"

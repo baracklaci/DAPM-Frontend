@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react"
+import React, { useCallback, useRef, useState } from "react"
 import ReactFlow, {
   Node,
   addEdge,
@@ -9,7 +9,8 @@ import ReactFlow, {
   useEdgesState,
   BackgroundVariant,
   Controls,
-  useReactFlow
+  useReactFlow,
+  useOnSelectionChange
 } from "reactflow";
 
 import CustomNode from "./Nodes/CustomNode";
@@ -18,19 +19,19 @@ import "reactflow/dist/style.css";
 import styled from "styled-components";
 import DataSourceNode from "./Nodes/DataSourceNode";
 import DataSinkNode from "./Nodes/DataSinkNode";
+import Sidebar from "./Sidebar";
+import ConfigurationSidebar from "./ConfigurationSidebar";
 
 const initialNodes: Node[] = [
   {
     id: "1",
     type: "custom",
-    data: { label: "Custom node" },
+    data: { label: "Custom operator" },
     position: { x: 250, y: 5 }
   },
 ];
 
 const initialEdges: Edge[] = [
-  { id: "e1-2", source: "1", target: "2", animated: true },
-  { id: "e1-3", source: "1", target: "3" }
 ];
 
 const nodeTypes = {
@@ -53,6 +54,14 @@ const BasicFlow = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const reactFlow = useReactFlow();
 
+  const [selectedNode, setSelectedNode] = useState<Node | undefined>();
+
+  useOnSelectionChange({
+    onChange: ({ nodes, edges }) => {
+      setSelectedNode(nodes.at(-1));
+      console.log(selectedNode);
+    },
+  });
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((els) => addEdge(params, els)),
@@ -110,7 +119,7 @@ const BasicFlow = () => {
       fitView
     >
       <Background variant={BackgroundVariant.Dots} color="#d9d9d9"/>
-      <Controls />
+      {selectedNode && <ConfigurationSidebar node={selectedNode} />}
     </ReactFlowStyled>
   );
 };

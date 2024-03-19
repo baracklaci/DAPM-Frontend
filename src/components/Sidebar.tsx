@@ -53,6 +53,7 @@ export default function PersistentDrawerLeft() {
                 // color: '#fff',
                 position: 'fixed',
                 top: '64px',
+                zIndex: 800
             }
         }}
         sx={{
