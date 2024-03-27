@@ -1,7 +1,7 @@
-import React, { useCallback, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import ReactFlow, {
   Node,
-  addEdge,
+  //addEdge,
   Background,
   Edge,
   Connection,
@@ -13,14 +13,18 @@ import ReactFlow, {
   useOnSelectionChange
 } from "reactflow";
 
+import { onNodesChange, onEdgesChange, onConnect, setNodes, setEdges, addNode, addEdge, removeNode } from "../redux/slices/nodeSlice";
+
 import CustomNode from "./Nodes/CustomNode";
 
 import "reactflow/dist/style.css";
 import styled from "styled-components";
 import DataSourceNode from "./Nodes/DataSourceNode";
 import DataSinkNode from "./Nodes/DataSinkNode";
-import Sidebar from "./Sidebar";
+import Sidebar from "./NodesSidebar";
 import ConfigurationSidebar from "./ConfigurationSidebar";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/states";
 
 const initialNodes: Node[] = [
   {
@@ -49,9 +53,8 @@ const getId = () => `dndnode_${id++}`;
 
 
 const BasicFlow = () => {
-  const reactFlowWrapper = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const nodes = useSelector((state: RootState) => state.nodeState.nodes);
+  const edges = useSelector((state: RootState) => state.nodeState.edges);
   const reactFlow = useReactFlow();
 
   const [selectedNode, setSelectedNode] = useState<Node | undefined>();
@@ -63,10 +66,20 @@ const BasicFlow = () => {
     },
   });
 
-  const onConnect = useCallback(
-    (params: Edge | Connection) => setEdges((els) => addEdge(params, els)),
-    [setEdges]
-  );
+  useEffect(() => {
+    const handleKeyDown = (event: { key: string; }) => {
+      if (selectedNode && event.key === 'Delete') {
+        removeNode(selectedNode)
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup on unmount
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [nodes, selectedNode]);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -98,15 +111,20 @@ const BasicFlow = () => {
         data: { label: `${data}` },
       };
 
-      setNodes((nds) => nds.concat(newNode));
+      addNode(newNode);
     },
     [reactFlow],
   );
   
-
+  // to hide the attribution
+  const proOptions = {
+    account: 'paid-enterprise',
+    hideAttribution: true,
+  };
 
   return (
     <ReactFlowStyled
+    proOptions={proOptions}
       style={{ flexGrow: 1}}
       nodes={nodes}
       edges={edges}

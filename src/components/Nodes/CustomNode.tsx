@@ -8,11 +8,13 @@ const CustomNode = ({
   selected,
 }: NodeProps) => {
   return (
-    <Box sx={{backgroundColor: '#556677', padding: '10px', color: 'white', border: selected ? '2px solid red' : 'none'}}>
+    <Box sx={{backgroundColor: '#556677', padding: '10px', color: 'white', border: selected ? '2px solid black' : '2px solid #556677'}}>
+      <Box sx={{display: "flex"}}>
       <Handle
         type="target"
         position={Position.Left}
       />
+      </Box>
       {data?.label}
       <Handle
         type="source"

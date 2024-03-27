@@ -9,7 +9,7 @@ const DataSinkNode = ({
 }: NodeProps) => {
 
     return (
-        <Box sx={{ backgroundColor: '#556677', padding: '10px', color: 'white', border: selected ? '2px solid red' : 'none' }}>
+        <Box sx={{ backgroundColor: '#556677', padding: '10px', color: 'white', border: selected ? '2px solid black' : '2px solid #556677'}}>
             <SaveIcon/>
             <Handle
                 type="target"

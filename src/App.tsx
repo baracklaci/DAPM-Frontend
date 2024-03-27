@@ -1,6 +1,6 @@
 import { AppBar, Box, ThemeProvider, createTheme } from "@mui/material";
 import Flow from "./components/Flow";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "./components/NodesSidebar";
 
 import "./index.css";
 import PipelineAppBar from "./components/PipelineAppBar";
