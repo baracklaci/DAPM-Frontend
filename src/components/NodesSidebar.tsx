@@ -75,7 +75,6 @@ export default function PersistentDrawerLeft() {
             Nodes
           </Typography>
         </DrawerHeader>
-        <Divider/>
         <List>
             {[
                 {text: 'Data source', icon: <SourceIcon/>, nodeType: 'dataSource', label: ""}, 

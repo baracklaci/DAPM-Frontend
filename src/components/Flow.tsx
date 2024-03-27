@@ -1,19 +1,15 @@
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import ReactFlow, {
   Node,
   //addEdge,
   Background,
   Edge,
-  Connection,
-  useNodesState,
-  useEdgesState,
   BackgroundVariant,
-  Controls,
   useReactFlow,
   useOnSelectionChange
 } from "reactflow";
 
-import { onNodesChange, onEdgesChange, onConnect, setNodes, setEdges, addNode, addEdge, removeNode } from "../redux/slices/nodeSlice";
+import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode } from "../redux/slices/nodeSlice";
 
 import CustomNode from "./Nodes/CustomNode";
 
@@ -21,22 +17,9 @@ import "reactflow/dist/style.css";
 import styled from "styled-components";
 import DataSourceNode from "./Nodes/DataSourceNode";
 import DataSinkNode from "./Nodes/DataSinkNode";
-import Sidebar from "./NodesSidebar";
 import ConfigurationSidebar from "./ConfigurationSidebar";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/states";
-
-const initialNodes: Node[] = [
-  {
-    id: "1",
-    type: "custom",
-    data: { label: "Custom operator" },
-    position: { x: 250, y: 5 }
-  },
-];
-
-const initialEdges: Edge[] = [
-];
 
 const nodeTypes = {
   custom: CustomNode,
@@ -53,6 +36,8 @@ const getId = () => `dndnode_${id++}`;
 
 
 const BasicFlow = () => {
+  const dispatch = useDispatch()
+  
   const nodes = useSelector((state: RootState) => state.nodeState.nodes);
   const edges = useSelector((state: RootState) => state.nodeState.edges);
   const reactFlow = useReactFlow();
@@ -69,7 +54,7 @@ const BasicFlow = () => {
   useEffect(() => {
     const handleKeyDown = (event: { key: string; }) => {
       if (selectedNode && event.key === 'Delete') {
-        removeNode(selectedNode)
+        dispatch(removeNode(selectedNode))
       }
     };
 
@@ -111,7 +96,7 @@ const BasicFlow = () => {
         data: { label: `${data}` },
       };
 
-      addNode(newNode);
+      dispatch(addNode(newNode));
     },
     [reactFlow],
   );
@@ -128,9 +113,9 @@ const BasicFlow = () => {
       style={{ flexGrow: 1}}
       nodes={nodes}
       edges={edges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
+      onNodesChange={x => dispatch(onNodesChange(x))}
+      onEdgesChange={x => dispatch(onEdgesChange(x))}
+      onConnect={x => {dispatch(onConnect(x))}      }
       nodeTypes={nodeTypes}
       onDrop={onDrop}
       onDragOver={onDragOver}

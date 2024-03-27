@@ -5,6 +5,9 @@ import Sidebar from "./components/NodesSidebar";
 import "./index.css";
 import PipelineAppBar from "./components/PipelineAppBar";
 import { Controls, Position, ReactFlowProvider } from "reactflow";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+import rootReducer from "./redux/slices";
 
 const darkTheme = createTheme({
   palette: {
@@ -12,10 +15,15 @@ const darkTheme = createTheme({
   },
 });
 
+const store = configureStore({
+  reducer: rootReducer,
+})
+
 export default function App() {
   return (
     <ThemeProvider theme={darkTheme}>
     <div className="App">
+    <Provider store={store}>
       <ReactFlowProvider>
         <Flow />
         <Box sx={{ display: 'flex' }}>
@@ -26,6 +34,7 @@ export default function App() {
           </Box>
         </Box>
       </ReactFlowProvider>
+    </Provider>
     </div>
     </ThemeProvider>
   );

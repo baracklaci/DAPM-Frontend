@@ -10,7 +10,7 @@ export const initialState: NodeState = {
 
 const nodeSlice = createSlice({
   name: 'node',
-  initialState,
+  initialState: initialState,
   reducers: {
     addNode: (state, { payload }: PayloadAction<Node>) => {
       state.nodes.push(payload)
@@ -29,6 +29,7 @@ const nodeSlice = createSlice({
       state.edges = applyEdgeChanges(payload, state.edges);
     },
     onConnect: (state, { payload }: PayloadAction<Connection>) => {
+      console.log('onConnect', payload)
       state.edges = addFlowEdge(payload, state.edges);
     },
     setNodes: (state, { payload }: PayloadAction<Node[]>) => {
@@ -42,4 +43,4 @@ const nodeSlice = createSlice({
 
 export const { addNode, removeNode, addEdge, onNodesChange, onEdgesChange, onConnect, setNodes, setEdges } = nodeSlice.actions
 
-export default nodeSlice.reducer
+export default nodeSlice.reducer 
