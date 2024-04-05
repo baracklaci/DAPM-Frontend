@@ -12,6 +12,9 @@ import rootReducer from "./redux/slices";
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
 import { PersistGate } from "redux-persist/integration/react";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import PipelineComposer from "./routes/PipeLineComposer";
+import UserPage from "./routes/UserPage";
 
 // Configure redux-persist
 const persistConfig = {
@@ -31,6 +34,19 @@ const store = configureStore({
   reducer: persistedReducer,
 })
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <UserPage/>,
+
+  },
+  {
+    path: "/pipeline",
+    element: <PipelineComposer/>,
+
+  }
+]);
+
 export const persistor = persistStore(store);
 
 export default function App() {
@@ -39,16 +55,7 @@ export default function App() {
       <div className="App">
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
-            <ReactFlowProvider>
-              <Flow />
-              <Box sx={{ display: 'flex' }}>
-                <PipelineAppBar />
-                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                  <Sidebar />
-                  <Controls style={{ position: 'fixed', bottom: '0px', left: '240px' }} />
-                </Box>
-              </Box>
-            </ReactFlowProvider>
+          <RouterProvider router={router} />
           </PersistGate>
         </Provider>
       </div>
