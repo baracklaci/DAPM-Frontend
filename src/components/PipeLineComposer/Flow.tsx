@@ -9,7 +9,7 @@ import ReactFlow, {
   useOnSelectionChange
 } from "reactflow";
 
-import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode } from "../redux/slices/nodeSlice";
+import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode } from "../../redux/slices/nodeSlice";
 
 import CustomNode from "./Nodes/CustomNode";
 
@@ -19,7 +19,7 @@ import DataSourceNode from "./Nodes/DataSourceNode";
 import DataSinkNode from "./Nodes/DataSinkNode";
 import ConfigurationSidebar from "./ConfigurationSidebar";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/states";
+import { RootState } from "../../redux/states";
 
 const nodeTypes = {
   custom: CustomNode,
