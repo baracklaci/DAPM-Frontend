@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/DAPM-Frontend/static/css/main.bd7ed530.css",
-    "main.js": "/DAPM-Frontend/static/js/main.f2c57d71.js",
+    "main.js": "/DAPM-Frontend/static/js/main.842a8fd8.js",
     "static/js/453.50c6d124.chunk.js": "/DAPM-Frontend/static/js/453.50c6d124.chunk.js",
     "index.html": "/DAPM-Frontend/index.html",
     "main.bd7ed530.css.map": "/DAPM-Frontend/static/css/main.bd7ed530.css.map",
-    "main.f2c57d71.js.map": "/DAPM-Frontend/static/js/main.f2c57d71.js.map",
+    "main.842a8fd8.js.map": "/DAPM-Frontend/static/js/main.842a8fd8.js.map",
     "453.50c6d124.chunk.js.map": "/DAPM-Frontend/static/js/453.50c6d124.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.bd7ed530.css",
-    "static/js/main.f2c57d71.js"
+    "static/js/main.842a8fd8.js"
   ]
 }
