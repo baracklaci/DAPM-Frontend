@@ -12,7 +12,7 @@ import rootReducer from "./redux/slices";
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
 import { PersistGate } from "redux-persist/integration/react";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RouterProvider, createBrowserRouter, createHashRouter } from "react-router-dom";
 import PipelineComposer from "./routes/PipeLineComposer";
 import UserPage from "./routes/UserPage";
 
@@ -34,7 +34,7 @@ const store = configureStore({
   reducer: persistedReducer,
 })
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <UserPage/>,
@@ -43,7 +43,6 @@ const router = createBrowserRouter([
   {
     path: "/pipeline",
     element: <PipelineComposer/>,
-
   }
 ]);
 

@@ -6,11 +6,13 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export default function MediaCard() {
+  const navigate = useNavigate();
   return (
     <Card sx={{ maxWidth: 345 }}>
-      <CardActionArea href='/pipeline'>
+      <CardActionArea onClick={() => navigate('/pipeline')}>
         <CardMedia
           sx={{ height: 140 }}
           image="/static/images/cards/contemplative-reptile.jpg"

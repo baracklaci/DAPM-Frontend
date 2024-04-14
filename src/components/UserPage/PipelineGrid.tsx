@@ -6,6 +6,7 @@ import Grid from '@mui/material/Grid';
 import PipelineCard from './PipelineCard';
 import { Button, Container } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import { useNavigate } from 'react-router-dom';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -16,9 +17,10 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export default function AutoGrid() {
+  const navigate = useNavigate();
   return (
     <Box sx={{ flexGrow: 1, flexBasis: "100%" }} >
-      <Button variant="contained" startIcon={<AddIcon />} href='/pipeline'
+      <Button variant="contained" startIcon={<AddIcon />} onClick={() => { navigate("/pipeline") }}
         sx={{ backgroundColor: "#bbb", "&:hover": { backgroundColor: "#eee" }, marginBlockStart: "10px" }}>
         Create New
       </Button>
