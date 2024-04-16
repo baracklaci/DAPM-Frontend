@@ -12,6 +12,8 @@ const DataSinkNode = ({
         <Box sx={{ backgroundColor: '#556677', padding: '10px', color: 'white', border: selected ? '2px solid black' : '2px solid #556677'}}>
             <SaveIcon/>
             <Handle
+                id="3"
+                key="3"
                 type="target"
                 position={Position.Left}
             />
