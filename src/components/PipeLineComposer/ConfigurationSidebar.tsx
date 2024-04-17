@@ -7,7 +7,15 @@ import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import { Node } from "reactflow";
+import { Node, useUpdateNodeInternals } from "reactflow";
+import { NodeData } from '../../redux/states';
+import { getNodes } from '../../redux/selectors';
+import { useDispatch, useSelector } from 'react-redux';
+import { addHandle } from '../../redux/slices/nodeSlice';
+import { Box, InputLabel, MenuItem, Select } from '@mui/material';
+import AlgorithmConfiguration from './ConfigurationPages/AlgorithmConfiguration';
+import DataSourceConfiguration from './ConfigurationPages/DataSourceConfiguration';
+import DataSinkConfiguration from './ConfigurationPages/DataSinkConfiguration';
 
 const drawerWidth = 240;
 
@@ -21,17 +29,18 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export interface ConfigurationSidebarProps {
-  node: Node | undefined;
+  nodeprop: Node<NodeData> | undefined;
 }
 
-export default function PersistentDrawerRight({ node }: ConfigurationSidebarProps) {
-  const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+export default function PersistentDrawerRight({ nodeprop }: ConfigurationSidebarProps) {
 
-  const onDragStart = (event: React.DragEvent, nodeType: string, data: string) => {
-    event.dataTransfer.setData('application/reactflow', JSON.stringify({ type: nodeType, data: data }));
-    event.dataTransfer.effectAllowed = 'move';
-  };
+  const dispatch = useDispatch()
+
+  const [algorithm, setAlgorithm] = React.useState("");
+
+  const node = useSelector(getNodes).nodes.find(node => node.id === nodeprop?.id);
+
+  const updateNodes = useUpdateNodeInternals()
 
   return (
     <Drawer
@@ -54,7 +63,6 @@ export default function PersistentDrawerRight({ node }: ConfigurationSidebarProp
       }}
       variant="permanent"
       anchor="right"
-      open={open}
     >
       <Divider />
       <DrawerHeader>
@@ -63,20 +71,9 @@ export default function PersistentDrawerRight({ node }: ConfigurationSidebarProp
         </Typography>
       </DrawerHeader>
       <Divider />
-      <List>
-        <>
-          <ListItem>
-            <ListItemButton>
-              <ListItemText primary={`type: ${node?.type}`} />
-            </ListItemButton>
-          </ListItem>
-          <ListItem>
-            <ListItemButton>
-            <ListItemText primary={`label: ${node?.data?.label}`} />
-            </ListItemButton>
-          </ListItem>
-        </>
-      </List>
+      {node?.type === "custom" && <AlgorithmConfiguration nodeprop={nodeprop} />}
+      {node?.type === "dataSource" && <DataSourceConfiguration nodeprop={nodeprop} />}
+      {node?.type === "dataSink" && <DataSinkConfiguration nodeprop={nodeprop} />}
     </Drawer>
   );
 }

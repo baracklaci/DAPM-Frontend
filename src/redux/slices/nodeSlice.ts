@@ -1,7 +1,7 @@
 import { addEdge as addFlowEdge, applyEdgeChanges, applyNodeChanges, Connection, Edge, EdgeChange, Node, NodeChange } from "reactflow";
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { NodeState } from "../states";
+import { NodeData, NodeState } from "../states";
 
 export const initialState: NodeState = {
   nodes: [],
@@ -12,10 +12,13 @@ const nodeSlice = createSlice({
   name: 'node',
   initialState: initialState,
   reducers: {
+    addHandle: (state, { payload }: PayloadAction<string>) => {
+      state.nodes.find(node => node.id === payload)?.data?.sourceHandles.push({ type: 'source', id: "1"})
+    },
     addNode: (state, { payload }: PayloadAction<Node>) => {
       state.nodes.push(payload)
     },
-    removeNode: (state, { payload }: PayloadAction<Node>) => {
+    removeNode: (state, { payload }: PayloadAction<Node<NodeData>>) => {
       state.nodes = state.nodes.filter(node => node.id !== payload.id)
     },
     addEdge: (state, { payload }: PayloadAction<Edge>) => {
@@ -41,6 +44,6 @@ const nodeSlice = createSlice({
   },
 })
 
-export const { addNode, removeNode, addEdge, onNodesChange, onEdgesChange, onConnect, setNodes, setEdges } = nodeSlice.actions
+export const { addHandle, addNode, removeNode, addEdge, onNodesChange, onEdgesChange, onConnect, setNodes, setEdges } = nodeSlice.actions
 
 export default nodeSlice.reducer 

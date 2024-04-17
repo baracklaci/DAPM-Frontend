@@ -5,6 +5,17 @@ export interface RootState {
 }
 
 export interface NodeState {
-  nodes: Node[],
+  nodes: Node<NodeData>[],
   edges: Edge[],
+}
+
+export interface HandleData {
+  type: string,
+  id: string,
+}
+
+export interface NodeData {
+  label: string
+  sourceHandles: HandleData[],
+  targetHandles: HandleData[],
 }

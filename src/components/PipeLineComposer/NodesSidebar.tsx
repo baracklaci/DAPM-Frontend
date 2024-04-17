@@ -40,8 +40,8 @@ export default function PersistentDrawerLeft() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
-  const onDragStart = (event: React.DragEvent, nodeType: string, data: string) => {
-    event.dataTransfer.setData('application/reactflow', JSON.stringify({type: nodeType, data: data}));
+  const onDragStart = (event: React.DragEvent, nodeType: string, data: string, algorithmType: string | undefined) => {
+    event.dataTransfer.setData('application/reactflow', JSON.stringify({type: nodeType, data: data, algorithmType: algorithmType}));
     event.dataTransfer.effectAllowed = 'move';
   };
 
@@ -77,14 +77,14 @@ export default function PersistentDrawerLeft() {
         </DrawerHeader>
         <List>
             {[
-                {text: 'Data source', icon: <SourceIcon/>, nodeType: 'dataSource', label: ""}, 
-                {text: 'Data sink', icon: <SaveIcon/>, nodeType: 'dataSink', label: ""},
-                {text: 'Miner', icon: <MinerIcon/>, nodeType: 'custom', label: "Miner"},
-                {text: 'Conformance checking', icon: <ConformanceIcon/>, nodeType: 'custom', label: "Conformance checker"},
-                {text: 'Custom operator', icon: <CustomOperatorIcon/>, nodeType: 'custom', label: "Custom operator"},
-            ].map(({text, icon, nodeType, label}) => (
+                {text: 'Data source', icon: <SourceIcon/>, nodeType: 'dataSource', label: "", instanceType: "dataSource"}, 
+                {text: 'Data sink', icon: <SaveIcon/>, nodeType: 'dataSink', label: "", instanceType: "dataSink"},
+                {text: 'Miner', icon: <MinerIcon/>, nodeType: 'custom', label: "Miner", instanceType: "miner"},
+                {text: 'Conformance checking', icon: <ConformanceIcon/>, nodeType: 'custom', label: "Conformance checker", instanceType: "conformance"},
+                {text: 'Custom operator', icon: <CustomOperatorIcon/>, nodeType: 'custom', label: "Custom operator", instanceType: "custom"},
+            ].map(({text, icon, nodeType, label, instanceType}) => (
                 <>
-                <ListItem key={text} disablePadding onDragStart={(event) => onDragStart(event, nodeType, label)} draggable>
+                <ListItem key={text} disablePadding onDragStart={(event) => onDragStart(event, nodeType, label, instanceType)} draggable>
                     <ListItemButton>
                         <ListItemIcon>
                             {icon}
