@@ -1,18 +1,13 @@
-import { AppBar, Box, ThemeProvider, createTheme } from "@mui/material";
-import Flow from "./components/PipeLineComposer/Flow";
-import Sidebar from "./components/PipeLineComposer/NodesSidebar";
+import { ThemeProvider, createTheme } from "@mui/material";
 
 import "./index.css";
-import PipelineAppBar from "./components/PipeLineComposer/PipelineAppBar";
-import { Controls, Position, ReactFlowProvider } from "reactflow";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./redux/slices";
 
-import { persistStore, persistReducer } from 'redux-persist'
+import { persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
-import { PersistGate } from "redux-persist/integration/react";
-import { RouterProvider, createBrowserRouter, createHashRouter } from "react-router-dom";
+import { RouterProvider, createHashRouter } from "react-router-dom";
 import PipelineComposer from "./routes/PipeLineComposer";
 import UserPage from "./routes/UserPage";
 
@@ -46,16 +41,12 @@ const router = createHashRouter([
   }
 ]);
 
-export const persistor = persistStore(store);
-
 export default function App() {
   return (
     <ThemeProvider theme={darkTheme}>
       <div className="App">
         <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
           <RouterProvider router={router} />
-          </PersistGate>
         </Provider>
       </div>
     </ThemeProvider>

@@ -15,11 +15,16 @@ const nodeSlice = createSlice({
     addHandle: (state, { payload }: PayloadAction<string>) => {
       state.nodes.find(node => node.id === payload)?.data?.sourceHandles.push({ type: 'source', id: "1"})
     },
+    updateNode: (state, { payload }: PayloadAction<Node<NodeData> | undefined>) => {
+      if (!payload) return
+      const index = state.nodes.findIndex(node => node.id === payload.id)
+      state.nodes[index] = payload
+    },
     addNode: (state, { payload }: PayloadAction<Node>) => {
       state.nodes.push(payload)
     },
     removeNode: (state, { payload }: PayloadAction<Node<NodeData>>) => {
-      state.nodes = state.nodes.filter(node => node.id !== payload.id)
+      state.nodes = state.nodes.filter(node => node.id !== payload.id && node.parentNode !== payload.id)
     },
     addEdge: (state, { payload }: PayloadAction<Edge>) => {
       state.edges.push(payload)
@@ -44,6 +49,6 @@ const nodeSlice = createSlice({
   },
 })
 
-export const { addHandle, addNode, removeNode, addEdge, onNodesChange, onEdgesChange, onConnect, setNodes, setEdges } = nodeSlice.actions
+export const { addHandle, updateNode, addNode, removeNode, addEdge, onNodesChange, onEdgesChange, onConnect, setNodes, setEdges } = nodeSlice.actions
 
 export default nodeSlice.reducer 

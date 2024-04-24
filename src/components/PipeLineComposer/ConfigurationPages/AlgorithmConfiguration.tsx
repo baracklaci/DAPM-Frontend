@@ -1,9 +1,5 @@
 import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
-import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
@@ -26,12 +22,17 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
   const [algorithm, setAlgorithm] = React.useState("");
 
   const node = useSelector(getNodes).nodes.find(node => node.id === nodeprop?.id);
-
+  
   const updateNodes = useUpdateNodeInternals()
+  
+  const parentNode = useSelector(getNodes).nodes.find(n => n.id === node?.parentNode);
 
   return (
       <List>
         <>
+          <ListItem>
+              <ListItemText primary={`Parent node - ${parentNode?.data?.label}`} />
+          </ListItem>
           <ListItem>
             <Box sx={{ width: '100%', display: "flex", flexDirection: "column" }}>
             <InputLabel id="demo-simple-select-standard-label">Please select algorithm</InputLabel>
@@ -39,7 +40,6 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
               labelId="algorithm-simple-select-label"
               id="algorithm-simple-select"
               value={algorithm}
-              label="Algorithm"
               sx={{ width: '100%' }}
               onChange={(event) => setAlgorithm(event?.target.value as string)}
             >
