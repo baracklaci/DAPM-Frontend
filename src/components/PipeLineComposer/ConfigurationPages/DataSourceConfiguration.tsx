@@ -1,18 +1,9 @@
 import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
-import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import { Node, useUpdateNodeInternals } from "reactflow";
-import { useDispatch, useSelector } from 'react-redux';
+import { Node } from "reactflow";
 import { Box, InputLabel, MenuItem, Select } from '@mui/material';
 import { NodeData } from '../../../redux/states';
-import { getNodes } from '../../../redux/selectors';
-import { addHandle } from '../../../redux/slices/nodeSlice';
 
 
 export interface AlgorithmConfugurationProps {
@@ -33,8 +24,7 @@ export default function DataSourceConfiguration({ nodeprop }: AlgorithmConfugura
               labelId="algorithm-simple-select-label"
               id="algorithm-simple-select"
               value={logData}
-              label="LogData"
-              sx={{ width: '100%' }}
+              sx={{ width: '100%'}}
               onChange={(event) => setLogData(event?.target.value as string)}
             >
               <MenuItem value={"Event log 1"}>Event log 1</MenuItem>

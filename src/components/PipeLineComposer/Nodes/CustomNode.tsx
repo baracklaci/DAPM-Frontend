@@ -3,7 +3,6 @@ import { relative } from "path";
 import { memo, useState } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 import styled from "styled-components";
-import { getHandleId } from "./IdGeneration";
 import { NodeData } from "../../../redux/states";
 import { getNode, getNodes } from "../../../redux/selectors";
 import { useSelector } from "react-redux";
