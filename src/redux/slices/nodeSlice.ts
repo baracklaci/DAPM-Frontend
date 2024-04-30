@@ -26,6 +26,9 @@ const nodeSlice = createSlice({
     removeNode: (state, { payload }: PayloadAction<Node<NodeData>>) => {
       state.nodes = state.nodes.filter(node => node.id !== payload.id && node.parentNode !== payload.id)
     },
+    removeEdge: (state, { payload }: PayloadAction<Edge>) => {
+      state.edges = state.edges.filter(edge => edge.id !== payload.id)
+    },
     addEdge: (state, { payload }: PayloadAction<Edge>) => {
       state.edges.push(payload)
     },
@@ -37,8 +40,7 @@ const nodeSlice = createSlice({
       state.edges = applyEdgeChanges(payload, state.edges);
     },
     onConnect: (state, { payload }: PayloadAction<Connection>) => {
-      console.log('onConnect', payload)
-      state.edges = addFlowEdge(payload, state.edges);
+      state.edges = addFlowEdge({...payload, style: {stroke: 'white', strokeOpacity: 1, strokeWidth: "1px"}}, state.edges);
     },
     setNodes: (state, { payload }: PayloadAction<Node[]>) => {
       state.nodes = payload;
@@ -49,6 +51,6 @@ const nodeSlice = createSlice({
   },
 })
 
-export const { addHandle, updateNode, addNode, removeNode, addEdge, onNodesChange, onEdgesChange, onConnect, setNodes, setEdges } = nodeSlice.actions
+export const { addHandle, updateNode, addNode, removeNode, removeEdge, addEdge, onNodesChange, onEdgesChange, onConnect, setNodes, setEdges } = nodeSlice.actions
 
 export default nodeSlice.reducer 

@@ -1,16 +1,26 @@
 import { Box, Typography } from '@mui/material';
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   NodeProps,
   NodeResizer} from 'reactflow';
+import { getNodes as getFlowData } from '../../../redux/selectors';
+import { getRelativeNodesBounds } from '../utils';
 
-const lineStyle = { borderColor: 'white', Visibility: 'visible'};
 
-function OrganizationNode({ data, id }: NodeProps) {
+function OrganizationNode({ data, id, selected }: NodeProps) {
+
+  const lineStyle: React.CSSProperties = {borderColor: selected ? '#007BFF' : 'white', visibility: 'visible'};
+
+  const childNodes = useSelector(getFlowData).nodes.filter(
+    (n) => n.parentNode === id
+  );
+
+  const rect = getRelativeNodesBounds(childNodes);
+
+  const minWidth = rect.x + rect.width
+  const minHeight = rect.y + rect.height
   
-  const minWidth = 100;
-  const minHeight = 100;
-
   return (
     <Box sx={{backgroundColor: "#ffffff10", height: "100%"}}>
       <NodeResizer

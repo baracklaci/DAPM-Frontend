@@ -18,7 +18,7 @@ function CustomNode({id}: NodeProps<NodeData>) {
   const selected = node?.selected;
 
   return (
-    <Box sx={{backgroundColor: '#556677', padding: '10px', color: 'white', position: "relative", border: selected ? '2px solid black' : '2px solid #556677'}}>
+    <Box sx={{backgroundColor: '#556677', padding: '10px', color: 'white', position: "relative", border: selected ? '2px solid #007bff' : '2px solid #556677'}}>
       <Box style={{display: "flex", flexDirection: "column", justifyContent: "space-around", position: "absolute", top: "0", bottom: "0", left: "0"}}>
       {data?.sourceHandles?.map(handle => <Handle
         key={handle.id}

@@ -10,6 +10,7 @@ import storage from 'redux-persist/lib/storage' // defaults to localStorage for 
 import { RouterProvider, createHashRouter } from "react-router-dom";
 import PipelineComposer from "./routes/PipeLineComposer";
 import UserPage from "./routes/UserPage";
+import { loadState, saveState } from "./redux/browser-storage";
 
 // Configure redux-persist
 const persistConfig = {
@@ -27,7 +28,15 @@ const darkTheme = createTheme({
 
 const store = configureStore({
   reducer: persistedReducer,
+  preloadedState: loadState(),
 })
+
+// here we subscribe to the store changes
+store.subscribe(
+  // we use debounce to save the state once each 800ms
+  // for better performances in case multiple changes occur in a short time
+  () => saveState(store.getState())
+);
 
 const router = createHashRouter([
   {

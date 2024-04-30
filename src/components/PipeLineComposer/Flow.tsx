@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useState, MouseEvent } from "react"
 import ReactFlow, {
   Node,
-  //addEdge,
   Background,
   BackgroundVariant,
   useReactFlow,
-  useOnSelectionChange
+  useOnSelectionChange,
+  Edge
 } from "reactflow";
 
-import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode, setNodes } from "../../redux/slices/nodeSlice";
+import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode, setNodes, removeEdge, setEdges, addEdge } from "../../redux/slices/nodeSlice";
 
 import CustomNode from "./Nodes/CustomNode";
 
@@ -37,12 +37,9 @@ const ReactFlowStyled = styled(ReactFlow)`
   background-color: #333;
 `;
 
-let id = 0;
-const getId = () => `dndnode_${id++}`;
+const getId = () => `node-${crypto.randomUUID()}`;
 
-let handleId = 0;
-const getHandleId = () => `handleid_${handleId++}`;
-
+const getHandleId = () => `handle-${crypto.randomUUID()}`;
 
 const BasicFlow = () => {
   const dispatch = useDispatch()
@@ -54,17 +51,31 @@ const BasicFlow = () => {
   const reactFlow = useReactFlow();
 
   const [selectedNode, setSelectedNode] = useState<Node | undefined>();
+  const [selectedDeletables, setSelectedDeletables] = useState<Array<Node<NodeData> | Edge | undefined>>([]);
+
+  const connectionLineStyle = { stroke: 'white', strokeOpacity: 1, strokeWidth: "1px" }
 
   useOnSelectionChange({
-    onChange: ({ nodes, edges }) => {
-      setSelectedNode(nodes.at(-1));
+    onChange: ({ nodes: selectedNodes, edges: selectedEdges }) => {
+      setSelectedNode(selectedNodes.at(0));
+      setSelectedDeletables([...selectedNodes, ...selectedEdges]);
+
+      var newEdges: Edge[] = edges.map(edge => {
+        if (!selectedEdges.find(x => x.id === edge.id)) {
+          return {...edge, style: {...edge.style, stroke: 'white', strokeOpacity: 1, strokeWidth: "1px"}}
+        }
+        return {...edge, style: {...edge.style, stroke: '#007bff', strokeOpacity: 1, strokeWidth: "2px"}}
+      });
+
+      dispatch(setEdges(newEdges));
     },
   });
 
   useEffect(() => {
     const handleKeyDown = (event: { key: string; }) => {
-      if (selectedNode && event.key === 'Delete') {
-        dispatch(removeNode(selectedNode))
+      if (event.key === 'Delete') {
+        selectedDeletables.filter((x): x is Node<NodeData> => true).forEach(node => dispatch(removeNode(node)));
+        selectedDeletables.filter((x): x is Edge => true).forEach(edge => dispatch(removeEdge(edge)));
       }
     };
 
@@ -74,7 +85,7 @@ const BasicFlow = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [nodes, selectedNode]);
+  }, [selectedDeletables]);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -137,7 +148,6 @@ const BasicFlow = () => {
 
       if (orgNode) {
         // if we drop a node on a group node, we want to position the node inside the group
-        console.log(orgNode);
         newNode.position = getNodePositionInsideParent(
           {
             position,
@@ -147,7 +157,7 @@ const BasicFlow = () => {
           orgNode
         ) ?? { x: 0, y: 0 };
         newNode.parentNode = orgNode?.id;
-        newNode.expandParent = true;
+        newNode.extent = "parent";
       }
 
       dispatch(addNode(newNode));
@@ -157,7 +167,6 @@ const BasicFlow = () => {
 
   const onNodeDragStop = useCallback(
     (_: MouseEvent, node: Node) => {
-      console.log('onNodeDragStop', node);
       if (node.type === 'organization' || node.parentNode) {
         return;
       }
@@ -167,8 +176,6 @@ const BasicFlow = () => {
         (n) => n.type === 'organization'
       );
       const organizationNode = intersections[0];
-
-      console.log('intersections', intersections);
 
       // when there is an intersection on drag stop, we want to attach the node to its new parent
       if (intersections.length && node.parentNode !== organizationNode?.id) {
@@ -205,7 +212,6 @@ const BasicFlow = () => {
 
   const onNodeDrag = useCallback(
     (_: MouseEvent, node: Node) => {
-      console.log('onNodeDrag', node);
       if (!node){
         return;
       }
@@ -264,6 +270,7 @@ return (
     onDragOver={onDragOver}
     fitView
     selectNodesOnDrag={false}
+    connectionLineStyle={connectionLineStyle}
   >
     <Background variant={BackgroundVariant.Dots} color="#d9d9d9" />
     {selectedNode && <ConfigurationSidebar nodeprop={selectedNode} />}
