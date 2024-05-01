@@ -6,6 +6,10 @@ import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
+import { useEffect, useState } from 'react';
+import { fetchOrganisations, fetchStatus } from '../../services/backendAPI';
+import { request } from 'http';
+
 
 const drawerWidth = 240;
 
@@ -20,18 +24,34 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function PersistentDrawerLeft() {
 
-    const organisations = {
-        organisations: [
-            {
-                name: "Organisation 1",
-                id: "o1"
-            },
-            {
-                name: "Organisation 2",
-                id: "o2"
-            },
-        ]
-    }
+    const [organisations, setOrganisations] = useState([
+        {
+            id: "o1",
+            name: "Organisation 1",
+            apiUrl: 'http://org1.dk'
+        },
+        {
+            id: "o2",
+            name: "Organisation 2",
+            apiUrl: 'http://org2.dk'
+        },
+    ])
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const request = await fetchOrganisations();
+                setOrganisations(request.result.organisations)
+            } catch (error) {
+                // Handle error if needed
+                console.error('Error fetching organisations:', error);
+            }
+        };
+      
+        fetchData();
+    }, []);
+
+    
 
     const repositories = {
         repositories: [
@@ -81,7 +101,7 @@ export default function PersistentDrawerLeft() {
                 </Typography>
             </DrawerHeader>
             <List>
-                {organisations.organisations.map(({ name, id }) => (
+                {organisations.map(({ id, name }) => (
                     <>
                         <ListItem key={id} disablePadding>
                             <ListItemButton>
