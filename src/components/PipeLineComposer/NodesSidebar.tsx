@@ -67,11 +67,13 @@ export default function PersistentDrawerLeft() {
         </DrawerHeader>
         <List>
             {[
-                {text: 'Data source', icon: <SourceIcon/>, nodeType: 'dataSource', label: "", instanceType: "dataSource"}, 
+                {text: 'Event log', icon: <SourceIcon/>, nodeType: 'dataSource', label: "", instanceType: "dataSource"}, 
+                {text: 'Petri net', icon: <SourceIcon/>, nodeType: 'dataSource', label: "", instanceType: "dataSource"}, 
+                {text: 'BPMN', icon: <SourceIcon/>, nodeType: 'dataSource', label: "", instanceType: "dataSource"}, 
                 {text: 'Data sink', icon: <SaveIcon/>, nodeType: 'dataSink', label: "", instanceType: "dataSink"},
-                {text: 'Miner', icon: <MinerIcon/>, nodeType: 'custom', label: "Miner", instanceType: "miner"},
-                {text: 'Conformance checking', icon: <ConformanceIcon/>, nodeType: 'custom', label: "Conformance checker", instanceType: "conformance"},
-                {text: 'Custom operator', icon: <CustomOperatorIcon/>, nodeType: 'custom', label: "Custom operator", instanceType: "custom"},
+                {text: 'Miner', icon: <MinerIcon/>, nodeType: 'operator', label: "Miner", instanceType: "miner"},
+                {text: 'Conformance checking', icon: <ConformanceIcon/>, nodeType: 'operator', label: "Conformance checker", instanceType: "conformance"},
+                {text: 'Custom operator', icon: <CustomOperatorIcon/>, nodeType: 'operator', label: "Custom operator", instanceType: "custom"},
                 {text: 'Organization', icon: <BusinessIcon/>, nodeType: 'organization', label: "Organization", instanceType: "organization"},
             ].map(({text, icon, nodeType, label, instanceType}) => (
                 <>
