@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { ApiState, Organization, Repository } from "../states/apiState";
+import { ApiState, Organization } from "../states/apiState";
 import { fetchOrganisations } from "../../services/backendAPI";
 
 
