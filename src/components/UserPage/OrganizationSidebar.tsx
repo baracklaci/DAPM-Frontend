@@ -8,8 +8,12 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { useEffect, useState } from 'react';
 import { fetchOrganisations,fetchOrganisation, fetchStatus, fetchOrganisationRepositories, fetchRepository, fetchRepositoryResources, putResource } from '../../services/backendAPI';
-import { request } from 'http';
 import React, { ChangeEvent } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getOrganizations, getRepositories, getResources } from '../../redux/selectors/apiSelector';
+import { organizationThunk } from '../../redux/slices/apiSlice';
+import { Organization } from '../../redux/states/apiState';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 
 const drawerWidth = 240;
 
@@ -24,18 +28,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function PersistentDrawerLeft() {
 
-    const [organisations, setOrganisations] = useState([
-        {
-            id: 1,
-            name: "Organisation 1",
-            apiUrl: 'http://org1.dk'
-        },
-        {
-            id: 2,
-            name: "Organisation 2",
-            apiUrl: 'http://org2.dk'
-        },
-    ])
+    const dispatch = useAppDispatch()
+    const organizations: Organization[] = useAppSelector(getOrganizations)
 
     
     //Here is a test for the file upload add the div in the bottom to the return section and try to upload a file :)
@@ -77,46 +71,18 @@ export default function PersistentDrawerLeft() {
     */
     
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const request = await fetchOrganisations();
-                const repositories = await fetchRepository(1,1);
-                const resources = await fetchRepositoryResources(1,1);
-                console.log(repositories);
-                console.log(resources);
-                setOrganisations(request.result.organizations)
-            } catch (error) {
-                // Handle error if needed
-                console.error('Error fetching organisations:', error);
-            }
-        };
-      
-        fetchData();
-    }, []);
+        dispatch(organizationThunk())
+        console.log("USEEFFECT")
+        console.log(organizations)
+        
+        
+    }, [dispatch]);
 
     
 
-    const repositories = {
-        repositories: [
-            {
-                name: "Repository 1",
-                id: "rep1"
-            },
-            {
-                name: "Repository 1",
-                id: "rep1"
-            },
-        ]
-    }
+    const repositories = useSelector(getRepositories)
 
-    const resources = {
-        resources: [
-            {
-                name: "Resource 1",
-                id: "res1"
-            },
-        ]
-    }
+    const resources = useSelector(getResources)
 
     return (
         <Drawer
@@ -144,14 +110,14 @@ export default function PersistentDrawerLeft() {
                 </Typography>
             </DrawerHeader>
             <List>
-                {organisations.map(({ id, name }) => (
+                {organizations.map(({ id, name }) => (
                     <>
                         <ListItem key={id} disablePadding>
                             <ListItemButton>
                                 <ListItemText primary={name} />
                             </ListItemButton>
                         </ListItem>
-                        {repositories.repositories.map(({ name, id }) => (
+                        {repositories.map(({ name, id }) => (
                             <>
                                 <ListItem key={id} disablePadding>
                                     <ListItemButton sx={{ paddingBlock: "5px" }}>
@@ -160,7 +126,7 @@ export default function PersistentDrawerLeft() {
                                 </ListItem>
                             </>
                         ))}
-                        {resources.resources.map(({ name, id }) => (
+                        {resources.map(({ name, id }) => (
                             <>
                                 <ListItem key={id} disablePadding>
                                     <ListItemButton sx={{ paddingBlock: 0 }}>

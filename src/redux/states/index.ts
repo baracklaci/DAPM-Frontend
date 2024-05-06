@@ -1,7 +1,9 @@
 import { Edge, Node } from 'reactflow';
+import { ApiState } from './apiState';
 
 export interface RootState {
-  nodeState: NodeState
+  nodeState: NodeState,
+  apiState: ApiState
 }
 
 export interface NodeState {
