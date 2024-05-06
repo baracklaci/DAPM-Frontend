@@ -6,9 +6,9 @@ import ListItemText from '@mui/material/ListItemText';
 import { Node, useUpdateNodeInternals } from "reactflow";
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, InputLabel, MenuItem, Select } from '@mui/material';
-import { NodeData } from '../../../redux/states';
+import { Algorithm, NodeData, OperatorNodeData } from '../../../redux/states/nodeState';
 import { getNodes } from '../../../redux/selectors';
-import { addHandle } from '../../../redux/slices/nodeSlice';
+import { addHandle, updateNode } from '../../../redux/slices/nodeSlice';
 
 
 export interface AlgorithmConfugurationProps {
@@ -19,19 +19,29 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
 
   const dispatch = useDispatch()
 
-  const [algorithm, setAlgorithm] = React.useState("");
+  const updateNodesInternal = useUpdateNodeInternals();
 
-  const node = useSelector(getNodes).nodes.find(node => node.id === nodeprop?.id);
-  
-  const updateNodes = useUpdateNodeInternals()
+  const node = useSelector(getNodes).nodes.find(node => node.id === nodeprop?.id) as Node<OperatorNodeData> | undefined;
   
   const parentNode = useSelector(getNodes).nodes.find(n => n.id === node?.parentNode);
+
+  const setAlgorithm = (algorithm: string) => {
+    dispatch(updateNode(
+      {
+        ...node!, 
+        data: {
+          ...node?.data!, 
+          instantiationData: {
+            algorithm: {name: algorithm, organizationId: 1, repositoryId: 1, algorithmId: 1 } as Algorithm
+          }
+        }
+  }))}
 
   return (
       <List>
         <>
           <ListItem>
-              <ListItemText primary={`Parent node - ${parentNode?.data?.label}`} />
+              <ListItemText primary={`Organization - ${parentNode?.data?.label}`} />
           </ListItem>
           <ListItem>
             <Box sx={{ width: '100%', display: "flex", flexDirection: "column" }}>
@@ -39,7 +49,7 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
             <Select
               labelId="algorithm-simple-select-label"
               id="algorithm-simple-select"
-              value={algorithm}
+              value={node?.data?.instantiationData?.algorithm?.name ?? ""}
               sx={{ width: '100%' }}
               onChange={(event) => setAlgorithm(event?.target.value as string)}
             >
@@ -52,7 +62,7 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
           <ListItem>
               <ListItemText primary={"Inputs"} />
           </ListItem>
-          {node?.data.sourceHandles?.map(handle => 
+          {node?.data.templateData.sourceHandles?.map(handle => 
             <ListItem>
               <ListItemText primary={`type: ${handle.type}`} />
             </ListItem>
@@ -60,7 +70,7 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
           <ListItem>
             <ListItemButton onClick={() => {
               dispatch(addHandle(node?.id ?? ""))
-              updateNodes(node?.id ?? "")
+              updateNodesInternal(node?.id ?? "")
               }}>
               <ListItemText primary={"Add more"} />
             </ListItemButton>
@@ -68,7 +78,7 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
           <ListItem>
               <ListItemText primary={"Outputs"} />
           </ListItem>
-          {node?.data.targetHandles?.map(handle => 
+          {node?.data.templateData.targetHandles?.map(handle => 
             <ListItem>
               <ListItemText primary={`type: ${handle.type}`} />
             </ListItem>

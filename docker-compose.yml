@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  react:
+    container_name: react-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"  # Map TCP port 80 in the container to port 80 on the Docker host.
+    restart: unless-stopped

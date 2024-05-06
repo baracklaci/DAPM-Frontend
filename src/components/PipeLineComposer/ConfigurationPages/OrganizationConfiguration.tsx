@@ -3,7 +3,8 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import { Node } from "reactflow";
 import { Box, InputLabel, MenuItem, Select } from '@mui/material';
-import { NodeData, RootState } from '../../../redux/states';
+import { RootState } from '../../../redux/states';
+import { NodeData } from '../../../redux/states/nodeState';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateNode } from '../../../redux/slices/nodeSlice';
 

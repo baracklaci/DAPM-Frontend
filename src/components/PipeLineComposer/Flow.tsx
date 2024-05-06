@@ -8,26 +8,28 @@ import ReactFlow, {
   Edge
 } from "reactflow";
 
-import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode, setNodes, removeEdge, setEdges, addEdge } from "../../redux/slices/nodeSlice";
+import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode, setNodes, removeEdge, setEdges } from "../../redux/slices/nodeSlice";
 
 import CustomNode from "./Nodes/CustomNode";
 
 import "reactflow/dist/style.css";
 import styled from "styled-components";
-import DataSourceNode from "./Nodes/DataSourceNode";
 import DataSinkNode from "./Nodes/DataSinkNode";
 import ConfigurationSidebar from "./ConfigurationSidebar";
 import { useDispatch, useSelector } from "react-redux";
-import { NodeData, RootState } from "../../redux/states";
+import { RootState } from "../../redux/states";
 import OrganizationNode from "./Nodes/OrganizationNode";
 
 import 'reactflow/dist/style.css';
 import '@reactflow/node-resizer/dist/style.css';
 
 import { getNodePositionInsideParent, sortNodes } from "./utils";
+import { BaseInstantiationData, BaseTemplateData, DataSinkInstantiationData, DataSourceInstantiationData, InstantiationData, NodeData, OperatorInstantiationData } from "../../redux/states/nodeState";
+import DataSourceNode from "./Nodes/DataSourceNode";
+import { current } from "@reduxjs/toolkit";
 
 const nodeTypes = {
-  custom: CustomNode,
+  operator: CustomNode,
   dataSource: DataSourceNode,
   dataSink: DataSinkNode,
   organization: OrganizationNode
@@ -50,21 +52,34 @@ const BasicFlow = () => {
   const edges = useSelector((state: RootState) => state.nodeState.edges);
   const reactFlow = useReactFlow();
 
-  const [selectedNode, setSelectedNode] = useState<Node | undefined>();
+  const [lastSelected, setLastSelected] = useState<Node | Edge | undefined>();
   const [selectedDeletables, setSelectedDeletables] = useState<Array<Node<NodeData> | Edge | undefined>>([]);
 
   const connectionLineStyle = { stroke: 'white', strokeOpacity: 1, strokeWidth: "1px" }
 
   useOnSelectionChange({
     onChange: ({ nodes: selectedNodes, edges: selectedEdges }) => {
-      setSelectedNode(selectedNodes.at(0));
+      const selecteds = [...selectedNodes, ...selectedEdges] as Array<Node<NodeData> | Edge>;
+      console.log("currentlySelected", selecteds, "previouslySelected", selectedDeletables)
+      console.log("lastSelected", lastSelected)
+
+      const set = new Set(selectedDeletables) as Set<Node<NodeData> | Edge | undefined>;
+      var foundItem: Node | Edge | undefined = undefined;
+
+      for (const item of selecteds) {
+        if (!set.has(item)) {
+          foundItem = item; // Return the first item that's not in set2
+        }
+      }
+
+      setLastSelected(foundItem);
       setSelectedDeletables([...selectedNodes, ...selectedEdges]);
 
       var newEdges: Edge[] = edges.map(edge => {
         if (!selectedEdges.find(x => x.id === edge.id)) {
-          return {...edge, style: {...edge.style, stroke: 'white', strokeOpacity: 1, strokeWidth: "1px"}}
+          return { ...edge, style: { ...edge.style, stroke: 'white', strokeOpacity: 1, strokeWidth: "1px" } }
         }
-        return {...edge, style: {...edge.style, stroke: '#007bff', strokeOpacity: 1, strokeWidth: "2px"}}
+        return { ...edge, style: { ...edge.style, stroke: '#007bff', strokeOpacity: 1, strokeWidth: "2px" } }
       });
 
       dispatch(setEdges(newEdges));
@@ -119,18 +134,31 @@ const BasicFlow = () => {
       }).filter((n) => n.type === 'organization');
       const orgNode = intersections[0];
 
-      type NodeSetup = {
-        sourceHandles: number;
-        targetHandles: number;
-      }
-
-      const handleSetup = new Map<string, NodeSetup>();
-      handleSetup.set('dataSource', { sourceHandles: 0, targetHandles: 1 });
-      handleSetup.set('dataSink', { sourceHandles: 1, targetHandles: 0 });
-      handleSetup.set('conformance', { sourceHandles: 2, targetHandles: 1 });
-      handleSetup.set('miner', { sourceHandles: 1, targetHandles: 1 });
-      handleSetup.set('custom', { sourceHandles: 1, targetHandles: 1 });
-      handleSetup.set('organization', { sourceHandles: 0, targetHandles: 0 });
+      const handleSetup = new Map<string, BaseTemplateData>();
+      handleSetup.set('dataSource', { 
+        sourceHandles: [{ id: getHandleId() }], 
+        targetHandles: [],
+      });
+      handleSetup.set('dataSink', { 
+        sourceHandles: [], 
+        targetHandles: [{ id: getHandleId()}],
+      });
+      handleSetup.set('conformance', { 
+        sourceHandles: [{ id: getHandleId()}], 
+        targetHandles: [{ id: getHandleId()}, { id: getHandleId()}],
+      });
+      handleSetup.set('miner', { 
+        sourceHandles: [{ id: getHandleId()}], 
+        targetHandles: [{ id: getHandleId()}],
+      });
+      handleSetup.set('custom', { 
+        sourceHandles: [{ id: getHandleId()}], 
+        targetHandles: [{ id: getHandleId()}],
+      });
+      handleSetup.set('organization', { 
+        sourceHandles: [], 
+        targetHandles: [],
+      });
 
       const nodeStyle = type === 'organization' ? { width: 400, height: 200, zIndex: -1000 } : undefined;
 
@@ -141,8 +169,8 @@ const BasicFlow = () => {
         style: nodeStyle,
         data: {
           label: `${data}`,
-          sourceHandles: Array.from({ length: handleSetup.get(algorithmType)!.sourceHandles }, () => ({ id: getHandleId(), type: 'source' })),
-          targetHandles: Array.from({ length: handleSetup.get(algorithmType)!.targetHandles }, () => ({ id: getHandleId(), type: 'target' }))
+          templateData: handleSetup.get(algorithmType)!,
+          instantiationData: {},
         },
       };
 
@@ -212,7 +240,7 @@ const BasicFlow = () => {
 
   const onNodeDrag = useCallback(
     (_: MouseEvent, node: Node) => {
-      if (!node){
+      if (!node) {
         return;
       }
       if (node.type !== 'node' && !node.parentNode) {
@@ -245,37 +273,37 @@ const BasicFlow = () => {
 
       dispatch(setNodes(newNodes));
     },
-  [nodes]
+    [nodes]
   );
 
-// to hide the attribution
-const proOptions = {
-  account: 'paid-enterprise',
-  hideAttribution: true,
-};
+  // to hide the attribution
+  const proOptions = {
+    account: 'paid-enterprise',
+    hideAttribution: true,
+  };
 
-return (
-  <ReactFlowStyled
-    proOptions={proOptions}
-    style={{ flexGrow: 1 }}
-    nodes={nodes}
-    edges={edges}
-    onNodesChange={x => dispatch(onNodesChange(x))}
-    onEdgesChange={x => dispatch(onEdgesChange(x))}
-    onConnect={x => { dispatch(onConnect(x)) }}
-    nodeTypes={nodeTypes}
-    onNodeDrag={onNodeDrag}
-    onNodeDragStop={onNodeDragStop}
-    onDrop={onDrop}
-    onDragOver={onDragOver}
-    fitView
-    selectNodesOnDrag={false}
-    connectionLineStyle={connectionLineStyle}
-  >
-    <Background variant={BackgroundVariant.Dots} color="#d9d9d9" />
-    {selectedNode && <ConfigurationSidebar nodeprop={selectedNode} />}
-  </ReactFlowStyled>
-);
+  return (
+    <ReactFlowStyled
+      proOptions={proOptions}
+      style={{ flexGrow: 1 }}
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={x => dispatch(onNodesChange(x))}
+      onEdgesChange={x => dispatch(onEdgesChange(x))}
+      onConnect={x => { dispatch(onConnect(x)) }}
+      nodeTypes={nodeTypes}
+      onNodeDrag={onNodeDrag}
+      onNodeDragStop={onNodeDragStop}
+      onDrop={onDrop}
+      onDragOver={onDragOver}
+      fitView
+      selectNodesOnDrag={false}
+      connectionLineStyle={connectionLineStyle}
+    >
+      <Background variant={BackgroundVariant.Dots} color="#d9d9d9" />
+      {lastSelected && <ConfigurationSidebar selectableProp={lastSelected} />}
+    </ReactFlowStyled>
+  );
 };
 
 export default BasicFlow;

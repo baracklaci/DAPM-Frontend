@@ -7,7 +7,7 @@ import rootReducer from "./redux/slices";
 
 import { persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
-import { RouterProvider, createHashRouter } from "react-router-dom";
+import { RouterProvider, createBrowserRouter, createHashRouter } from "react-router-dom";
 import PipelineComposer from "./routes/PipeLineComposer";
 import UserPage from "./routes/UserPage";
 import { loadState, saveState } from "./redux/browser-storage";
@@ -38,7 +38,7 @@ store.subscribe(
   () => saveState(store.getState())
 );
 
-const router = createHashRouter([
+const router = createBrowserRouter([
   {
     path: "/",
     element: <UserPage/>,
