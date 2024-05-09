@@ -2,7 +2,11 @@ import { Edge, Node } from 'reactflow';
 
 export interface NodeState {
   nodes: Node<NodeData>[],
-  edges: Edge[],
+  edges: Edge<EdgeData>[],
+}
+
+export interface EdgeData {
+  filename?: string;
 }
 
 export interface NodeData {

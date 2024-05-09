@@ -32,6 +32,11 @@ export default function PersistentDrawerRight({ selectableProp }: ConfigurationS
   const node = useSelector(getNodes).nodes.find(node => node.id === selectableProp?.id);
   const edge = useSelector(getNodes).edges.find(edge => edge.id === selectableProp?.id);
 
+  const edgeEndNode = useSelector(getNodes).nodes.find(node => node.data.templateData.targetHandles.find(handle => handle.id === edge?.targetHandle));
+
+  if (edgeEndNode !== undefined && edgeEndNode?.type !== "dataSink")
+    return (null)
+
   return (
     <Drawer
       PaperProps={{

@@ -17,15 +17,15 @@ export default function EdgeConfiguration({ edgeProp }: AlgorithmConfugurationPr
 
     const edge = useSelector(getNodes).edges.find(edge => edge.id === edgeProp?.id);
 
-    const setEdge = (edgeText: string) => {
-        dispatch(updateEdge({ ...edge!, data: { text: edgeText } }))
+    const setFilename = (edgeText: string) => {
+        dispatch(updateEdge({ ...edge!, data: { filename: edgeText } }))
     }
     return (
         <List>
             <>
                 <ListItem>
                     <Box sx={{ width: '100%', display: "flex", flexDirection: "column" }}>
-                        <TextField value={edge?.data?.text} id="outlined-basic" label="Outlined" variant="outlined" onChange={(event) => setEdge(event?.target.value as string)} />
+                        <TextField value={edge?.data?.filename} id="outlined-basic" label="Filename" variant="outlined" onChange={(event) => setFilename(event?.target.value as string)} />
                     </Box>
                 </ListItem>
             </>

@@ -1,7 +1,7 @@
 import { addEdge as addFlowEdge, applyEdgeChanges, applyNodeChanges, Connection, Edge, EdgeChange, Node, NodeChange } from "reactflow";
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { NodeData, NodeState } from "../states/nodeState";
+import { EdgeData, NodeData, NodeState } from "../states/nodeState";
 
 export const initialState: NodeState = {
   nodes: [],
@@ -36,7 +36,7 @@ const nodeSlice = createSlice({
       //console.log("addEdge", payload)
       state.edges.push(payload)
     },
-    updateEdge: (state, { payload }: PayloadAction<Edge | undefined>) => {
+    updateEdge: (state, { payload }: PayloadAction<Edge<EdgeData> | undefined>) => {
       if (!payload) return
       const index = state.edges.findIndex(edge => edge.id === payload.id)
       state.edges[index] = payload
