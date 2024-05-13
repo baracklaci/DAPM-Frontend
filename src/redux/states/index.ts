@@ -1,5 +1,7 @@
 import { NodeState } from './nodeState';
+import { ApiState } from './apiState';
 
 export interface RootState {
-  nodeState: NodeState
+  nodeState: NodeState,
+  apiState: ApiState
 }

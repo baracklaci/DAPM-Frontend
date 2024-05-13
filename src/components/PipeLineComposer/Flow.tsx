@@ -60,8 +60,8 @@ const BasicFlow = () => {
   useOnSelectionChange({
     onChange: ({ nodes: selectedNodes, edges: selectedEdges }) => {
       const selecteds = [...selectedNodes, ...selectedEdges] as Array<Node<NodeData> | Edge>;
-      console.log("currentlySelected", selecteds, "previouslySelected", selectedDeletables)
-      console.log("lastSelected", lastSelected)
+      //console.log("currentlySelected", selecteds, "previouslySelected", selectedDeletables)
+      //console.log("lastSelected", lastSelected)
 
       const set = new Set(selectedDeletables) as Set<Node<NodeData> | Edge | undefined>;
       var foundItem: Node | Edge | undefined = undefined;
