@@ -33,7 +33,7 @@ const nodeSlice = createSlice({
       state.edges = state.edges.filter(edge => edge.id !== payload.id)
     },
     addEdge: (state, { payload }: PayloadAction<Edge>) => {
-      console.log("addEdge", payload)
+      //console.log("addEdge", payload)
       state.edges.push(payload)
     },
     updateEdge: (state, { payload }: PayloadAction<Edge | undefined>) => {

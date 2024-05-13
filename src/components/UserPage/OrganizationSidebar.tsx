@@ -11,8 +11,8 @@ import { fetchOrganisations,fetchOrganisation, fetchStatus, fetchOrganisationRep
 import React, { ChangeEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getOrganizations, getRepositories, getResources } from '../../redux/selectors/apiSelector';
-import { organizationThunk } from '../../redux/slices/apiSlice';
-import { Organization } from '../../redux/states/apiState';
+import { organizationThunk, repositoryThunk, resourceThunk } from '../../redux/slices/apiSlice';
+import { Organization, Repository } from '../../redux/states/apiState';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 
 const drawerWidth = 240;
@@ -30,6 +30,8 @@ export default function PersistentDrawerLeft() {
 
     const dispatch = useAppDispatch()
     const organizations: Organization[] = useAppSelector(getOrganizations)
+    const repositories: Repository[] = useAppSelector(getRepositories)
+    const resources = useSelector(getResources)
 
     
     //Here is a test for the file upload add the div in the bottom to the return section and try to upload a file :)
@@ -72,17 +74,14 @@ export default function PersistentDrawerLeft() {
     
     useEffect(() => {
         dispatch(organizationThunk())
-        console.log("USEEFFECT")
-        console.log(organizations)
+        //console.log("USEEFFECT")
+        //console.log(organizations)
+        dispatch(repositoryThunk(organizations)); // Pass organization ID as argument when dispatching
+        dispatch(resourceThunk({organizations,repositories}));
+
         
         
     }, [dispatch]);
-
-    
-
-    const repositories = useSelector(getRepositories)
-
-    const resources = useSelector(getResources)
 
     return (
         <Drawer

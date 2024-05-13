@@ -18,7 +18,6 @@ export interface Repository {
 }
 
 export interface Resource {
-    extension: string,
     id: number,
     name: string,
     organizationId: number,
