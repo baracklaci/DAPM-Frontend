@@ -6,7 +6,7 @@ import { RootState } from "../states"
 
 const rootReducer: Reducer<RootState> = combineReducers({
     nodeState: nodeReducer,
-    apiState: apiReducer
+    apiState: apiReducer,
     pipelineState: pipelineReducer
 })
 

@@ -6,7 +6,8 @@ import { PipelineData, PipelineState } from "../states/pipelineState";
 import { useDispatch } from "react-redux";
 
 export const initialState: PipelineState = {
-    pipelines: []
+    pipelines: [],
+    activePipelineId: ""
 }
 
 const pipelineState = createSlice({

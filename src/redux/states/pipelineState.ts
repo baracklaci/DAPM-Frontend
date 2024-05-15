@@ -3,10 +3,10 @@ import { NodeState } from './nodeState';
 
 export interface PipelineState {
   pipelines: PipelineData[]
+  activePipelineId: string
 }
 
 export interface PipelineData {
     id: string;
-    isActive: boolean;
     flowData: NodeState;
 }

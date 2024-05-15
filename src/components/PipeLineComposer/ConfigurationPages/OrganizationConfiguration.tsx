@@ -7,6 +7,7 @@ import { RootState } from '../../../redux/states';
 import { NodeData } from '../../../redux/states/nodeState';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateNode } from '../../../redux/slices/nodeSlice';
+import { getOrganizations } from '../../../redux/selectors/apiSelector';
 
 
 export interface AlgorithmConfugurationProps {
@@ -23,11 +24,13 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
     dispatch(updateNode({ ...node!, data: { ...node?.data!, label: org } }))
   }
 
+  const organizations = useSelector(getOrganizations);
+
   return (
-      <List>
-        <>
-          <ListItem>
-            <Box sx={{ width: '100%', display: "flex", flexDirection: "column" }}>
+    <List>
+      <>
+        <ListItem>
+          <Box sx={{ width: '100%', display: "flex", flexDirection: "column" }}>
             <InputLabel id="demo-simple-select-standard-label">Please select the organization</InputLabel>
             <Select
               labelId="algorithm-simple-select-label"
@@ -36,14 +39,15 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
               sx={{ width: '100%' }}
               onChange={(event) => setOrgData(event?.target.value as string)}
             >
-              <MenuItem value={"Organization"}>Organization</MenuItem>
+              {organizations.map((org) => <MenuItem value={org.name}>{org.name}</MenuItem>)}
+              {/* <MenuItem value={"Organization"}>Organization</MenuItem>
               <MenuItem value={"Organization 1"}>Organization 1</MenuItem>
               <MenuItem value={"Organization 2"}>Organization 2</MenuItem>
-              <MenuItem value={"Organization 3"}>Organization 3</MenuItem>
+              <MenuItem value={"Organization 3"}>Organization 3</MenuItem> */}
             </Select>
-            </Box>
-            </ListItem>
-        </>
-      </List>
+          </Box>
+        </ListItem>
+      </>
+    </List>
   );
 }
