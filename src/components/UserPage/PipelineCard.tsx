@@ -7,12 +7,26 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setActivePipeline } from '../../redux/slices/pipelineSlice';
 
-export default function MediaCard() {
+export interface PipelineCardProps {
+  id: string;
+  name: string;
+}
+
+export default function MediaCard({ id, name }: PipelineCardProps) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const navigateToPipeline = () => {
+    dispatch(setActivePipeline(id));
+    navigate('/pipeline');
+  }
+
   return (
     <Card sx={{ maxWidth: 345 }}>
-      <CardActionArea onClick={() => navigate('/pipeline')}>
+      <CardActionArea onClick={navigateToPipeline}>
         <CardMedia
           sx={{ height: 140 }}
           image="/static/images/cards/contemplative-reptile.jpg"
@@ -20,7 +34,7 @@ export default function MediaCard() {
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
-            Pipeline
+            {name}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Click this to modify the pipeline
@@ -29,4 +43,6 @@ export default function MediaCard() {
       </CardActionArea>
     </Card>
   );
+
+  
 }

@@ -3,8 +3,8 @@ import Drawer from '@mui/material/Drawer';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import { Edge, Node } from "reactflow";
-import { NodeData } from '../../redux/states/nodeState';
-import { getNodes } from '../../redux/selectors';
+import { NodeData } from '../../redux/states/pipelineState';
+import { getEdges, getNodes } from '../../redux/selectors';
 import { useSelector } from 'react-redux';
 import AlgorithmConfiguration from './ConfigurationPages/AlgorithmConfiguration';
 import DataSourceConfiguration from './ConfigurationPages/DataSourceConfiguration';
@@ -29,10 +29,10 @@ export interface ConfigurationSidebarProps {
 
 export default function PersistentDrawerRight({ selectableProp }: ConfigurationSidebarProps) {
 
-  const node = useSelector(getNodes).nodes.find(node => node.id === selectableProp?.id);
-  const edge = useSelector(getNodes).edges.find(edge => edge.id === selectableProp?.id);
+  const node = useSelector(getNodes)?.find(node => node.id === selectableProp?.id);
+  const edge = useSelector(getEdges)?.find(edge => edge.id === selectableProp?.id);
 
-  const edgeEndNode = useSelector(getNodes).nodes.find(node => node.data.templateData.targetHandles.find(handle => handle.id === edge?.targetHandle));
+  const edgeEndNode = useSelector(getNodes)?.find(node => node.data.templateData.targetHandles.find(handle => handle.id === edge?.targetHandle));
 
   if (edgeEndNode !== undefined && edgeEndNode?.type !== "dataSink")
     return (null)

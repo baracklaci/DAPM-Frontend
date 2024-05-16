@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import {
   NodeProps,
   NodeResizer} from 'reactflow';
-import { getNodes as getFlowData } from '../../../redux/selectors';
+import { getNodes } from '../../../redux/selectors';
 import { getRelativeNodesBounds } from '../utils';
 
 
@@ -12,11 +12,11 @@ function OrganizationNode({ data, id, selected }: NodeProps) {
 
   const lineStyle: React.CSSProperties = {borderColor: selected ? '#007BFF' : 'white', visibility: 'visible'};
 
-  const childNodes = useSelector(getFlowData).nodes.filter(
+  const childNodes = useSelector(getNodes)?.filter(
     (n) => n.parentNode === id
   );
 
-  const rect = getRelativeNodesBounds(childNodes);
+  const rect = getRelativeNodesBounds(childNodes!);
 
   const minWidth = rect.x + rect.width
   const minHeight = rect.y + rect.height

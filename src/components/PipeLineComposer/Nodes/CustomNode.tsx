@@ -5,7 +5,7 @@ import { Handle, NodeProps, Position } from "reactflow";
 import styled from "styled-components";
 import { getNode, getNodes } from "../../../redux/selectors";
 import { useSelector } from "react-redux";
-import { NodeData } from "../../../redux/states/nodeState";
+import { NodeData } from "../../../redux/states/pipelineState";
 
 // const CustomNode = ({
 //   id,
@@ -13,7 +13,7 @@ import { NodeData } from "../../../redux/states/nodeState";
 //   selected
 // }: NodeProps<NodeData>) => {
 function CustomNode({id}: NodeProps<NodeData>) {
-  const node = useSelector(getNodes).nodes.find(node => node.id === id);
+  const node = useSelector(getNodes)?.find(node => node.id === id);
   const data = node?.data;
   const selected = node?.selected;
 

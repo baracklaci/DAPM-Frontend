@@ -3,8 +3,8 @@ import ListItem from '@mui/material/ListItem';
 import { Edge } from "reactflow";
 import { Box, TextField } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateEdge } from '../../../redux/slices/nodeSlice';
-import { getNodes } from '../../../redux/selectors';
+import { updateEdge } from '../../../redux/slices/pipelineSlice';
+import { getActiveFlowData, getNodes } from '../../../redux/selectors';
 
 
 export interface AlgorithmConfugurationProps {
@@ -15,7 +15,7 @@ export default function EdgeConfiguration({ edgeProp }: AlgorithmConfugurationPr
 
     const dispatch = useDispatch()
 
-    const edge = useSelector(getNodes).edges.find(edge => edge.id === edgeProp?.id);
+    const edge = useSelector(getActiveFlowData)?.edges.find(edge => edge.id === edgeProp?.id);
 
     const setFilename = (edgeText: string) => {
         dispatch(updateEdge({ ...edge!, data: { filename: edgeText } }))

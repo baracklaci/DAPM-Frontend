@@ -4,10 +4,11 @@ import ListItem from '@mui/material/ListItem';
 import { Node } from "reactflow";
 import { Box, InputLabel, MenuItem, Select } from '@mui/material';
 import { RootState } from '../../../redux/states';
-import { NodeData } from '../../../redux/states/nodeState';
+import { NodeData } from '../../../redux/states/pipelineState';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateNode } from '../../../redux/slices/nodeSlice';
+import { updateNode } from '../../../redux/slices/pipelineSlice';
 import { getOrganizations } from '../../../redux/selectors/apiSelector';
+import { getNode, getNodes } from '../../../redux/selectors';
 
 
 export interface AlgorithmConfugurationProps {
@@ -18,7 +19,7 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
 
   const dispatch = useDispatch()
 
-  const node = useSelector((state: RootState) => state?.nodeState).nodes.find(node => node.id === nodeprop?.id);
+  const node = useSelector(getNodes)?.find(node => node.id === nodeprop?.id);
 
   const setOrgData = (org: string) => {
     dispatch(updateNode({ ...node!, data: { ...node?.data!, label: org } }))

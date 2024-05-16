@@ -3,11 +3,11 @@ import { memo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 import SourceIcon from '@mui/icons-material/Source';
 import { useSelector } from "react-redux";
-import { NodeData } from "../../../redux/states/nodeState";
+import { NodeData } from "../../../redux/states/pipelineState";
 import { getNodes } from "../../../redux/selectors";
 
 const DataSourceNode = ({ id }: NodeProps<NodeData>) => {
-    const node = useSelector(getNodes).nodes.find(node => node.id === id);
+    const node = useSelector(getNodes)?.find(node => node.id === id);
     const data = node?.data;
     const selected = node?.selected;
 

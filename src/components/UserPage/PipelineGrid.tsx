@@ -7,8 +7,9 @@ import PipelineCard from './PipelineCard';
 import { Button, Container } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addNewPipeline } from '../../redux/slices/pipelineSlice';
+import { getPipelines } from '../../redux/selectors';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -23,6 +24,8 @@ export default function AutoGrid() {
 
   const dispatch = useDispatch();
 
+  const pipelines = useSelector(getPipelines)
+
   const createNewPipeline = () => {
     dispatch(addNewPipeline({id: `pipeline-${crypto.randomUUID()}`, flowData: {nodes: [], edges: []}}));
     { navigate("/pipeline") }
@@ -35,9 +38,9 @@ export default function AutoGrid() {
         Create New
       </Button>
       <Grid container spacing={{ xs: 1, md: 1 }} sx={{ padding: "10px" }}>
-        {Array.from(Array(6).keys()).map((value) => (
+        {pipelines.map(({id, name}) => (
           <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-            <PipelineCard></PipelineCard>
+            <PipelineCard id={id} name={name}></PipelineCard>
           </Grid>
         ))}
       </Grid>

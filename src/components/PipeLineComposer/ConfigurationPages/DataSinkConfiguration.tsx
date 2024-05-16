@@ -3,9 +3,9 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import { Node } from "reactflow";
 import { Box, InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
-import { DataSinkInstantiationData, DataSinkNodeData, NodeData, Repository } from '../../../redux/states/nodeState';
+import { DataSinkInstantiationData, DataSinkNodeData, NodeData, Repository } from '../../../redux/states/pipelineState';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateNode } from '../../../redux/slices/nodeSlice';
+import { updateNode } from '../../../redux/slices/pipelineSlice';
 import { getNodes } from '../../../redux/selectors';
 import { getRepositories } from '../../../redux/selectors/apiSelector';
 
@@ -18,9 +18,9 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
 
   const dispatch = useDispatch()
 
-  const node = useSelector(getNodes).nodes.find(node => node.id === nodeprop?.id)  as Node<DataSinkNodeData> | undefined;;
+  const node = useSelector(getNodes)?.find(node => node.id === nodeprop?.id)  as Node<DataSinkNodeData> | undefined;;
 
-  const parentNode = useSelector(getNodes).nodes.find(n => n.id === node?.parentNode);
+  const parentNode = useSelector(getNodes)?.find(n => n.id === node?.parentNode);
 
   const repositories = useSelector(getRepositories);
 
