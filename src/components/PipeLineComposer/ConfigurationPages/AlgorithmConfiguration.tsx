@@ -5,10 +5,10 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { Node, useUpdateNodeInternals } from "reactflow";
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, InputLabel, MenuItem, Select } from '@mui/material';
-import { Algorithm, NodeData, OperatorNodeData } from '../../../redux/states/nodeState';
+import { Box, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Algorithm, NodeData, OperatorNodeData } from '../../../redux/states/pipelineState';
 import { getNodes } from '../../../redux/selectors';
-import { addHandle, updateNode } from '../../../redux/slices/nodeSlice';
+import { addHandle, updateNode } from '../../../redux/slices/pipelineSlice';
 
 
 export interface AlgorithmConfugurationProps {
@@ -21,30 +21,43 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
 
   const updateNodesInternal = useUpdateNodeInternals();
 
-  const node = useSelector(getNodes).nodes.find(node => node.id === nodeprop?.id) as Node<OperatorNodeData> | undefined;
-  
-  const parentNode = useSelector(getNodes).nodes.find(n => n.id === node?.parentNode);
+  const node = useSelector(getNodes)?.find(node => node.id === nodeprop?.id) as Node<OperatorNodeData> | undefined;
+
+  const parentNode = useSelector(getNodes)?.find(n => n.id === node?.parentNode);
 
   const setAlgorithm = (algorithm: string) => {
     dispatch(updateNode(
       {
-        ...node!, 
+        ...node!,
         data: {
-          ...node?.data!, 
+          ...node?.data!,
           instantiationData: {
-            algorithm: {name: algorithm, organizationId: 1, repositoryId: 1, algorithmId: 1 } as Algorithm
+            algorithm: { name: algorithm, organizationId: 1, repositoryId: 1, algorithmId: 1 } as Algorithm
           }
         }
-  }))}
+      }))
+  }
+
+  const setHint = (hint: string) => {
+    dispatch(updateNode(
+      {
+        ...node!,
+        data: {
+          ...node?.data!,
+          label: hint
+        }
+      }))
+  }
 
   return (
-      <List>
-        <>
-          <ListItem>
-              <ListItemText primary={`Organization - ${parentNode?.data?.label}`} />
-          </ListItem>
-          <ListItem>
-            <Box sx={{ width: '100%', display: "flex", flexDirection: "column" }}>
+    <List>
+      <>
+        <ListItem>
+          <ListItemText primary={`Organization - ${parentNode?.data?.label}`} />
+        </ListItem>
+        <ListItem>
+          <Box sx={{ width: '100%', display: "flex", flexDirection: "column" }}>
+            <TextField value={node?.data.label} id="outlined-basic" label="Hint" variant="outlined" onChange={(event) => setHint(event?.target.value as string)} />
             <InputLabel id="demo-simple-select-standard-label">Please select algorithm</InputLabel>
             <Select
               labelId="algorithm-simple-select-label"
@@ -57,33 +70,33 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
               <MenuItem value={"Heuristic Miner"}>Heuristic Miner</MenuItem>
               <MenuItem value={"Fuzzy Miner"}>Fuzzy Miner</MenuItem>
             </Select>
-            </Box>
-          </ListItem>
+          </Box>
+        </ListItem>
+        <ListItem>
+          <ListItemText primary={"Inputs"} />
+        </ListItem>
+        {node?.data.templateData.sourceHandles?.map(handle =>
           <ListItem>
-              <ListItemText primary={"Inputs"} />
+            <ListItemText primary={`type: ${handle.type}`} />
           </ListItem>
-          {node?.data.templateData.sourceHandles?.map(handle => 
-            <ListItem>
-              <ListItemText primary={`type: ${handle.type}`} />
-            </ListItem>
-          )}
+        )}
+        <ListItem>
+          <ListItemButton onClick={() => {
+            dispatch(addHandle(node?.id ?? ""))
+            updateNodesInternal(node?.id ?? "")
+          }}>
+            <ListItemText primary={"Add more"} />
+          </ListItemButton>
+        </ListItem>
+        <ListItem>
+          <ListItemText primary={"Outputs"} />
+        </ListItem>
+        {node?.data.templateData.targetHandles?.map(handle =>
           <ListItem>
-            <ListItemButton onClick={() => {
-              dispatch(addHandle(node?.id ?? ""))
-              updateNodesInternal(node?.id ?? "")
-              }}>
-              <ListItemText primary={"Add more"} />
-            </ListItemButton>
+            <ListItemText primary={`type: ${handle.type}`} />
           </ListItem>
-          <ListItem>
-              <ListItemText primary={"Outputs"} />
-          </ListItem>
-          {node?.data.templateData.targetHandles?.map(handle => 
-            <ListItem>
-              <ListItemText primary={`type: ${handle.type}`} />
-            </ListItem>
-          )}
-        </>
-      </List>
+        )}
+      </>
+    </List>
   );
 }

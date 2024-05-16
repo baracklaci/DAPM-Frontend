@@ -1,8 +1,23 @@
 import { Edge, Node } from 'reactflow';
 
+export interface PipelineState {
+  pipelines: PipelineData[]
+  activePipelineId: string
+}
+
+export interface PipelineData {
+    id: string;
+    name: string;
+    flowData: NodeState;
+}
+
 export interface NodeState {
   nodes: Node<NodeData>[],
-  edges: Edge[],
+  edges: Edge<EdgeData>[],
+}
+
+export interface EdgeData {
+  filename?: string;
 }
 
 export interface NodeData {
@@ -86,3 +101,4 @@ export interface HandleData {
   type?: string,
   id: string,
 }
+

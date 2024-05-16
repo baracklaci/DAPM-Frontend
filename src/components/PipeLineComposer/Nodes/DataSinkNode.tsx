@@ -4,10 +4,10 @@ import { Handle, NodeProps, Position } from "reactflow";
 import SaveIcon from '@mui/icons-material/Save';
 import { useSelector } from "react-redux";
 import { getNodes } from "../../../redux/selectors";
-import { NodeData } from "../../../redux/states/nodeState";
+import { NodeData } from "../../../redux/states/pipelineState";
 
 const DataSinkNode = ({ id }: NodeProps<NodeData>) => {
-    const node = useSelector(getNodes).nodes.find(node => node.id === id);
+    const node = useSelector(getNodes)?.find(node => node.id === id);
     const data = node?.data;
     const selected = node?.selected;
 

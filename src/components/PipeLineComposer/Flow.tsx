@@ -8,7 +8,7 @@ import ReactFlow, {
   Edge
 } from "reactflow";
 
-import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode, setNodes, removeEdge, setEdges } from "../../redux/slices/nodeSlice";
+import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode, setNodes, removeEdge, setEdges } from "../../redux/slices/pipelineSlice";
 
 import CustomNode from "./Nodes/CustomNode";
 
@@ -24,9 +24,10 @@ import 'reactflow/dist/style.css';
 import '@reactflow/node-resizer/dist/style.css';
 
 import { getNodePositionInsideParent, sortNodes } from "./utils";
-import { BaseInstantiationData, BaseTemplateData, DataSinkInstantiationData, DataSourceInstantiationData, InstantiationData, NodeData, OperatorInstantiationData } from "../../redux/states/nodeState";
+import { BaseInstantiationData, BaseTemplateData, DataSinkInstantiationData, DataSourceInstantiationData, InstantiationData, NodeData, OperatorInstantiationData } from "../../redux/states/pipelineState";
 import DataSourceNode from "./Nodes/DataSourceNode";
 import { current } from "@reduxjs/toolkit";
+import { getEdges, getNodes } from "../../redux/selectors";
 
 const nodeTypes = {
   operator: CustomNode,
@@ -48,8 +49,8 @@ const BasicFlow = () => {
 
   const { getIntersectingNodes } = useReactFlow();
 
-  const nodes = useSelector((state: RootState) => state.nodeState.nodes);
-  const edges = useSelector((state: RootState) => state.nodeState.edges);
+  const nodes = useSelector(getNodes);
+  const edges = useSelector(getEdges);
   const reactFlow = useReactFlow();
 
   const [lastSelected, setLastSelected] = useState<Node | Edge | undefined>();
@@ -75,7 +76,7 @@ const BasicFlow = () => {
       setLastSelected(foundItem);
       setSelectedDeletables([...selectedNodes, ...selectedEdges]);
 
-      var newEdges: Edge[] = edges.map(edge => {
+      var newEdges: Edge[] = edges!.map(edge => {
         if (!selectedEdges.find(x => x.id === edge.id)) {
           return { ...edge, style: { ...edge.style, stroke: 'white', strokeOpacity: 1, strokeWidth: "1px" } }
         }
@@ -208,7 +209,7 @@ const BasicFlow = () => {
       // when there is an intersection on drag stop, we want to attach the node to its new parent
       if (intersections.length && node.parentNode !== organizationNode?.id) {
 
-        const nextNodes: Node[] = nodes.map((n) => {
+        const nextNodes: Node[] = nodes!.map((n) => {
           if (n.id === organizationNode.id) {
             return {
               ...n,
@@ -255,7 +256,7 @@ const BasicFlow = () => {
           ? 'active'
           : '';
 
-      const newNodes: Node[] = nodes.map((n) => {
+      const newNodes: Node[] = nodes!.map((n) => {
         if (n.type === 'organization') {
           return {
             ...n,
