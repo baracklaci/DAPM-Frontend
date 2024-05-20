@@ -76,8 +76,9 @@ export default function PersistentDrawerLeft() {
         dispatch(organizationThunk())
         //console.log("USEEFFECT")
         //console.log(organizations)
-        dispatch(repositoryThunk(organizations)); // Pass organization ID as argument when dispatching
+        dispatch(repositoryThunk(organizations));
         dispatch(resourceThunk({organizations,repositories}));
+        
 
         
         
@@ -109,30 +110,30 @@ export default function PersistentDrawerLeft() {
                 </Typography>
             </DrawerHeader>
             <List>
-                {organizations.map(({ id, name }) => (
+                {organizations.map((organization) => (
                     <>
-                        <ListItem key={id} disablePadding>
+                        <ListItem key={organization.id} disablePadding>
                             <ListItemButton>
-                                <ListItemText primary={name} />
+                                <ListItemText primary={organization.name} />
                             </ListItemButton>
                         </ListItem>
-                        {repositories.map(({ name, id }) => (
+                        {repositories.map((repository) => ( repository.organizationId === organization.id ? 
                             <>
-                                <ListItem key={id} disablePadding>
+                                <ListItem key={repository.id} disablePadding>
                                     <ListItemButton sx={{ paddingBlock: "5px" }}>
-                                        <ListItemText secondary={name} />
+                                        <ListItemText secondary={repository.name} />
                                     </ListItemButton>
                                 </ListItem>
-                            </>
+                                {resources.map((resource) => ( resource.repositoryId === repository.id ?
+                                    <>
+                                        <ListItem key={resource.id} disablePadding>
+                                            <ListItemButton sx={{ paddingBlock: 0 }}>
+                                                <ListItemText secondary={resource.name} secondaryTypographyProps={{fontSize: "0.8rem"}}/>
+                                            </ListItemButton>
+                                        </ListItem>
+                                    </> : ""
                         ))}
-                        {resources.map(({ name, id }) => (
-                            <>
-                                <ListItem key={id} disablePadding>
-                                    <ListItemButton sx={{ paddingBlock: 0 }}>
-                                        <ListItemText secondary={name} secondaryTypographyProps={{fontSize: "0.8rem"}}/>
-                                    </ListItemButton>
-                                </ListItem>
-                            </>
+                            </> : ""
                         ))}
                     </>
                 ))}
