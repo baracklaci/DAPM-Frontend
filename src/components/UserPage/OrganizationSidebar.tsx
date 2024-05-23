@@ -14,6 +14,9 @@ import { getOrganizations, getRepositories, getResources } from '../../redux/sel
 import { organizationThunk, repositoryThunk, resourceThunk } from '../../redux/slices/apiSlice';
 import { Organization, Repository } from '../../redux/states/apiState';
 import { useAppDispatch, useAppSelector } from '../../hooks';
+import Popup from 'reactjs-popup';
+import { Box, Button } from '@mui/material';
+import UploadButton from './UploadButton';
 
 const drawerWidth = 240;
 
@@ -119,11 +122,13 @@ export default function PersistentDrawerLeft() {
                         </ListItem>
                         {repositories.map((repository) => ( repository.organizationId === organization.id ? 
                             <>
-                                <ListItem key={repository.id} disablePadding>
-                                    <ListItemButton sx={{ paddingBlock: "5px" }}>
+                                <Box sx={{display: "flex"}}>
+                                    <ListItem key={repository.id}>                                   
                                         <ListItemText secondary={repository.name} />
-                                    </ListItemButton>
-                                </ListItem>
+                                        <UploadButton orgId={repository.organizationId} repId={repository.id} />
+                                    </ListItem>
+                                    
+                                </Box>
                                 {resources.map((resource) => ( resource.repositoryId === repository.id ?
                                     <>
                                         <ListItem key={resource.id} disablePadding>
