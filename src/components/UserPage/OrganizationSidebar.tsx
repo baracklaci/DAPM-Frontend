@@ -14,7 +14,6 @@ import { getOrganizations, getRepositories, getResources } from '../../redux/sel
 import { organizationThunk, repositoryThunk, resourceThunk } from '../../redux/slices/apiSlice';
 import { Organization, Repository } from '../../redux/states/apiState';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import Popup from 'reactjs-popup';
 import { Box, Button } from '@mui/material';
 import UploadButton from './UploadButton';
 
