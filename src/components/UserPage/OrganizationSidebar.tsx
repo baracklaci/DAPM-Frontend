@@ -34,45 +34,6 @@ export default function PersistentDrawerLeft() {
     const organizations: Organization[] = useAppSelector(getOrganizations)
     const repositories: Repository[] = useAppSelector(getRepositories)
     const resources = useSelector(getResources)
-
-    
-    //Here is a test for the file upload add the div in the bottom to the return section and try to upload a file :)
-    /*
-    const [file, setFile] = useState<File | null>(null);
-
-    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = event.target.files && event.target.files[0];
-        if (selectedFile) {
-            setFile(selectedFile);
-        }
-    };
-
-     const uploadResource = async () => {
-        if (file) {
-            const orgId = 1; // You can replace these values with your actual organization and repository IDs
-            const repId = 1;
-
-            const formData = new FormData();
-            formData.append('Name', 'json3');
-            formData.append('ResourceFile', file);
-
-            try {
-                const result = await putResource(orgId, repId, formData);
-                console.log('Resource successfully uploaded:', result);
-            } catch (error) {
-                console.error('Error uploading resource:', error);
-            }
-        } else {
-            console.error('No file selected.');
-        }
-    };
-
-    //Add this to the return to get a file upload form.
-    <div>
-        <input type="file" onChange={handleFileChange} />
-        <button onClick={uploadResource}>Upload</button>
-    </div>
-    */
     
     useEffect(() => {
         dispatch(organizationThunk())
@@ -126,7 +87,6 @@ export default function PersistentDrawerLeft() {
                                         <ListItemText secondary={repository.name} />
                                         <UploadButton orgId={repository.organizationId} repId={repository.id} />
                                     </ListItem>
-                                    
                                 </Box>
                                 {resources.map((resource) => ( resource.repositoryId === repository.id ?
                                     <>
