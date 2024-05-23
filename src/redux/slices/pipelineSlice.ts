@@ -19,6 +19,11 @@ const pipelineSlice = createSlice({
     setActivePipeline: (state, { payload }: PayloadAction<string>) => {
       state.activePipelineId = payload
     },
+    setImageData: (state, { payload }: PayloadAction<{ id: string, imgData: string }>) => {
+      var pipeline = state.pipelines.find(pipeline => pipeline.id === payload.id)
+      if (!pipeline) return
+      pipeline.imgData = payload.imgData
+    },
     
     // actions for the active pipeline
     
@@ -143,6 +148,6 @@ const pipelineSlice = createSlice({
   },
 })
 
-export const { addNewPipeline, setActivePipeline, updatePipelineName, addHandle, updateSourceHandle, updateTargetHandle, updateNode, addNode, removeNode, removeEdge, addEdge, updateEdge, onNodesChange, onEdgesChange, onConnect, setNodes, setEdges } = pipelineSlice.actions
+export const { addNewPipeline, setActivePipeline, updatePipelineName, addHandle, updateSourceHandle, updateTargetHandle, setImageData, updateNode, addNode, removeNode, removeEdge, addEdge, updateEdge, onNodesChange, onEdgesChange, onConnect, setNodes, setEdges } = pipelineSlice.actions
 
 export default pipelineSlice.reducer 

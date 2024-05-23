@@ -9,6 +9,7 @@ export interface PipelineData {
     id: string;
     name: string;
     flowData: NodeState;
+    imgData: string;
 }
 
 export interface NodeState {
