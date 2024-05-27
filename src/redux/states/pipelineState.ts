@@ -54,6 +54,8 @@ export interface DataSinkTemplateData extends BaseTemplateData {}
 
 export interface OperatorTemplateData extends BaseTemplateData {
   hint: string;
+  inputResourceType?: string;
+  outputResourceType?: string;
 }
 
 export interface BaseInstantiationData {}

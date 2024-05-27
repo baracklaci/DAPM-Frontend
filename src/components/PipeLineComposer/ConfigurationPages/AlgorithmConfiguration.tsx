@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Box, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { Algorithm, NodeData, OperatorNodeData } from '../../../redux/states/pipelineState';
 import { getNodes } from '../../../redux/selectors';
-import { addHandle, updateNode } from '../../../redux/slices/pipelineSlice';
+import { addHandle, updateNode, updateSourceHandle, updateTargetHandle } from '../../../redux/slices/pipelineSlice';
 
 
 export interface AlgorithmConfugurationProps {
@@ -24,6 +24,9 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
   const node = useSelector(getNodes)?.find(node => node.id === nodeprop?.id) as Node<OperatorNodeData> | undefined;
 
   const parentNode = useSelector(getNodes)?.find(n => n.id === node?.parentNode);
+
+  const dataTypes = ["eventLog", "bpmnModel", "petriNet"]
+
 
   const setAlgorithm = (algorithm: string) => {
     dispatch(updateNode(
@@ -49,9 +52,65 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
       }))
   }
 
+  const setSourceType = (dataType: string, handle: string) => {
+    dispatch(updateSourceHandle({
+      nodeId: node?.id,
+      handleId: handle,
+      newType: dataType
+    }))
+  }
+
+  const setTargetType = (dataType: string, handle: string) => {
+    dispatch(updateTargetHandle({
+      nodeId: node?.id,
+      handleId: handle,
+      newType: dataType
+    }))
+  }
+
   return (
     <List>
       <>
+      <header>Template Data</header>
+
+        {node?.data.templateData.sourceHandles.map((handle) => {
+          return (
+          <ListItem>
+          <Box sx={{ width: '100%', display: "flex", flexDirection: "column" }}>
+            <InputLabel id="demo-simple-select-standard-label">Please select the output type</InputLabel>
+            <Select
+              labelId="algorithm-simple-select-label"
+              id="algorithm-simple-select"
+              value={handle.type}
+              sx={{ width: '100%' }}
+              onChange={(event) => setSourceType(event?.target.value as string, handle.id)}
+            >
+            {dataTypes.map((resource) => <MenuItem value={resource}>{resource}</MenuItem>)}
+            </Select>
+          </Box>
+        </ListItem>
+          )
+        })}
+        {node?.data.templateData.targetHandles.map((handle) => {
+          return(
+          <ListItem>
+          <Box sx={{ width: '100%', display: "flex", flexDirection: "column" }}>
+            <InputLabel id="demo-simple-select-standard-label">Please select the input type</InputLabel>
+            <Select
+              labelId="algorithm-simple-select-label"
+              id="algorithm-simple-select"
+              value={handle.type}
+              sx={{ width: '100%' }}
+              onChange={(event) => setTargetType(event?.target.value as string, handle.id)}
+            >
+            {dataTypes.map((resource) => <MenuItem value={resource}>{resource}</MenuItem>)}
+            </Select>
+          </Box>
+        </ListItem>
+          )
+        })}
+
+        <header>Instantiation Data</header>
         <ListItem>
           <ListItemText primary={`Organization - ${parentNode?.data?.label}`} />
         </ListItem>
