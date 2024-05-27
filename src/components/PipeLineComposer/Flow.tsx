@@ -5,7 +5,8 @@ import ReactFlow, {
   BackgroundVariant,
   useReactFlow,
   useOnSelectionChange,
-  Edge
+  Edge,
+  Connection
 } from "reactflow";
 
 import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode, setNodes, removeEdge, setEdges } from "../../redux/slices/pipelineSlice";
@@ -27,7 +28,8 @@ import { getNodePositionInsideParent, sortNodes } from "./utils";
 import { BaseInstantiationData, BaseTemplateData, DataSinkInstantiationData, DataSourceInstantiationData, InstantiationData, NodeData, OperatorInstantiationData } from "../../redux/states/pipelineState";
 import DataSourceNode from "./Nodes/DataSourceNode";
 import { current } from "@reduxjs/toolkit";
-import { getEdges, getNodes } from "../../redux/selectors";
+import { getEdges, getNode, getNodes } from "../../redux/selectors";
+import { useAppSelector } from "../../hooks";
 
 const nodeTypes = {
   operator: CustomNode,
@@ -283,6 +285,25 @@ const BasicFlow = () => {
     hideAttribution: true,
   };
 
+  const isValidConnection = (connection: Connection) => {
+    const sourceNode = nodes?.find(node => node.id === connection.source)
+    const targetNode = nodes?.find(node => node.id === connection.target)
+    const sourceHandle = sourceNode?.data.templateData.sourceHandles.find(handle => handle.id === connection.sourceHandle)
+    const targetHandle = targetNode?.data.templateData.targetHandles.find(handle => handle.id === connection.targetHandle)
+
+    console.log(sourceHandle?.type)
+    console.log(targetHandle?.type)
+
+    if ( targetNode?.type === "dataSink") {
+      return true
+    } else {
+      if (targetHandle?.type === undefined || sourceHandle?.type  === undefined) {
+        return false
+      }
+      return sourceHandle?.type === targetHandle?.type
+    }
+  }
+
   return (
     <ReactFlowStyled
       proOptions={proOptions}
@@ -292,6 +313,7 @@ const BasicFlow = () => {
       onNodesChange={x => dispatch(onNodesChange(x))}
       onEdgesChange={x => dispatch(onEdgesChange(x))}
       onConnect={x => { dispatch(onConnect(x)) }}
+      isValidConnection={isValidConnection}
       nodeTypes={nodeTypes}
       onNodeDrag={onNodeDrag}
       onNodeDragStop={onNodeDragStop}

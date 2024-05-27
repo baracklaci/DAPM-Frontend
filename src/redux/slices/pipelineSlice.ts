@@ -31,6 +31,53 @@ const pipelineSlice = createSlice({
       var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
       activeFlowData?.nodes.find(node => node.id === payload)?.data?.templateData?.sourceHandles.push({ type: 'source', id: "1" })
     },
+    updateSourceHandle: (state, { payload }: PayloadAction<{ nodeId?: string, handleId?: string, newType?: string }>) => {
+      const { nodeId, handleId, newType } = payload;
+      // Find the active pipeline based on the activePipelineId
+      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
+      
+      if (!activeFlowData) return; // Early exit if no active pipeline is found
+    
+      // Find the node within the active pipeline's flowData that matches the nodeId
+      const targetNode = activeFlowData.nodes.find(node => node.id === nodeId);
+
+      if (!targetNode) return; // Early exit if no matching node is found
+    
+      // Initialize templateData and sourceHandles if they are not defined
+      if (!targetNode.data.templateData?.sourceHandles) return; // Early exit if templateData or sourceHandles are not defined
+    
+      // Find the handle to update within the sourceHandles
+      const handleToUpdate = targetNode.data.templateData.sourceHandles.find(handle => handle.id === handleId);
+    
+      if (!handleToUpdate) return; // Early exit if no matching handle is found
+
+      // Update the handle's type
+      handleToUpdate.type = newType;
+    },
+    updateTargetHandle: (state, { payload }: PayloadAction<{ nodeId?: string, handleId?: string, newType?: string }>) => {
+      const { nodeId, handleId, newType } = payload;
+      // Find the active pipeline based on the activePipelineId
+      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
+      
+      if (!activeFlowData) return; // Early exit if no active pipeline is found
+    
+      // Find the node within the active pipeline's flowData that matches the nodeId
+      const targetNode = activeFlowData.nodes.find(node => node.id === nodeId);
+
+      if (!targetNode) return; // Early exit if no matching node is found
+    
+      // Initialize templateData and sourceHandles if they are not defined
+      if (!targetNode.data.templateData?.targetHandles) return; // Early exit if templateData or sourceHandles are not defined
+    
+      // Find the handle to update within the sourceHandles
+      const handleToUpdate = targetNode.data.templateData.targetHandles.find(handle => handle.id === handleId);
+    
+      if (!handleToUpdate) return; // Early exit if no matching handle is found
+
+      // Update the handle's type
+      handleToUpdate.type = newType;
+    },
+    
     updateNode: (state, { payload }: PayloadAction<Node<NodeData> | undefined>) => {
       if (!payload) return
       var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
@@ -96,6 +143,6 @@ const pipelineSlice = createSlice({
   },
 })
 
-export const { addNewPipeline, setActivePipeline, updatePipelineName, addHandle, updateNode, addNode, removeNode, removeEdge, addEdge, updateEdge, onNodesChange, onEdgesChange, onConnect, setNodes, setEdges } = pipelineSlice.actions
+export const { addNewPipeline, setActivePipeline, updatePipelineName, addHandle, updateSourceHandle, updateTargetHandle, updateNode, addNode, removeNode, removeEdge, addEdge, updateEdge, onNodesChange, onEdgesChange, onConnect, setNodes, setEdges } = pipelineSlice.actions
 
 export default pipelineSlice.reducer 
