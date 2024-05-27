@@ -3,7 +3,18 @@ import { Edge, Node } from 'reactflow';
 export interface PipelineState {
   pipelines: PipelineData[]
   activePipelineId: string
+  history: HistoryData
 }
+
+export interface HistoryData {
+  past: HistoryItem[];
+  future: HistoryItem[];
+};
+
+export interface HistoryItem {
+  nodes: Node<NodeData>[];
+  edges: Edge<EdgeData>[];
+};
 
 export interface PipelineData {
     id: string;

@@ -9,7 +9,7 @@ import ReactFlow, {
   Connection
 } from "reactflow";
 
-import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode, setNodes, removeEdge, setEdges } from "../../redux/slices/pipelineSlice";
+import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode, setNodes, removeEdge, setEdges, undo, createSnapShot, redo } from "../../redux/slices/pipelineSlice";
 
 import CustomNode from "./Nodes/CustomNode";
 
@@ -63,8 +63,6 @@ const BasicFlow = () => {
   useOnSelectionChange({
     onChange: ({ nodes: selectedNodes, edges: selectedEdges }) => {
       const selecteds = [...selectedNodes, ...selectedEdges] as Array<Node<NodeData> | Edge>;
-      //console.log("currentlySelected", selecteds, "previouslySelected", selectedDeletables)
-      //console.log("lastSelected", lastSelected)
 
       const set = new Set(selectedDeletables) as Set<Node<NodeData> | Edge | undefined>;
       var foundItem: Node | Edge | undefined = undefined;
@@ -80,7 +78,7 @@ const BasicFlow = () => {
 
       var newEdges: Edge[] = edges!.map(edge => {
         if (!selectedEdges.find(x => x.id === edge.id)) {
-          return { ...edge, style: { ...edge.style, stroke: 'white', strokeOpacity: 1, strokeWidth: "1px" } }
+          return { ...edge, style: { ...edge.style, stroke: 'white', strokeOpacity: 1, strokeWidth: "2px" } }
         }
         return { ...edge, style: { ...edge.style, stroke: '#007bff', strokeOpacity: 1, strokeWidth: "2px" } }
       });
@@ -90,12 +88,18 @@ const BasicFlow = () => {
   });
 
   useEffect(() => {
-    const handleKeyDown = (event: { key: string; }) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Delete') {
         selectedDeletables.filter((x): x is Node<NodeData> => true).forEach(node => dispatch(removeNode(node)));
         selectedDeletables.filter((x): x is Edge => true).forEach(edge => dispatch(removeEdge(edge)));
       }
-    };
+      if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+        dispatch(undo());
+      }
+      if ((event.ctrlKey || event.metaKey) && event.key === 'y') {
+        dispatch(redo());
+      }
+      };
 
     window.addEventListener('keydown', handleKeyDown);
 
@@ -120,6 +124,8 @@ const BasicFlow = () => {
       if (typeof type === 'undefined' || !type) {
         return;
       }
+      
+      dispatch(createSnapShot())
 
       // reactFlowInstance.project was renamed to reactFlowInstance.screenToFlowPosition
       // and you don't need to subtract the reactFlowBounds.left/top anymore
@@ -201,7 +207,6 @@ const BasicFlow = () => {
       if (node.type === 'organization' || node.parentNode) {
         return;
       }
-
 
       const intersections = getIntersectingNodes(node).filter(
         (n) => n.type === 'organization'
@@ -316,6 +321,9 @@ const BasicFlow = () => {
       isValidConnection={isValidConnection}
       nodeTypes={nodeTypes}
       onNodeDrag={onNodeDrag}
+      onNodeDragStart={x => dispatch(createSnapShot())}
+      onNodesDelete={x => dispatch(createSnapShot())}
+      onEdgesDelete={x => dispatch(createSnapShot())}
       onNodeDragStop={onNodeDragStop}
       onDrop={onDrop}
       onDragOver={onDragOver}

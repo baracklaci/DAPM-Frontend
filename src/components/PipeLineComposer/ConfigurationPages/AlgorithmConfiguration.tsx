@@ -116,7 +116,7 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
         </ListItem>
         <ListItem>
           <Box sx={{ width: '100%', display: "flex", flexDirection: "column" }}>
-            <TextField value={node?.data.label} id="outlined-basic" label="Hint" variant="outlined" onChange={(event) => setHint(event?.target.value as string)} />
+            <TextField inputProps={{ maxLength:30 }} value={node?.data.label} id="outlined-basic" label="Hint" variant="outlined" onChange={(event) => setHint(event?.target.value as string)} />
             <InputLabel id="demo-simple-select-standard-label">Please select algorithm</InputLabel>
             <Select
               labelId="algorithm-simple-select-label"

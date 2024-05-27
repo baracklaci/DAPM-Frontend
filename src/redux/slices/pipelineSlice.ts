@@ -1,11 +1,22 @@
-import { addEdge as addFlowEdge, applyEdgeChanges, applyNodeChanges, Connection, Edge, EdgeChange, Node, NodeChange } from "reactflow";
+import { addEdge as addFlowEdge, applyEdgeChanges, applyNodeChanges, Connection, Edge, EdgeChange, MarkerType, Node, NodeChange } from "reactflow";
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { EdgeData, NodeData, NodeState, PipelineData, PipelineState } from "../states/pipelineState";
 
 export const initialState: PipelineState = {
   pipelines: [],
-  activePipelineId: ""
+  activePipelineId: "",
+  history: {
+    past: [],
+    future: []
+  }
+}
+
+const takeSnapshot = (state: PipelineState) => {
+  var activePipeline = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)
+  if (!activePipeline) return
+  console.log("snapshot taken", activePipeline.flowData.nodes, activePipeline.flowData.edges)
+  state.history.past.push({nodes: activePipeline.flowData.nodes, edges: activePipeline.flowData.edges})
 }
 
 const pipelineSlice = createSlice({
@@ -23,6 +34,44 @@ const pipelineSlice = createSlice({
       var pipeline = state.pipelines.find(pipeline => pipeline.id === payload.id)
       if (!pipeline) return
       pipeline.imgData = payload.imgData
+    },
+
+    // actions for undo and redo
+
+    undo(state){
+      var activePipeline = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)
+      if (!activePipeline) return
+      const pastState = state.history.past.pop()
+      if (!pastState) return
+
+      console.log("undo", pastState)
+      state.history.future.push({nodes: activePipeline.flowData.nodes, edges: activePipeline.flowData.edges})
+      activePipeline.flowData.nodes = pastState.nodes
+      activePipeline.flowData.edges = pastState.edges
+    },
+    redo(state){
+      var activePipeline = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)
+      if (!activePipeline) return
+      const futureState = state.history.future.pop()
+      if (!futureState) return
+
+      console.log("redo", futureState.nodes, futureState.edges)
+      activePipeline.flowData.nodes = futureState.nodes
+      activePipeline.flowData.edges = futureState.edges
+    },
+    createSnapShot(state){
+      takeSnapshot(state)
+    },
+    // takeSnapshot(state){
+    //   var activePipeline = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)
+    //   if (!activePipeline) return
+    //   state.history.past.push({nodes: activePipeline.flowData.nodes, edges: activePipeline.flowData.edges})
+    // },
+    canUndo(state){
+
+    },
+    canRedo(state){
+
     },
     
     // actions for the active pipeline
@@ -92,11 +141,15 @@ const pipelineSlice = createSlice({
     },
     addNode: (state, { payload }: PayloadAction<Node>) => {
       var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
-      activeFlowData?.nodes.push(payload)
+      if (!activeFlowData) return
+      
+      activeFlowData.nodes.push(payload)
     },
     removeNode: (state, { payload }: PayloadAction<Node<NodeData>>) => {
       var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
       if (!activeFlowData) return
+      //takeSnapshot(state)
+
       activeFlowData.nodes = activeFlowData.nodes.filter(node => node.id !== payload.id && node.parentNode !== payload.id)
       activeFlowData.edges = activeFlowData.edges.filter(edge =>
         !payload.data?.templateData?.sourceHandles.find(data => data.id === edge.sourceHandle) &&
@@ -105,13 +158,21 @@ const pipelineSlice = createSlice({
     removeEdge: (state, { payload }: PayloadAction<Edge>) => {
       var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
       if (!activeFlowData) return
+      //takeSnapshot(state)
+
       activeFlowData!.edges = activeFlowData?.edges.filter(edge => edge.id !== payload.id)
     },
-    addEdge: (state, { payload }: PayloadAction<Edge>) => {
-      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
-      //console.log("addEdge", payload)
-      activeFlowData?.edges.push(payload)
-    },
+    // addEdge: (state, { payload }: PayloadAction<Edge>) => {
+    //   var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
+    //   if (!activeFlowData) return
+
+    //   activeFlowData.edges.push({ ...payload, markerEnd: {
+    //     type: MarkerType.ArrowClosed,
+    //     width: 20,
+    //     height: 20,
+    //     color: '#FF0072',
+    //   } })
+    // },
     updateEdge: (state, { payload }: PayloadAction<Edge<EdgeData> | undefined>) => {
       if (!payload) return
       var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
@@ -123,31 +184,71 @@ const pipelineSlice = createSlice({
     onNodesChange: (state, { payload }: PayloadAction<NodeChange[]>) => {
       var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
       if (!activeFlowData) return
+
       activeFlowData.nodes = applyNodeChanges(payload, activeFlowData.nodes);
     },
     onEdgesChange: (state, { payload }: PayloadAction<EdgeChange[]>) => {
       var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
       if (!activeFlowData) return
+
       activeFlowData.edges = applyEdgeChanges(payload, activeFlowData.edges);
     },
     onConnect: (state, { payload }: PayloadAction<Connection>) => {
       var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
       if (!activeFlowData) return
-      activeFlowData.edges = addFlowEdge({ ...payload, style: { stroke: 'white', strokeOpacity: 1, strokeWidth: "1px" } }, activeFlowData.edges);
+      takeSnapshot(state)
+
+      activeFlowData.edges = addFlowEdge({ ...payload, markerEnd: {
+        type: MarkerType.ArrowClosed,
+        width: 15,
+        height: 15,
+        color: 'white',
+      } , style: { stroke: 'white', strokeOpacity: 1, strokeWidth: "2px" } }, activeFlowData.edges);
     },
     setNodes: (state, { payload }: PayloadAction<Node[]>) => {
       var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
       if (!activeFlowData) return
+
       activeFlowData.nodes = payload;
     },
     setEdges: (state, { payload }: PayloadAction<Edge[]>) => {
       var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
       if (!activeFlowData) return
+
       activeFlowData.edges = payload;
     },
   },
 })
 
-export const { addNewPipeline, setActivePipeline, updatePipelineName, addHandle, updateSourceHandle, updateTargetHandle, setImageData, updateNode, addNode, removeNode, removeEdge, addEdge, updateEdge, onNodesChange, onEdgesChange, onConnect, setNodes, setEdges } = pipelineSlice.actions
+export const { 
+  //actions for all pipelines
+  addNewPipeline, 
+  setActivePipeline, 
+  setImageData, 
+  
+  // actions for undo and redo
+  undo,
+  redo,
+  createSnapShot,
+  canUndo,
+  canRedo,
+
+  // actions for the active pipeline
+  updateSourceHandle,
+  updateTargetHandle,
+  updatePipelineName, 
+  addHandle, 
+  updateNode, 
+  addNode, 
+  removeNode, 
+  removeEdge, 
+  // addEdge, 
+  updateEdge, 
+  onNodesChange, 
+  onEdgesChange, 
+  onConnect, 
+  setNodes, 
+  setEdges 
+} = pipelineSlice.actions
 
 export default pipelineSlice.reducer 
