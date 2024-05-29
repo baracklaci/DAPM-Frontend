@@ -1,15 +1,12 @@
-import * as React from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import { Node } from "reactflow";
 import { Box, InputLabel, MenuItem, Select } from '@mui/material';
-import { RootState } from '../../../redux/states';
-import { NodeData, OrganizationInstantiationData, OrganizationNodeData } from '../../../redux/states/pipelineState';
+import { NodeData, OrganizationNodeData } from '../../../redux/states/pipelineState';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateNode } from '../../../redux/slices/pipelineSlice';
 import { getOrganizations } from '../../../redux/selectors/apiSelector';
-import { getNode, getNodes } from '../../../redux/selectors';
-import { Organization } from '../../../redux/states/apiState';
+import { getNodes } from '../../../redux/selectors';
 
 
 export interface AlgorithmConfugurationProps {

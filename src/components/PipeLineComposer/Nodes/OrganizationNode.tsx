@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import { memo, useEffect, useState } from 'react';
+import { memo } from 'react';
 import { useSelector } from 'react-redux';
 import {
   NodeProps,
@@ -30,7 +30,7 @@ function OrganizationNode({ data, id, selected }: NodeProps<OrganizationNodeData
         minWidth={minWidth}
         isVisible={true}
       />
-      <Typography sx={{color: "white"}}>{data?.instantiationData.organization?.name}</Typography>
+      <Typography sx={{color: "white"}}>{data?.instantiationData.organization?.name ?? '-'}</Typography>
       
     </Box>
   );

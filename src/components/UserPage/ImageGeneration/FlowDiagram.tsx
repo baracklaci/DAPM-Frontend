@@ -1,7 +1,5 @@
-// FlowDiagram.tsx
 import React from 'react';
 import ReactFlow, { Edge, Handle, Node } from 'reactflow';
-import CustomImageNode from './OrganizationImageNode';
 import DataSourceNode from '../../PipeLineComposer/Nodes/DataSourceNode';
 import DataSinkNode from '../../PipeLineComposer/Nodes/DataSinkNode';
 import CustomNode from '../../PipeLineComposer/Nodes/CustomNode';

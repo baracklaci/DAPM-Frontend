@@ -24,7 +24,7 @@ import 'reactflow/dist/style.css';
 import '@reactflow/node-resizer/dist/style.css';
 
 import { getNodePositionInsideParent, sortNodes } from "./utils";
-import { BaseTemplateData, NodeData } from "../../redux/states/pipelineState";
+import { BaseTemplateData, NodeData, OperatorNodeData, OperatorTemplateData } from "../../redux/states/pipelineState";
 import DataSourceNode from "./Nodes/DataSourceNode";
 import { getEdges, getNodes } from "../../redux/selectors";
 import { DefaultEdge } from "./Edges/DefaultEdge";
@@ -148,15 +148,18 @@ const BasicFlow = () => {
       handleSetup.set('conformance', { 
         sourceHandles: [{ id: getHandleId()}], 
         targetHandles: [{ id: getHandleId()}, { id: getHandleId()}],
-      });
+        hint: 'Conformance checker'
+      } as OperatorTemplateData);
       handleSetup.set('miner', { 
         sourceHandles: [{ id: getHandleId()}], 
         targetHandles: [{ id: getHandleId()}],
-      });
+        hint: 'Miner'
+      } as OperatorTemplateData);
       handleSetup.set('custom', { 
         sourceHandles: [{ id: getHandleId()}], 
         targetHandles: [{ id: getHandleId()}],
-      });
+        hint: 'Custom'
+      } as OperatorTemplateData);
       handleSetup.set('organization', { 
         sourceHandles: [], 
         targetHandles: [],
@@ -288,9 +291,6 @@ const BasicFlow = () => {
     const targetNode = nodes?.find(node => node.id === connection.target)
     const sourceHandle = sourceNode?.data.templateData.sourceHandles.find(handle => handle.id === connection.sourceHandle)
     const targetHandle = targetNode?.data.templateData.targetHandles.find(handle => handle.id === connection.targetHandle)
-
-    console.log(sourceHandle?.type)
-    console.log(targetHandle?.type)
 
     if ( targetNode?.type === "dataSink") {
       return true

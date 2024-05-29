@@ -1,23 +1,18 @@
-import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import PipelineCard from './PipelineCard';
-import { Button, Container } from '@mui/material';
+import { Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addNewPipeline, setImageData } from '../../redux/slices/pipelineSlice';
 import { getPipelines } from '../../redux/selectors';
-import { useEffect, useState } from 'react';
 import FlowDiagram from './ImageGeneration/FlowDiagram';
 import ReactDOM from 'react-dom';
-import html2canvas from 'html2canvas';
 import { toPng } from 'html-to-image';
-import { Edge, Node, ReactFlowProvider, getNodesBounds, getRectOfNodes, getTransformForBounds, getViewportForBounds } from 'reactflow';
-import Flow from '../PipeLineComposer/Flow';
-import { createRoot } from 'react-dom/client';
+import { getNodesBounds, getViewportForBounds } from 'reactflow';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',

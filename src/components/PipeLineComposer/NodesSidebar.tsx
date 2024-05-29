@@ -40,7 +40,6 @@ export default function PersistentDrawerLeft() {
         PaperProps={{
             sx: {
                 backgroundColor: '#292929',
-                // color: '#fff',
                 position: 'fixed',
                 top: '64px',
                 zIndex: 800

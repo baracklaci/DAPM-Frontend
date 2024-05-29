@@ -1,10 +1,8 @@
 import { Box, Typography } from '@mui/material';
-import { memo, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { memo } from 'react';
 import {
   NodeProps,
   NodeResizer} from 'reactflow';
-import { getNodes } from '../../../redux/selectors';
 
 
 function OrganizationNode({ data, id, selected }: NodeProps) {

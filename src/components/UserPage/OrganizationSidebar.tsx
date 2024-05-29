@@ -6,15 +6,13 @@ import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import { useEffect, useState } from 'react';
-import { fetchOrganisations,fetchOrganisation, fetchStatus, fetchOrganisationRepositories, fetchRepository, fetchRepositoryResources, putResource } from '../../services/backendAPI';
-import React, { ChangeEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { getOrganizations, getRepositories, getResources } from '../../redux/selectors/apiSelector';
 import { organizationThunk, repositoryThunk, resourceThunk } from '../../redux/slices/apiSlice';
 import { Organization, Repository } from '../../redux/states/apiState';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import UploadButton from './UploadButton';
 
 const drawerWidth = 240;
@@ -37,8 +35,6 @@ export default function PersistentDrawerLeft() {
     
     useEffect(() => {
         dispatch(organizationThunk())
-        //console.log("USEEFFECT")
-        //console.log(organizations)
         dispatch(repositoryThunk(organizations));
         dispatch(resourceThunk({organizations,repositories}));
         

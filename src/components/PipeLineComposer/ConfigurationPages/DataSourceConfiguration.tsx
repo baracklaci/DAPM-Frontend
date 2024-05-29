@@ -1,4 +1,3 @@
-import * as React from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import { Node } from "reactflow";
@@ -86,9 +85,6 @@ export default function DataSourceConfiguration({ nodeprop }: AlgorithmConfugura
                 onChange={(event) => setLogData(event?.target.value as string)}
               >
               {resources.map((resource) => <MenuItem value={resource.name}>{resource.name}</MenuItem>)}
-                {/* <MenuItem value={"Event log 1"}>Event log 1</MenuItem>
-                <MenuItem value={"Event log 2"}>Event log 2</MenuItem>
-                <MenuItem value={"Event log 3"}>Event log 3</MenuItem> */}
               </Select>
             </Box>
           </ListItem>

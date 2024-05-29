@@ -1,9 +1,7 @@
-import { Box, ListItem, ListItemText } from "@mui/material";
+import { Box } from "@mui/material";
 import { memo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 import SaveIcon from '@mui/icons-material/Save';
-import { useSelector } from "react-redux";
-import { getNodes } from "../../../redux/selectors";
 import { NodeData } from "../../../redux/states/pipelineState";
 
 const DataSinkNode = ({ data, selected }: NodeProps<NodeData>) => {

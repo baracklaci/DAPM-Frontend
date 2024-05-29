@@ -1,9 +1,6 @@
 import {
-    BaseEdge,
-  type EdgeProps,
-  BezierEdge,
-  MarkerType
-} from 'reactflow';
+    type EdgeProps,
+  BezierEdge} from 'reactflow';
 
 import { EdgeData } from '../../../redux/states/pipelineState';
 import { useSelector } from 'react-redux';

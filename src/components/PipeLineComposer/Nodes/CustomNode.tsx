@@ -1,18 +1,9 @@
 import { Box } from "@mui/material";
-import { relative } from "path";
-import { memo, useState } from "react";
+import { memo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
-import styled from "styled-components";
-import { getNode, getNodes } from "../../../redux/selectors";
-import { useSelector } from "react-redux";
-import { NodeData } from "../../../redux/states/pipelineState";
+import { NodeData, OperatorNodeData } from "../../../redux/states/pipelineState";
 
-// const CustomNode = ({
-//   id,
-//   data,
-//   selected
-// }: NodeProps<NodeData>) => {
-function CustomNode({data, selected}: NodeProps<NodeData>) {
+function CustomNode({data, selected}: NodeProps<OperatorNodeData>) {
 
   return (
     <Box sx={{backgroundColor: '#556677', padding: '10px', color: 'white', position: "relative", border: selected ? '2px solid #007bff' : '2px solid #556677'}}>
@@ -25,7 +16,7 @@ function CustomNode({data, selected}: NodeProps<NodeData>) {
         style={{position: "relative", transform: "none", top: "auto"}}
       />)}
       </Box>
-      {data?.label}
+      {data?.templateData.hint}
       <Box style={{display: "flex", flexDirection: "column", justifyContent: "space-around", position: "absolute", top: "0", bottom: "0", right: "0"}}>
       {data?.templateData.sourceHandles?.map(handle => <Handle
         key={handle.id}

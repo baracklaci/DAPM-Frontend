@@ -31,8 +31,6 @@ export default function PipelineAppBar() {
 
   const flowData = useSelector(getActiveFlowData)
 
-  const activePipeline = useSelector(getActivePipeline);
-
   const generateJson = () => {
     const requestData = {
       nodes: flowData?.nodes?.filter(node => node.type !== 'organization').map(node => {
@@ -43,28 +41,6 @@ export default function PipelineAppBar() {
       })
     }
 
-    // const nodes = flowData?.nodes;
-
-    // const width = 800
-    // const height = 600
-
-    // const nodesBounds = getNodesBounds(nodes!);
-    // const {x, y, zoom} = getViewportForBounds(nodesBounds, width, height, 0.5, 2);
-    // const pipelineId = activePipeline?.id!;
-
-    // toPng(document.querySelector('.react-flow__viewport') as HTMLElement, {
-    //             //backgroundColor: '#1a365d',
-    //             width: width,
-    //             height: height,
-    //             style: {
-    //               width: `${width}`,
-    //               height: `${height}`,
-    //               transform: `translate(${x}px, ${y}px) scale(${zoom})`,
-    //             },
-    //           }).then((dataUrl) => {
-    //             dispatch(setImageData({ id: pipelineId, imgData: dataUrl }));
-    //           });
-
     console.log(JSON.stringify(requestData))
   }
 
@@ -74,7 +50,6 @@ export default function PipelineAppBar() {
         <Button onClick={() => navigate('/')}>
           <ArrowBackIosNewIcon sx={{ color: "white" }} />
         </Button>
-        {/* <TextField sx={{width: '100%'}} value={pipelineName} id="outlined-basic" label="Filename" variant="outlined" onChange={(event) => setPipelineName(event?.target.value as string)} /> */}
         <Box sx={{ width: '100%', textAlign: 'center' }}>
           {isEditing ? (
             <TextField
