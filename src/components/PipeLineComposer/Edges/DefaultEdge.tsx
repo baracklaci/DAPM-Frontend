@@ -7,18 +7,23 @@ import { useSelector } from 'react-redux';
 import { getNodes } from '../../../redux/selectors';
 
 
-export function DefaultEdge({id, data, style, selected, target, ...delegated}: EdgeProps<EdgeData>) {
+export function DefaultEdge({id, data, style, selected, source, target, sourceHandleId, targetHandleId, ...delegated}: EdgeProps<EdgeData>) {
 
   const nodes = useSelector(getNodes);
+  const sourceNode = nodes?.find(node => node.id === source);
   const targetNode = nodes?.find(node => node.id === target);
 
-  const strokeColor = (targetNode?.type === 'dataSink' && (!data?.filename || data.filename == '')) ? 'red' : 'white';
+  const sourceHandle = sourceNode?.data.templateData.sourceHandles.find(handle => handle.id === sourceHandleId);
+  const targetHandle = targetNode?.data.templateData.targetHandles.find(handle => handle.id === targetHandleId)
+
+  const strokeColor = ((targetNode?.type === 'dataSink' && (!data?.filename || data.filename == '')) || (targetNode?.type !== 'dataSink' && (sourceHandle?.type !== targetHandle?.type))) ? 'red' : 'white';
 
   return (
     <>
       <BezierEdge
         id={id}
         target={target}
+        source={source}
         {...delegated}
         style={{
           ...style,
