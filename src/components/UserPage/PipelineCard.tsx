@@ -13,9 +13,10 @@ import { setActivePipeline } from '../../redux/slices/pipelineSlice';
 export interface PipelineCardProps {
   id: string;
   name: string;
+  imgData: string;
 }
 
-export default function MediaCard({ id, name }: PipelineCardProps) {
+export default function MediaCard({ id, name, imgData }: PipelineCardProps) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -29,8 +30,8 @@ export default function MediaCard({ id, name }: PipelineCardProps) {
       <CardActionArea onClick={navigateToPipeline}>
         <CardMedia
           sx={{ height: 140 }}
-          image="/static/images/cards/contemplative-reptile.jpg"
           title="green iguana"
+          image={imgData}
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">

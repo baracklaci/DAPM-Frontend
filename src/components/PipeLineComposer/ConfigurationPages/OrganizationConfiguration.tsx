@@ -1,14 +1,12 @@
-import * as React from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import { Node } from "reactflow";
 import { Box, InputLabel, MenuItem, Select } from '@mui/material';
-import { RootState } from '../../../redux/states';
-import { NodeData } from '../../../redux/states/pipelineState';
+import { NodeData, OrganizationNodeData } from '../../../redux/states/pipelineState';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateNode } from '../../../redux/slices/pipelineSlice';
 import { getOrganizations } from '../../../redux/selectors/apiSelector';
-import { getNode, getNodes } from '../../../redux/selectors';
+import { getNodes } from '../../../redux/selectors';
 
 
 export interface AlgorithmConfugurationProps {
@@ -19,13 +17,15 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
 
   const dispatch = useDispatch()
 
-  const node = useSelector(getNodes)?.find(node => node.id === nodeprop?.id);
-
-  const setOrgData = (org: string) => {
-    dispatch(updateNode({ ...node!, data: { ...node?.data!, label: org } }))
-  }
+  const node = useSelector(getNodes)?.find(node => node.id === nodeprop?.id) as Node<OrganizationNodeData> | undefined;
 
   const organizations = useSelector(getOrganizations);
+
+  const setOrgData = (organizationId: number) => {
+    const organization = organizations.find(org => org.id === organizationId);
+    dispatch(updateNode({ ...node!, data: { ...node?.data!, instantiationData: {organization} } }))
+  }
+
 
   return (
     <List>
@@ -36,15 +36,11 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
             <Select
               labelId="algorithm-simple-select-label"
               id="algorithm-simple-select"
-              value={node?.data.label}
+              value={node?.data.instantiationData.organization?.id}
               sx={{ width: '100%' }}
-              onChange={(event) => setOrgData(event?.target.value as string)}
+              onChange={(event) => setOrgData(+event?.target.value)}
             >
-              {organizations.map((org) => <MenuItem value={org.name}>{org.name}</MenuItem>)}
-              {/* <MenuItem value={"Organization"}>Organization</MenuItem>
-              <MenuItem value={"Organization 1"}>Organization 1</MenuItem>
-              <MenuItem value={"Organization 2"}>Organization 2</MenuItem>
-              <MenuItem value={"Organization 3"}>Organization 3</MenuItem> */}
+              {organizations.map((org) => <MenuItem value={org.id}>{org.name}</MenuItem>)}
             </Select>
           </Box>
         </ListItem>

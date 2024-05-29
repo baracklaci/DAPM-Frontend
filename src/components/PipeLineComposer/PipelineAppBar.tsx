@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getActiveFlowData, getActivePipeline } from "../../redux/selectors";
 import React, { useState } from "react";
-import { updatePipelineName } from "../../redux/slices/pipelineSlice";
+import { setImageData, updatePipelineName } from "../../redux/slices/pipelineSlice";
 import EditIcon from '@mui/icons-material/Edit';
+import { getNodesBounds, getRectOfNodes, getTransformForBounds, getViewportForBounds } from "reactflow";
+import { toPng } from "html-to-image";
 
 export default function PipelineAppBar() {
   const navigate = useNavigate();
@@ -39,7 +41,6 @@ export default function PipelineAppBar() {
       })
     }
 
-    //alert(JSON.stringify(requestData))
     console.log(JSON.stringify(requestData))
   }
 
@@ -49,7 +50,6 @@ export default function PipelineAppBar() {
         <Button onClick={() => navigate('/')}>
           <ArrowBackIosNewIcon sx={{ color: "white" }} />
         </Button>
-        {/* <TextField sx={{width: '100%'}} value={pipelineName} id="outlined-basic" label="Filename" variant="outlined" onChange={(event) => setPipelineName(event?.target.value as string)} /> */}
         <Box sx={{ width: '100%', textAlign: 'center' }}>
           {isEditing ? (
             <TextField

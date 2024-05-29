@@ -9,7 +9,7 @@ import ReactFlow, {
   Connection
 } from "reactflow";
 
-import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode, setNodes, removeEdge, setEdges } from "../../redux/slices/pipelineSlice";
+import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode, setNodes, removeEdge, undo, createSnapShot, redo } from "../../redux/slices/pipelineSlice";
 
 import CustomNode from "./Nodes/CustomNode";
 
@@ -18,24 +18,26 @@ import styled from "styled-components";
 import DataSinkNode from "./Nodes/DataSinkNode";
 import ConfigurationSidebar from "./ConfigurationSidebar";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/states";
 import OrganizationNode from "./Nodes/OrganizationNode";
 
 import 'reactflow/dist/style.css';
 import '@reactflow/node-resizer/dist/style.css';
 
 import { getNodePositionInsideParent, sortNodes } from "./utils";
-import { BaseInstantiationData, BaseTemplateData, DataSinkInstantiationData, DataSourceInstantiationData, InstantiationData, NodeData, OperatorInstantiationData } from "../../redux/states/pipelineState";
+import { BaseTemplateData, NodeData, OperatorNodeData, OperatorTemplateData } from "../../redux/states/pipelineState";
 import DataSourceNode from "./Nodes/DataSourceNode";
-import { current } from "@reduxjs/toolkit";
-import { getEdges, getNode, getNodes } from "../../redux/selectors";
-import { useAppSelector } from "../../hooks";
+import { getEdges, getNodes } from "../../redux/selectors";
+import { DefaultEdge } from "./Edges/DefaultEdge";
 
 const nodeTypes = {
   operator: CustomNode,
   dataSource: DataSourceNode,
   dataSink: DataSinkNode,
   organization: OrganizationNode
+};
+
+const edgeTypes = {
+  default: DefaultEdge
 };
 
 const ReactFlowStyled = styled(ReactFlow)`
@@ -63,8 +65,6 @@ const BasicFlow = () => {
   useOnSelectionChange({
     onChange: ({ nodes: selectedNodes, edges: selectedEdges }) => {
       const selecteds = [...selectedNodes, ...selectedEdges] as Array<Node<NodeData> | Edge>;
-      //console.log("currentlySelected", selecteds, "previouslySelected", selectedDeletables)
-      //console.log("lastSelected", lastSelected)
 
       const set = new Set(selectedDeletables) as Set<Node<NodeData> | Edge | undefined>;
       var foundItem: Node | Edge | undefined = undefined;
@@ -77,25 +77,22 @@ const BasicFlow = () => {
 
       setLastSelected(foundItem);
       setSelectedDeletables([...selectedNodes, ...selectedEdges]);
-
-      var newEdges: Edge[] = edges!.map(edge => {
-        if (!selectedEdges.find(x => x.id === edge.id)) {
-          return { ...edge, style: { ...edge.style, stroke: 'white', strokeOpacity: 1, strokeWidth: "1px" } }
-        }
-        return { ...edge, style: { ...edge.style, stroke: '#007bff', strokeOpacity: 1, strokeWidth: "2px" } }
-      });
-
-      dispatch(setEdges(newEdges));
     },
   });
 
   useEffect(() => {
-    const handleKeyDown = (event: { key: string; }) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Delete') {
         selectedDeletables.filter((x): x is Node<NodeData> => true).forEach(node => dispatch(removeNode(node)));
         selectedDeletables.filter((x): x is Edge => true).forEach(edge => dispatch(removeEdge(edge)));
       }
-    };
+      if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+        dispatch(undo());
+      }
+      if ((event.ctrlKey || event.metaKey) && event.key === 'y') {
+        dispatch(redo());
+      }
+      };
 
     window.addEventListener('keydown', handleKeyDown);
 
@@ -120,6 +117,8 @@ const BasicFlow = () => {
       if (typeof type === 'undefined' || !type) {
         return;
       }
+      
+      dispatch(createSnapShot())
 
       // reactFlowInstance.project was renamed to reactFlowInstance.screenToFlowPosition
       // and you don't need to subtract the reactFlowBounds.left/top anymore
@@ -149,15 +148,18 @@ const BasicFlow = () => {
       handleSetup.set('conformance', { 
         sourceHandles: [{ id: getHandleId()}], 
         targetHandles: [{ id: getHandleId()}, { id: getHandleId()}],
-      });
+        hint: 'Conformance checker'
+      } as OperatorTemplateData);
       handleSetup.set('miner', { 
         sourceHandles: [{ id: getHandleId()}], 
         targetHandles: [{ id: getHandleId()}],
-      });
+        hint: 'Miner'
+      } as OperatorTemplateData);
       handleSetup.set('custom', { 
         sourceHandles: [{ id: getHandleId()}], 
         targetHandles: [{ id: getHandleId()}],
-      });
+        hint: 'Custom'
+      } as OperatorTemplateData);
       handleSetup.set('organization', { 
         sourceHandles: [], 
         targetHandles: [],
@@ -201,7 +203,6 @@ const BasicFlow = () => {
       if (node.type === 'organization' || node.parentNode) {
         return;
       }
-
 
       const intersections = getIntersectingNodes(node).filter(
         (n) => n.type === 'organization'
@@ -291,9 +292,6 @@ const BasicFlow = () => {
     const sourceHandle = sourceNode?.data.templateData.sourceHandles.find(handle => handle.id === connection.sourceHandle)
     const targetHandle = targetNode?.data.templateData.targetHandles.find(handle => handle.id === connection.targetHandle)
 
-    console.log(sourceHandle?.type)
-    console.log(targetHandle?.type)
-
     if ( targetNode?.type === "dataSink") {
       return true
     } else {
@@ -315,7 +313,11 @@ const BasicFlow = () => {
       onConnect={x => { dispatch(onConnect(x)) }}
       isValidConnection={isValidConnection}
       nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
       onNodeDrag={onNodeDrag}
+      onNodeDragStart={x => dispatch(createSnapShot())}
+      onNodesDelete={x => dispatch(createSnapShot())}
+      onEdgesDelete={x => dispatch(createSnapShot())}
       onNodeDragStop={onNodeDragStop}
       onDrop={onDrop}
       onDragOver={onDragOver}

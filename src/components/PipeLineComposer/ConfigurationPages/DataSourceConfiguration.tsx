@@ -1,9 +1,8 @@
-import * as React from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import { Node } from "reactflow";
 import { Box, InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
-import { DataSourceNodeData, NodeData, Resource } from '../../../redux/states/pipelineState';
+import { DataSourceNodeData, NodeData, OrganizationNodeData } from '../../../redux/states/pipelineState';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNodes } from '../../../redux/selectors';
 import { updateNode, updateSourceHandle } from '../../../redux/slices/pipelineSlice';
@@ -20,9 +19,9 @@ export default function DataSourceConfiguration({ nodeprop }: AlgorithmConfugura
 
   const node = useSelector(getNodes)?.find(node => node.id === nodeprop?.id) as Node<DataSourceNodeData> | undefined;
 
-  const parentNode = useSelector(getNodes)?.find(n => n.id === node?.parentNode);
+  const parentNode = useSelector(getNodes)?.find(n => n.id === node?.parentNode) as Node<OrganizationNodeData> | undefined;
 
-  const resources = useSelector(getResources);
+  const resources = useSelector(getResources).filter(resource => resource.organizationId === parentNode?.data?.instantiationData.organization?.id);
 
   const dataTypes = ["eventLog", "bpmnModel", "petriNet"]
 
@@ -33,7 +32,7 @@ export default function DataSourceConfiguration({ nodeprop }: AlgorithmConfugura
         data: {
           ...node?.data!,
           instantiationData: {
-            resource: { name: resource, organizationId: 1, repositoryId: 1, resourceId: 1, fileExtension: "csv", resourceType: "eventLog" } as Resource
+            resource: { name: resource, organizationId: 1, repositoryId: 1, id: 1, type: "eventLog" }
           }
         }
       }))
@@ -86,9 +85,6 @@ export default function DataSourceConfiguration({ nodeprop }: AlgorithmConfugura
                 onChange={(event) => setLogData(event?.target.value as string)}
               >
               {resources.map((resource) => <MenuItem value={resource.name}>{resource.name}</MenuItem>)}
-                {/* <MenuItem value={"Event log 1"}>Event log 1</MenuItem>
-                <MenuItem value={"Event log 2"}>Event log 2</MenuItem>
-                <MenuItem value={"Event log 3"}>Event log 3</MenuItem> */}
               </Select>
             </Box>
           </ListItem>

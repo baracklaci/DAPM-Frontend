@@ -44,16 +44,13 @@ export default function PersistentDrawerRight({ selectableProp }: ConfigurationS
           backgroundColor: '#292929',
           position: 'fixed',
           top: '64px',
+          height: 'calc(100vh - 64px)',
         }
       }}
       sx={{
         width: drawerWidth,
         position: 'static',
         flexGrow: 1,
-        '& .MuiDrawer-paper': {
-          width: drawerWidth,
-          boxSizing: 'border-box',
-        },
       }}
       variant="permanent"
       anchor="right"

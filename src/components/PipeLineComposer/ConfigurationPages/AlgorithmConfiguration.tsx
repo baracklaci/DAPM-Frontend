@@ -6,7 +6,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { Node, useUpdateNodeInternals } from "reactflow";
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import { Algorithm, NodeData, OperatorNodeData } from '../../../redux/states/pipelineState';
+import { Algorithm, NodeData, OperatorNodeData, OperatorTemplateData } from '../../../redux/states/pipelineState';
 import { getNodes } from '../../../redux/selectors';
 import { addHandle, updateNode, updateSourceHandle, updateTargetHandle } from '../../../redux/slices/pipelineSlice';
 
@@ -47,7 +47,7 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
         ...node!,
         data: {
           ...node?.data!,
-          label: hint
+          templateData: { ...node?.data.templateData, hint: hint } as OperatorTemplateData
         }
       }))
   }
@@ -69,7 +69,7 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
   }
 
   return (
-    <List>
+    <List sx={{height: 'calc(100vh - 64px)'}}>
       <>
       <header>Template Data</header>
 
@@ -116,7 +116,7 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
         </ListItem>
         <ListItem>
           <Box sx={{ width: '100%', display: "flex", flexDirection: "column" }}>
-            <TextField value={node?.data.label} id="outlined-basic" label="Hint" variant="outlined" onChange={(event) => setHint(event?.target.value as string)} />
+            <TextField inputProps={{ maxLength:30 }} value={node?.data.label} id="outlined-basic" label="Hint" variant="outlined" onChange={(event) => setHint(event?.target.value as string)} />
             <InputLabel id="demo-simple-select-standard-label">Please select algorithm</InputLabel>
             <Select
               labelId="algorithm-simple-select-label"

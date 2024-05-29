@@ -1,9 +1,8 @@
-import * as React from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import { Node } from "reactflow";
 import { Box, InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
-import { DataSinkInstantiationData, DataSinkNodeData, NodeData, Repository } from '../../../redux/states/pipelineState';
+import { DataSinkNodeData, NodeData } from '../../../redux/states/pipelineState';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateNode } from '../../../redux/slices/pipelineSlice';
 import { getNodes } from '../../../redux/selectors';
@@ -31,7 +30,7 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
         data: {
           ...node?.data!,
           instantiationData: {
-            repository: { name: repository, organizationId: 1, repositoryId: 1 } as Repository
+            repository: { name: repository, organizationId: 1, id: 1 }
           }
         }
       }))
@@ -54,9 +53,6 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
               onChange={(event) => setLogData(event?.target.value as string)}
             >
               {repositories.map((repository) => <MenuItem value={repository.name}>{repository.name}</MenuItem>)}
-              {/* <MenuItem value={"Repository 1"}>Repository 1</MenuItem>
-              <MenuItem value={"Repository 2"}>Repository 2</MenuItem>
-              <MenuItem value={"Repository 3"}>Repository 3</MenuItem> */}
             </Select>
           </Box>
         </ListItem>

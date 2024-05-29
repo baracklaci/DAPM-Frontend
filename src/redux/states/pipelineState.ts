@@ -1,14 +1,28 @@
 import { Edge, Node } from 'reactflow';
+import { Organization, Repository, Resource } from './apiState';
 
 export interface PipelineState {
   pipelines: PipelineData[]
   activePipelineId: string
+  //history: HistoryData
 }
+
+export interface HistoryData {
+  past: HistoryItem[];
+  future: HistoryItem[];
+};
+
+export interface HistoryItem {
+  nodes: Node<NodeData>[];
+  edges: Edge<EdgeData>[];
+};
 
 export interface PipelineData {
     id: string;
     name: string;
     flowData: NodeState;
+    imgData: string;
+    history: HistoryData;
 }
 
 export interface NodeState {
@@ -40,6 +54,11 @@ export interface OperatorNodeData extends NodeData {
   instantiationData: OperatorInstantiationData;
 }
 
+export interface OrganizationNodeData extends NodeData {
+  templateData: OrganizationTemplateData;
+  instantiationData: OrganizationInstantiationData;
+}
+
 
 export interface BaseTemplateData {
   sourceHandles: HandleData[];
@@ -51,6 +70,8 @@ export interface DataSourceTemplateData extends BaseTemplateData {
 }
 
 export interface DataSinkTemplateData extends BaseTemplateData {}
+
+export interface OrganizationTemplateData extends BaseTemplateData {}
 
 export interface OperatorTemplateData extends BaseTemplateData {
   hint: string;
@@ -72,24 +93,8 @@ export interface OperatorInstantiationData extends BaseInstantiationData {
   algorithm?: Algorithm;
 }
 
-export interface InstantiationData {
-  resource?: Resource;
-  algorithm?: Algorithm;
-}
-
-export interface Repository {
-  organizationId?: number;
-  repositoryId?: number;
-  name: string;
-}
-
-export interface Resource {
-  organizationId?: number;
-  repositoryId?: number;
-  resourceId?: number;
-  resourceType?: string;
-  fileExtension?: string;
-  name: string;
+export interface OrganizationInstantiationData extends BaseInstantiationData {
+  organization?: Organization;
 }
 
 export interface Algorithm {
