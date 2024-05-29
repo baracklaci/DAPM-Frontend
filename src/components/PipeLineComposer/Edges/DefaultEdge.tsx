@@ -10,6 +10,7 @@ import { getNodes } from '../../../redux/selectors';
 export function DefaultEdge({id, data, style, selected, source, target, sourceHandleId, targetHandleId, ...delegated}: EdgeProps<EdgeData>) {
 
   const nodes = useSelector(getNodes);
+  
   const sourceNode = nodes?.find(node => node.id === source);
   const targetNode = nodes?.find(node => node.id === target);
 
