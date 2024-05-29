@@ -12,10 +12,7 @@ import { NodeData } from "../../../redux/states/pipelineState";
 //   data,
 //   selected
 // }: NodeProps<NodeData>) => {
-function CustomNode({id}: NodeProps<NodeData>) {
-  const node = useSelector(getNodes)?.find(node => node.id === id);
-  const data = node?.data;
-  const selected = node?.selected;
+function CustomNode({data, selected}: NodeProps<NodeData>) {
 
   return (
     <Box sx={{backgroundColor: '#556677', padding: '10px', color: 'white', position: "relative", border: selected ? '2px solid #007bff' : '2px solid #556677'}}>

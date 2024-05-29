@@ -6,9 +6,10 @@ import {
   NodeResizer} from 'reactflow';
 import { getNodes } from '../../../redux/selectors';
 import { getRelativeNodesBounds } from '../utils';
+import { OrganizationNodeData } from '../../../redux/states/pipelineState';
 
 
-function OrganizationNode({ data, id, selected }: NodeProps) {
+function OrganizationNode({ data, id, selected }: NodeProps<OrganizationNodeData>) {
 
   const lineStyle: React.CSSProperties = {borderColor: selected ? '#007BFF' : 'white', visibility: 'visible'};
 
@@ -29,7 +30,7 @@ function OrganizationNode({ data, id, selected }: NodeProps) {
         minWidth={minWidth}
         isVisible={true}
       />
-      <Typography sx={{color: "white"}}>{data?.label}</Typography>
+      <Typography sx={{color: "white"}}>{data?.instantiationData.organization?.name}</Typography>
       
     </Box>
   );

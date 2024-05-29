@@ -9,7 +9,7 @@ import ReactFlow, {
   Connection
 } from "reactflow";
 
-import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode, setNodes, removeEdge, setEdges, undo, createSnapShot, redo } from "../../redux/slices/pipelineSlice";
+import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode, setNodes, removeEdge, undo, createSnapShot, redo } from "../../redux/slices/pipelineSlice";
 
 import CustomNode from "./Nodes/CustomNode";
 
@@ -18,24 +18,26 @@ import styled from "styled-components";
 import DataSinkNode from "./Nodes/DataSinkNode";
 import ConfigurationSidebar from "./ConfigurationSidebar";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/states";
 import OrganizationNode from "./Nodes/OrganizationNode";
 
 import 'reactflow/dist/style.css';
 import '@reactflow/node-resizer/dist/style.css';
 
 import { getNodePositionInsideParent, sortNodes } from "./utils";
-import { BaseInstantiationData, BaseTemplateData, DataSinkInstantiationData, DataSourceInstantiationData, InstantiationData, NodeData, OperatorInstantiationData } from "../../redux/states/pipelineState";
+import { BaseTemplateData, NodeData } from "../../redux/states/pipelineState";
 import DataSourceNode from "./Nodes/DataSourceNode";
-import { current } from "@reduxjs/toolkit";
-import { getEdges, getNode, getNodes } from "../../redux/selectors";
-import { useAppSelector } from "../../hooks";
+import { getEdges, getNodes } from "../../redux/selectors";
+import { DefaultEdge } from "./Edges/DefaultEdge";
 
 const nodeTypes = {
   operator: CustomNode,
   dataSource: DataSourceNode,
   dataSink: DataSinkNode,
   organization: OrganizationNode
+};
+
+const edgeTypes = {
+  default: DefaultEdge
 };
 
 const ReactFlowStyled = styled(ReactFlow)`
@@ -75,15 +77,6 @@ const BasicFlow = () => {
 
       setLastSelected(foundItem);
       setSelectedDeletables([...selectedNodes, ...selectedEdges]);
-
-      var newEdges: Edge[] = edges!.map(edge => {
-        if (!selectedEdges.find(x => x.id === edge.id)) {
-          return { ...edge, style: { ...edge.style, stroke: 'white', strokeOpacity: 1, strokeWidth: "2px" } }
-        }
-        return { ...edge, style: { ...edge.style, stroke: '#007bff', strokeOpacity: 1, strokeWidth: "2px" } }
-      });
-
-      dispatch(setEdges(newEdges));
     },
   });
 
@@ -320,6 +313,7 @@ const BasicFlow = () => {
       onConnect={x => { dispatch(onConnect(x)) }}
       isValidConnection={isValidConnection}
       nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
       onNodeDrag={onNodeDrag}
       onNodeDragStart={x => dispatch(createSnapShot())}
       onNodesDelete={x => dispatch(createSnapShot())}

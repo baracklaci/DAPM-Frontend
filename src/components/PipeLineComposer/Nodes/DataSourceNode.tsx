@@ -6,10 +6,7 @@ import { useSelector } from "react-redux";
 import { NodeData } from "../../../redux/states/pipelineState";
 import { getNodes } from "../../../redux/selectors";
 
-const DataSourceNode = ({ id }: NodeProps<NodeData>) => {
-    const node = useSelector(getNodes)?.find(node => node.id === id);
-    const data = node?.data;
-    const selected = node?.selected;
+const DataSourceNode = ({ data, selected }: NodeProps<NodeData>) => {
 
     return (
         <Box sx={{ backgroundColor: '#556677', padding: '10px', color: 'white', position: "relative", border: selected ? '2px solid #007bff' : '2px solid #556677' }}>

@@ -5,18 +5,14 @@ import { EdgeData, NodeData, NodeState, PipelineData, PipelineState } from "../s
 
 export const initialState: PipelineState = {
   pipelines: [],
-  activePipelineId: "",
-  history: {
-    past: [],
-    future: []
-  }
+  activePipelineId: ""
 }
 
 const takeSnapshot = (state: PipelineState) => {
   var activePipeline = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)
   if (!activePipeline) return
   console.log("snapshot taken", activePipeline.flowData.nodes, activePipeline.flowData.edges)
-  state.history.past.push({nodes: activePipeline.flowData.nodes, edges: activePipeline.flowData.edges})
+  activePipeline?.history?.past?.push({nodes: activePipeline.flowData.nodes, edges: activePipeline.flowData.edges})
 }
 
 const pipelineSlice = createSlice({
@@ -24,13 +20,14 @@ const pipelineSlice = createSlice({
   initialState: initialState,
   reducers: {
     addNewPipeline: (state, { payload }: PayloadAction<{ id: string, flowData: NodeState }>) => {
-      state.pipelines.push({ id: payload.id, name: 'unnamed pipeline', flowData: payload.flowData } as PipelineData)
+      state.pipelines.push({ id: payload.id, name: 'unnamed pipeline', flowData: payload.flowData, history: { past: [], future: []}, imgData: '' } as PipelineData)
       state.activePipelineId = payload.id
     },
     setActivePipeline: (state, { payload }: PayloadAction<string>) => {
       state.activePipelineId = payload
     },
     setImageData: (state, { payload }: PayloadAction<{ id: string, imgData: string }>) => {
+      console.log('setImgData', payload.id, payload.imgData)
       var pipeline = state.pipelines.find(pipeline => pipeline.id === payload.id)
       if (!pipeline) return
       pipeline.imgData = payload.imgData
@@ -41,18 +38,18 @@ const pipelineSlice = createSlice({
     undo(state){
       var activePipeline = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)
       if (!activePipeline) return
-      const pastState = state.history.past.pop()
+      const pastState = activePipeline?.history?.past?.pop()
       if (!pastState) return
 
       console.log("undo", pastState)
-      state.history.future.push({nodes: activePipeline.flowData.nodes, edges: activePipeline.flowData.edges})
+      activePipeline.history.future.push({nodes: activePipeline.flowData.nodes, edges: activePipeline.flowData.edges})
       activePipeline.flowData.nodes = pastState.nodes
       activePipeline.flowData.edges = pastState.edges
     },
     redo(state){
       var activePipeline = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)
       if (!activePipeline) return
-      const futureState = state.history.future.pop()
+      const futureState = activePipeline?.history?.future?.pop()
       if (!futureState) return
 
       console.log("redo", futureState.nodes, futureState.edges)
@@ -178,7 +175,15 @@ const pipelineSlice = createSlice({
       var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
       if (!activeFlowData) return
       const index = activeFlowData.edges.findIndex(edge => edge.id === payload.id)
-      activeFlowData.edges[index] = payload
+      const strokeColor = payload.data?.filename === undefined || payload.data?.filename === '' || payload.data?.filename === null ? 'red' : 'white'
+      activeFlowData.edges[index] = { ...payload,
+      // markerEnd: {
+      //   type: MarkerType.ArrowClosed,
+      //   width: 15,
+      //   height: 15,
+      //   color: strokeColor,
+      // }, style: { stroke: strokeColor, strokeOpacity: 1, strokeWidth: "2px" } 
+    }
     },
     // From react flow example
     onNodesChange: (state, { payload }: PayloadAction<NodeChange[]>) => {
@@ -198,12 +203,9 @@ const pipelineSlice = createSlice({
       if (!activeFlowData) return
       takeSnapshot(state)
 
-      activeFlowData.edges = addFlowEdge({ ...payload, markerEnd: {
-        type: MarkerType.ArrowClosed,
-        width: 15,
-        height: 15,
-        color: 'white',
-      } , style: { stroke: 'white', strokeOpacity: 1, strokeWidth: "2px" } }, activeFlowData.edges);
+      const strokeColor = activeFlowData.nodes.find(node => node.id == payload.target)?.type === 'dataSink' ? 'red' : 'white'
+
+      activeFlowData.edges = addFlowEdge({ ...payload, type: 'default'}, activeFlowData.edges);
     },
     setNodes: (state, { payload }: PayloadAction<Node[]>) => {
       var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData

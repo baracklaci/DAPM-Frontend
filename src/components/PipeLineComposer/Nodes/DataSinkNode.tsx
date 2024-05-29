@@ -6,10 +6,7 @@ import { useSelector } from "react-redux";
 import { getNodes } from "../../../redux/selectors";
 import { NodeData } from "../../../redux/states/pipelineState";
 
-const DataSinkNode = ({ id }: NodeProps<NodeData>) => {
-    const node = useSelector(getNodes)?.find(node => node.id === id);
-    const data = node?.data;
-    const selected = node?.selected;
+const DataSinkNode = ({ data, selected }: NodeProps<NodeData>) => {
 
     return (
         <Box sx={{ backgroundColor: '#556677', padding: '10px', color: 'white', position: "relative", border: selected ? '2px solid #007bff' : '2px solid #556677' }}>

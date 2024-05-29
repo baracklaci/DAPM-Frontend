@@ -11,11 +11,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addNewPipeline, setImageData } from '../../redux/slices/pipelineSlice';
 import { getPipelines } from '../../redux/selectors';
 import { useEffect, useState } from 'react';
-import FlowDiagram from './FlowDiagram';
+import FlowDiagram from './ImageGeneration/FlowDiagram';
 import ReactDOM from 'react-dom';
 import html2canvas from 'html2canvas';
 import { toPng } from 'html-to-image';
-import { Edge, Node, getRectOfNodes, getTransformForBounds } from 'reactflow';
+import { Edge, Node, ReactFlowProvider, getNodesBounds, getRectOfNodes, getTransformForBounds, getViewportForBounds } from 'reactflow';
+import Flow from '../PipeLineComposer/Flow';
+import { createRoot } from 'react-dom/client';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -33,45 +35,48 @@ export default function AutoGrid() {
   const pipelines = useSelector(getPipelines)
 
   const createNewPipeline = () => {
-    dispatch(addNewPipeline({id: `pipeline-${crypto.randomUUID()}`, flowData: {nodes: [], edges: []}}));
+    dispatch(addNewPipeline({ id: `pipeline-${crypto.randomUUID()}`, flowData: { nodes: [], edges: [] } }));
     { navigate("/pipeline") }
   }
 
-  useEffect(() => {
-    pipelines.map(({ flowData, id }) => {
-      const nodes = flowData.nodes;
-      const edges = flowData.edges;
-      const pipelineId = id;
-      const container = document.createElement('div');
-      container.style.position = 'absolute';
-      container.style.top = '-10000px';
-      document.body.appendChild(container);
-    
-      ReactDOM.render(
-        <FlowDiagram nodes={nodes} edges={edges} />,
-        container,
-        () => {
-    
-          const nodesBounds = getRectOfNodes(nodes);
-          const transform = getTransformForBounds(nodesBounds, 1024, 768, 0.5, 2);
-    
-          toPng(document.querySelector('.react-flow__viewport') as HTMLElement, {
-            backgroundColor: '#1a365d',
-            width: 2024,
-            height: 1768,
-            style: {
-              width: '1024',
-              height: '768',
-              transform: `translate(${transform[0]}px, ${transform[1]}px) scale(${transform[2]})`,
-            },
-          }).then((dataUrl) => {
-            dispatch(setImageData({ id: pipelineId, imgData: dataUrl }));
-            document.body.removeChild(container);
-          });
-        }
-      );
-    });
-  }, []);
+  pipelines.map(({ flowData, id, name }) => {
+    const nodes = flowData.nodes;
+    const edges = flowData.edges;
+    console.log(name, nodes, edges);
+    const pipelineId = id;
+    const container = document.createElement('div');
+    container.style.position = 'absolute';
+    container.style.top = '-10000px';
+    container.id = pipelineId;
+    document.body.appendChild(container);
+
+    ReactDOM.render(
+      <FlowDiagram nodes={nodes} edges={edges} />,
+      container,
+      () => {
+
+        const width = 800
+        const height = 600
+
+        const nodesBounds = getNodesBounds(nodes!);
+        const { x, y, zoom } = getViewportForBounds(nodesBounds, width, height, 0.5, 2, 1);
+
+        toPng(document.querySelector(`#${pipelineId} .react-flow__viewport`) as HTMLElement, {
+          backgroundColor: '#333',
+          width: width,
+          height: height,
+          style: {
+            width: `${width}`,
+            height: `${height}`,
+            transform: `translate(${x}px, ${y}px) scale(${zoom})`,
+          },
+        }).then((dataUrl) => {
+          dispatch(setImageData({ id: pipelineId, imgData: dataUrl }));
+          document.body.removeChild(container);
+        });
+      }
+    );
+  });
 
   return (
     <Box sx={{ flexGrow: 1, flexBasis: "100%" }} >
@@ -80,7 +85,7 @@ export default function AutoGrid() {
         Create New
       </Button>
       <Grid container spacing={{ xs: 1, md: 1 }} sx={{ padding: "10px" }}>
-        {pipelines.map(({id, name, imgData}) => (
+        {pipelines.map(({ id, name, imgData }) => (
           <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
             <PipelineCard id={id} name={name} imgData={imgData}></PipelineCard>
           </Grid>
