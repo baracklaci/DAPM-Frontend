@@ -98,9 +98,9 @@ export interface OrganizationInstantiationData extends BaseInstantiationData {
 }
 
 export interface Algorithm {
-  organizationId?: number;
-  repositoryId?: number;
-  algorithmId?: number;
+  organizationId?: string;
+  repositoryId?: string;
+  algorithmId?: string;
   name: string;
 }
 

@@ -6,22 +6,22 @@ export interface ApiState {
 
 export interface Organization {
     name: string,
-    id: number
+    id: string
     apiUrl: string
 }
 
 export interface Repository {
-    id: number,
+    id: string,
     name: string,
-    organizationId: number
+    organizationId: string
 
 }
 
 export interface Resource {
-    id: number,
+    id: string,
     name: string,
-    organizationId: number,
-    repositoryId: number,
+    organizationId: string,
+    repositoryId: string,
     type: string
 
 }

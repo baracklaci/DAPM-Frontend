@@ -21,7 +21,7 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
 
   const organizations = useSelector(getOrganizations);
 
-  const setOrgData = (organizationId: number) => {
+  const setOrgData = (organizationId: string) => {
     const organization = organizations.find(org => org.id === organizationId);
     dispatch(updateNode({ ...node!, data: { ...node?.data!, instantiationData: {organization} } }))
   }
@@ -38,7 +38,7 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
               id="algorithm-simple-select"
               value={node?.data.instantiationData.organization?.id}
               sx={{ width: '100%' }}
-              onChange={(event) => setOrgData(+event?.target.value)}
+              onChange={(event) => setOrgData(event?.target.value)}
             >
               {organizations.map((org) => <MenuItem value={org.id}>{org.name}</MenuItem>)}
             </Select>
