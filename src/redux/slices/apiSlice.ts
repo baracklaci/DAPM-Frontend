@@ -8,20 +8,20 @@ import { getOrganizations } from "../selectors/apiSelector";
 export const initialState: ApiState = {
     organizations: [],
     repositories: [{
-      organizationId: 1,
+      organizationId: "",
       name: "Repository 1",
-      id: 1
+      id: ""
   },
   {
-      organizationId: 1,
+      organizationId: "",
       name: "Repository 2",
-      id: 2
+      id: ""
   },],
     resources: [{
-      id: 1,
+      id: "",
       name: "resource 1",
-      organizationId: 1,
-      repositoryId: 1,
+      organizationId: "",
+      repositoryId: "",
       type: "eventLog"
   },]
   }

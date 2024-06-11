@@ -35,7 +35,7 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
         data: {
           ...node?.data!,
           instantiationData: {
-            algorithm: { name: algorithm, organizationId: 1, repositoryId: 1, algorithmId: 1 } as Algorithm
+            algorithm: { name: algorithm, organizationId: "", repositoryId: "", algorithmId: "" } as Algorithm
           }
         }
       }))

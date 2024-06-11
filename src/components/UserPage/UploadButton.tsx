@@ -3,8 +3,8 @@ import React, { ChangeEvent } from 'react';
 import { putResource } from '../../services/backendAPI';
 
 export interface UploadButtonProps {
-    orgId: number,
-    repId: number,
+    orgId: string,
+    repId: string,
 }
 
 const UploadButton = ({orgId, repId}: UploadButtonProps) => {
