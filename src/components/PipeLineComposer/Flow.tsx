@@ -28,6 +28,7 @@ import { BaseTemplateData, NodeData, OperatorNodeData, OperatorTemplateData } fr
 import DataSourceNode from "./Nodes/DataSourceNode";
 import { getEdges, getNodes } from "../../redux/selectors";
 import { DefaultEdge } from "./Edges/DefaultEdge";
+import { v4 as uuidv4 } from "uuid";
 
 const nodeTypes = {
   operator: CustomNode,
@@ -44,9 +45,9 @@ const ReactFlowStyled = styled(ReactFlow)`
   background-color: #333;
 `;
 
-const getId = () => `node-${crypto.randomUUID()}`;
+const getId = () => `node-${uuidv4()}`;
 
-const getHandleId = () => `handle-${crypto.randomUUID()}`;
+const getHandleId = () => `handle-${uuidv4()}`;
 
 const BasicFlow = () => {
   const dispatch = useDispatch()
