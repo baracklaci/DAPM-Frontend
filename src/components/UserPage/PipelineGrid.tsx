@@ -13,6 +13,7 @@ import FlowDiagram from './ImageGeneration/FlowDiagram';
 import ReactDOM from 'react-dom';
 import { toPng } from 'html-to-image';
 import { getNodesBounds, getViewportForBounds } from 'reactflow';
+import { v4 as uuidv4 } from 'uuid';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -30,7 +31,7 @@ export default function AutoGrid() {
   const pipelines = useSelector(getPipelines)
 
   const createNewPipeline = () => {
-    dispatch(addNewPipeline({ id: `pipeline-${crypto.randomUUID()}`, flowData: { nodes: [], edges: [] } }));
+    dispatch(addNewPipeline({ id: `pipeline-${uuidv4()}`, flowData: { nodes: [], edges: [] } }));
     { navigate("/pipeline") }
   }
 
