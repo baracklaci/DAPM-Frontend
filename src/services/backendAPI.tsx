@@ -171,11 +171,105 @@ export async function fetchRepositoryResources(orgId:string, repId:string) {
     }
 }
 
-export async function putRepository(orgId: string, formData: FormData) {
+export async function fetchResource(orgId:string, repId:string, resId:string) {
+    try {
+        const response = await fetch(`http://` + path +`/Organizations/${orgId}/repositories/${repId}/resources/${resId}`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const jsonData = await response.json();
+
+        // Fetch additional data recursively
+        const getData = async (ticketId: string): Promise<any> => {
+            try {
+                const data = await fetchStatus(ticketId);
+                if (!data.status) {
+                    return await getData(ticketId); // Recursive call
+                } else {
+                    return data; // Return data once condition is met
+                }
+            } catch (error) {
+                throw error; // Propagate error to the outer catch block
+            }
+        };
+
+        // Call getData function with the ticketId obtained from fetchOrganisations
+        return await getData(jsonData.ticketId);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error; // Propagate error to the caller
+    }
+}
+
+export async function fetchRepositoryPipelines(orgId:string, repId:string) {
+    try {
+        const response = await fetch(`http://` + path +`/Organizations/${orgId}/repositories/${repId}/pipelines`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const jsonData = await response.json();
+        // Fetch additional data recursively
+        const getData = async (ticketId: string): Promise<any> => {
+            try {
+                const data = await fetchStatus(ticketId);
+                if (!data.status) {
+                    return await getData(ticketId); // Recursive call
+                } else {
+                    return data; // Return data once condition is met
+                }
+            } catch (error) {
+                throw error; // Propagate error to the outer catch block
+            }
+        };
+
+        // Call getData function with the ticketId obtained from fetchOrganisations
+        return await getData(jsonData.ticketId);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error; // Propagate error to the caller
+    }
+}
+
+export async function fetchPipeline(orgId:string, repId:string, pipId:string) {
+    try {
+        const response = await fetch(`http://` + path +`/Organizations/${orgId}/repositories/${repId}/pipelines/${pipId}`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const jsonData = await response.json();
+        // Fetch additional data recursively
+        const getData = async (ticketId: string): Promise<any> => {
+            try {
+                const data = await fetchStatus(ticketId);
+                if (!data.status) {
+                    return await getData(ticketId); // Recursive call
+                } else {
+                    return data; // Return data once condition is met
+                }
+            } catch (error) {
+                throw error; // Propagate error to the outer catch block
+            }
+        };
+
+        // Call getData function with the ticketId obtained from fetchOrganisations
+        return await getData(jsonData.ticketId);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error; // Propagate error to the caller
+    }
+}
+
+//NOT DONE!
+export async function putRepository(orgId: string, name:string) {
+    const headers = new Headers()
+    headers.append("accept", "text/plain")
+    headers.append("Content-Type", "text/plain")
+
     try {
         const response = await fetch(`http://` + path +`/Organizations/${orgId}/repositories`, {
             method: "POST",
-            body: formData
+            headers: headers,
+            body: name
         });
 
         if (!response.ok) {

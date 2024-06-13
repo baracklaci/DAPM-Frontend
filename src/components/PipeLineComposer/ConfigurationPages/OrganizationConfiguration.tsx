@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateNode } from '../../../redux/slices/pipelineSlice';
 import { getOrganizations } from '../../../redux/selectors/apiSelector';
 import { getNodes } from '../../../redux/selectors';
+import { useEffect } from 'react';
 
 
 export interface AlgorithmConfugurationProps {

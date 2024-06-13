@@ -14,6 +14,8 @@ import { Organization, Repository } from '../../redux/states/apiState';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { Box } from '@mui/material';
 import UploadButton from './UploadButton';
+import { fetchPipeline, fetchRepositoryPipelines, fetchResource } from '../../services/backendAPI';
+import CreateRepositoryButton from './CreateRepositoryButton';
 
 const drawerWidth = 240;
 
@@ -42,6 +44,36 @@ export default function PersistentDrawerLeft() {
         
         
     }, [dispatch]);
+
+
+    // fetch pipelines test
+    //Remember to change the IDs
+   /* useEffect(() => {
+        const fetchTestPipelines = async () => {
+          try {
+            console.log('Fetching repository pipelines...');
+            const testpipeline = await fetchRepositoryPipelines("43b2c65f-f82c-4aff-b049-ccdac4e02671", "8746e302-e56e-46d2-83a2-dda343689a77");
+            console.log("Pipeline data:", testpipeline);
+          } catch (error) {
+            console.error("Error fetching pipeline data:", error);
+          }
+        };
+
+          const fetchTestPipeline = async () => {
+            try {
+              console.log('Fetching resource...');
+              const testPipeline = await fetchPipeline("43b2c65f-f82c-4aff-b049-ccdac4e02671", "8746e302-e56e-46d2-83a2-dda343689a77", "e988728e-91e3-4e97-a9d7-160cfdae6b5f");
+              console.log("pipelineById:", testPipeline);
+            } catch (error) {
+              console.error("Error fetching pipeline data:", error);
+            }
+          };
+    
+        fetchTestPipelines();
+        fetchTestPipeline();
+      }, []);
+
+      */
 
     return (
         <Drawer
@@ -74,6 +106,7 @@ export default function PersistentDrawerLeft() {
                         <ListItem key={organization.id} disablePadding>
                             <ListItemButton>
                                 <ListItemText primary={organization.name} />
+                                <CreateRepositoryButton orgId={organization.id}/>
                             </ListItemButton>
                         </ListItem>
                         {repositories.map((repository) => ( repository.organizationId === organization.id ? 

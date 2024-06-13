@@ -23,6 +23,7 @@ const UploadButton = ({orgId, repId}: UploadButtonProps) => {
 
             const formData = new FormData();
             formData.append('Name', name);
+            formData.append('ResourceType', "EventLog")
             formData.append('ResourceFile', e.target.files[0]);
 
             try {
