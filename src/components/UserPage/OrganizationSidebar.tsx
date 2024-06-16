@@ -14,7 +14,7 @@ import { Organization, Repository } from '../../redux/states/apiState';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { Box } from '@mui/material';
 import UploadButton from './UploadButton';
-import { fetchPipeline, fetchRepositoryPipelines, fetchResource } from '../../services/backendAPI';
+import { fetchOrganisation, fetchOrganisationRepositories, fetchOrganisations, fetchPipeline, fetchRepositoryPipelines, fetchRepositoryResources, fetchResource, putPipeline } from '../../services/backendAPI';
 import CreateRepositoryButton from './CreateRepositoryButton';
 
 const drawerWidth = 240;
@@ -40,8 +40,18 @@ export default function PersistentDrawerLeft() {
         dispatch(repositoryThunk(organizations));
         dispatch(resourceThunk({organizations,repositories}));
         
-
+        /*const fetchResources = async () => {
+            try {
+                console.log('Fetching repository resources...');
+                const testpipeline = await fetchRepositoryResources("43b2c65f-f82c-4aff-b049-ccdac4e02671","8746e302-e56e-46d2-83a2-dda343689a77");
+                console.log("Pipeline data:", testpipeline);
+              } catch (error) {
+                console.error("Error fetching pipeline data:", error);
+              }
+        }
         
+
+        fetchResources()*/
         
     }, [dispatch]);
 
@@ -74,6 +84,63 @@ export default function PersistentDrawerLeft() {
       }, []);
 
       */
+
+      useEffect(() => {
+        const postPipeline = async () => {
+
+            const json = `{
+  "name": "string",
+  "pipeline": {
+    "nodes": [
+      {
+        "type": "string",
+        "templateData": {
+          "sourceHandles": [
+            {
+              "handleData": {
+                "id": "string"
+              }
+            }
+          ],
+          "targetHandles": [
+            {
+              "handleData": {
+                "id": "string"
+              }
+            }
+          ]
+        },
+        "instantiationData": {
+          "resource": {
+            "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "repositoryId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "resourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "name": "string"
+          }
+        }
+      }
+    ],
+    "edges": [
+      {
+        "sourceHandle": "string",
+        "targetHandle": "string"
+      }
+    ]
+  }
+}`
+
+            try {
+                console.log("post pipeline")
+                const testpost = await putPipeline("24dc98f8-702a-4846-b9a7-612fcbb858f4", "cc014430-c1be-46fd-bdf4-a417d51348bb", json)
+                console.log("pipeline: "+testpost)
+            } catch (error) {
+                console.error("Error fetching pipeline data:", error);
+              }
+        } 
+        postPipeline()
+      }, [])
+
+      
 
     return (
         <Drawer
