@@ -1,7 +1,7 @@
 const vmPath = `dapm1.compute.dtu.dk:5000`
 const localPath = `localhost:5000`
 
-const path = localPath
+const path = vmPath
 
 export async function fetchStatus(ticket: string) {
 
@@ -175,9 +175,6 @@ export async function fetchRepositoryResources(orgId: string, repId: string) {
             throw new Error('Fetching resources, Network response was not ok');
         }
         const jsonData = await response.json();
-        console.log("ResourceFetch: ")
-        console.log(jsonData)
-
 
         // Fetch additional data recursively
         const getData = async (ticketId: string): Promise<any> => {
@@ -321,16 +318,18 @@ export async function fetchPipeline(orgId: string, repId: string, pipId: string)
 }
 
 //NOT DONE!
-export async function putRepository(orgId: string, name: string) {
+export async function putRepository(orgId: string, formData: any) {
+    /*
     const headers = new Headers()
-    headers.append("accept", "text/plain")
-    headers.append("Content-Type", "text/plain")
+    headers.append("accept", "application/json")
+    headers.append("Content-Type", "application/json")
+    */
 
     try {
         const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories`, {
             method: "POST",
-            headers: headers,
-            body: name
+            //headers: headers,
+            body: JSON.stringify(`{"name": "Repository1"}`)
         });
 
         if (!response.ok) {
@@ -419,46 +418,7 @@ export async function putPipeline(orgId: string, repId: string, pipeline: string
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             },
-            body: JSON.stringify({
-                "name": "test",
-                "pipeline": {
-                    "nodes": [
-                        {
-                            "type": "string",
-                            "templateData": {
-                                "sourceHandles": [
-                                    {
-                                        "handleData": {
-                                            "id": "string"
-                                        }
-                                    }
-                                ],
-                                "targetHandles": [
-                                    {
-                                        "handleData": {
-                                            "id": "string"
-                                        }
-                                    }
-                                ]
-                            },
-                            "instantiationData": {
-                                "resource": {
-                                    "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                                    "repositoryId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                                    "resourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                                    "name": "string"
-                                }
-                            }
-                        }
-                    ],
-                    "edges": [
-                        {
-                            "sourceHandle": "string",
-                            "targetHandle": "string"
-                        }
-                    ]
-                }
-            })
+            body: JSON.stringify(pipeline)
         });
 
         if (!response.ok) {
