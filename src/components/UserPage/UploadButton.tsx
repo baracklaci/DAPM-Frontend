@@ -1,4 +1,4 @@
-import { Button, FormControl, FormLabel, TextField } from '@mui/material';
+import { Button, FormControl, FormLabel, MenuItem, Select, TextField } from '@mui/material';
 import React, { ChangeEvent } from 'react';
 import { putResource } from '../../services/backendAPI';
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
@@ -9,6 +9,8 @@ export interface UploadButtonProps {
 }
 
 const UploadButton = ({ orgId, repId }: UploadButtonProps) => {
+
+    const dataTypes = ["eventLog", "bpmnModel", "petriNet"]
 
     const [anchor, setAnchor] = React.useState<null | HTMLElement>(null);
 
@@ -44,10 +46,10 @@ const UploadButton = ({ orgId, repId }: UploadButtonProps) => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        
+
         const formData = new FormData(event.currentTarget);
         const formEntries = Object.fromEntries(formData.entries());
-        
+
         console.log('Form Data:', formEntries);
 
         if (formData.get('ResourceFile')) {
@@ -60,7 +62,7 @@ const UploadButton = ({ orgId, repId }: UploadButtonProps) => {
         } else {
             console.error('No file selected.');
         }
-        
+
         alert("Form Submitted");
     };
 
@@ -98,17 +100,23 @@ const UploadButton = ({ orgId, repId }: UploadButtonProps) => {
                             <TextField name="Name" />
 
                             <FormLabel>Resource type</FormLabel>
-                            <TextField name="ResourceType" />
+                            <Select
+                                name="ResourceType"
+                                labelId="resourceType-select-lable"
+                                id="resourceType-select"
+                                sx={{ width: '100%' }}>
+                                {dataTypes.map((resource) => <MenuItem value={resource}>{resource}</MenuItem>)}
+                             </Select>
 
-                            <FormLabel>Upload File</FormLabel>
-                            <input type="file" name="ResourceFile" onChange={handleChange} />
-                        </FormControl>
+                        <FormLabel>Upload File</FormLabel>
+                        <input type="file" name="ResourceFile" />
+                    </FormControl>
 
-                        <Button type="submit" sx={{ backgroundColor: "gray", padding: "1px", color: "black" }}>Submit</Button>
-                    </form>
-                </div>
-            </BasePopup>
+                    <Button type="submit" sx={{ backgroundColor: "gray", padding: "1px", color: "black" }}>Submit</Button>
+                </form>
         </div>
+            </BasePopup >
+        </div >
     );
 }
 

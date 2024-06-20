@@ -85,7 +85,7 @@ export default function PersistentDrawerLeft() {
 
       */
 
-      useEffect(() => {
+      /*useEffect(() => {
         const postPipeline = async () => {
 
             const json = `{
@@ -139,7 +139,7 @@ export default function PersistentDrawerLeft() {
         } 
         postPipeline()
       }, [])
-
+*/
       
 
     return (

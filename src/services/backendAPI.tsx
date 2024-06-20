@@ -175,7 +175,9 @@ export async function fetchRepositoryResources(orgId: string, repId: string) {
             throw new Error('Fetching resources, Network response was not ok');
         }
         const jsonData = await response.json();
+        console.log("ResourceFetch: ")
         console.log(jsonData)
+
 
         // Fetch additional data recursively
         const getData = async (ticketId: string): Promise<any> => {
