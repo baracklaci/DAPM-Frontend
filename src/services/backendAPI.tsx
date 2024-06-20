@@ -6,47 +6,47 @@ const path = localPath
 export async function fetchStatus(ticket: string) {
 
     try {
-        const response = await fetch(`http://` + path +`/status/${ticket}`);
+        const response = await fetch(`http://` + path + `/status/${ticket}`);
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+            throw new Error('Network response was not ok');
         }
         const jsonData = await response.json();
         return jsonData;
-      } catch (error) {
+    } catch (error) {
         console.error('Error fetching status:', error);
         return error;
-      }
+    }
 }
 
 
 export async function fetchOrganisations() {
     try {
-        const response = await fetch(`http://` + path +`/organizations`);
+        const response = await fetch(`http://` + path + `/organizations`);
         if (!response.ok) {
             throw new Error('Fetching orgs, Network response was not ok');
         }
         const jsonData = await response.json();
 
-    // Fetch additional data recursively
-    const getData = async (ticketId: string): Promise<any> => {
-        const maxRetries = 10;
-        const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-    
-        for (let retries = 0; retries < maxRetries; retries++) {
-            try {
-                const data = await fetchStatus(ticketId);
-                if (data.status) {
-                    return data;
-                }
-                await delay(1000); // Wait for 1 second before retrying
-            } catch (error) {
-                if (retries === maxRetries - 1) {
-                    throw new Error('Max retries reached');
+        // Fetch additional data recursively
+        const getData = async (ticketId: string): Promise<any> => {
+            const maxRetries = 10;
+            const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+            for (let retries = 0; retries < maxRetries; retries++) {
+                try {
+                    const data = await fetchStatus(ticketId);
+                    if (data.status) {
+                        return data;
+                    }
+                    await delay(1000); // Wait for 1 second before retrying
+                } catch (error) {
+                    if (retries === maxRetries - 1) {
+                        throw new Error('Max retries reached');
+                    }
                 }
             }
-        }
-        throw new Error('Failed to fetch data');
-    };
+            throw new Error('Failed to fetch data');
+        };
 
         // Call getData function with the ticketId obtained from fetchOrganisations
         return await getData(jsonData.ticketId);
@@ -58,9 +58,9 @@ export async function fetchOrganisations() {
 
 
 
-export async function fetchOrganisation(orgId:string) {
+export async function fetchOrganisation(orgId: string) {
     try {
-        const response = await fetch(`http://` + path +`/Organizations/${orgId}`);
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}`);
         if (!response.ok) {
             throw new Error('Fetching org, Network response was not ok');
         }
@@ -70,7 +70,7 @@ export async function fetchOrganisation(orgId:string) {
         const getData = async (ticketId: string): Promise<any> => {
             const maxRetries = 10;
             const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        
+
             for (let retries = 0; retries < maxRetries; retries++) {
                 try {
                     const data = await fetchStatus(ticketId);
@@ -95,9 +95,9 @@ export async function fetchOrganisation(orgId:string) {
     }
 }
 
-export async function fetchOrganisationRepositories(orgId:string) {
+export async function fetchOrganisationRepositories(orgId: string) {
     try {
-        const response = await fetch(`http://` + path +`/Organizations/${orgId}/repositories`);
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories`);
         if (!response.ok) {
             throw new Error('Fecthing reps, Network response was not ok');
         }
@@ -107,7 +107,7 @@ export async function fetchOrganisationRepositories(orgId:string) {
         const getData = async (ticketId: string): Promise<any> => {
             const maxRetries = 10;
             const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        
+
             for (let retries = 0; retries < maxRetries; retries++) {
                 try {
                     const data = await fetchStatus(ticketId);
@@ -132,19 +132,19 @@ export async function fetchOrganisationRepositories(orgId:string) {
     }
 }
 
-export async function fetchRepository(orgId:string, repId:string) {
+export async function fetchRepository(orgId: string, repId: string) {
     try {
-        const response = await fetch(`http://` + path +`/Organizations/${orgId}/repositories/${repId}`);
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}`);
         if (!response.ok) {
             throw new Error('Fecthing rep, Network response was not ok');
         }
         const jsonData = await response.json();
 
         // Fetch additional data recursively
-    const getData = async (ticketId: string): Promise<any> => {
+        const getData = async (ticketId: string): Promise<any> => {
             const maxRetries = 10;
             const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        
+
             for (let retries = 0; retries < maxRetries; retries++) {
                 try {
                     const data = await fetchStatus(ticketId);
@@ -168,9 +168,9 @@ export async function fetchRepository(orgId:string, repId:string) {
     }
 }
 
-export async function fetchRepositoryResources(orgId:string, repId:string) {
+export async function fetchRepositoryResources(orgId: string, repId: string) {
     try {
-        const response = await fetch(`http://` + path +`/Organizations/${orgId}/repositories/${repId}/resources`);
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}/resources`);
         if (!response.ok) {
             throw new Error('Fetching resources, Network response was not ok');
         }
@@ -181,7 +181,7 @@ export async function fetchRepositoryResources(orgId:string, repId:string) {
         const getData = async (ticketId: string): Promise<any> => {
             const maxRetries = 10;
             const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        
+
             for (let retries = 0; retries < maxRetries; retries++) {
                 try {
                     const data = await fetchStatus(ticketId);
@@ -207,9 +207,9 @@ export async function fetchRepositoryResources(orgId:string, repId:string) {
     }
 }
 
-export async function fetchResource(orgId:string, repId:string, resId:string) {
+export async function fetchResource(orgId: string, repId: string, resId: string) {
     try {
-        const response = await fetch(`http://` + path +`/Organizations/${orgId}/repositories/${repId}/resources/${resId}`);
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}/resources/${resId}`);
         if (!response.ok) {
             throw new Error('Fetching resource, Feching Network response was not ok');
         }
@@ -219,7 +219,7 @@ export async function fetchResource(orgId:string, repId:string, resId:string) {
         const getData = async (ticketId: string): Promise<any> => {
             const maxRetries = 10;
             const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        
+
             for (let retries = 0; retries < maxRetries; retries++) {
                 try {
                     const data = await fetchStatus(ticketId);
@@ -244,19 +244,19 @@ export async function fetchResource(orgId:string, repId:string, resId:string) {
     }
 }
 
-export async function fetchRepositoryPipelines(orgId:string, repId:string) {
+export async function fetchRepositoryPipelines(orgId: string, repId: string) {
     try {
-        const response = await fetch(`http://` + path +`/Organizations/${orgId}/repositories/${repId}/pipelines`);
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}/pipelines`);
         if (!response.ok) {
             throw new Error('fetching pipelines, Network response was not ok');
         }
         const jsonData = await response.json();
-       
+
         // Fetch additional data recursively
         const getData = async (ticketId: string): Promise<any> => {
             const maxRetries = 10;
             const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        
+
             for (let retries = 0; retries < maxRetries; retries++) {
                 try {
                     const data = await fetchStatus(ticketId);
@@ -281,19 +281,19 @@ export async function fetchRepositoryPipelines(orgId:string, repId:string) {
     }
 }
 
-export async function fetchPipeline(orgId:string, repId:string, pipId:string) {
+export async function fetchPipeline(orgId: string, repId: string, pipId: string) {
     try {
-        const response = await fetch(`http://` + path +`/Organizations/${orgId}/repositories/${repId}/pipelines/${pipId}`);
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}/pipelines/${pipId}`);
         if (!response.ok) {
             throw new Error('fetching pipeline, Network response was not ok');
         }
         const jsonData = await response.json();
-        
+
         // Fetch additional data recursively
         const getData = async (ticketId: string): Promise<any> => {
             const maxRetries = 10;
             const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        
+
             for (let retries = 0; retries < maxRetries; retries++) {
                 try {
                     const data = await fetchStatus(ticketId);
@@ -319,13 +319,13 @@ export async function fetchPipeline(orgId:string, repId:string, pipId:string) {
 }
 
 //NOT DONE!
-export async function putRepository(orgId: string, name:string) {
+export async function putRepository(orgId: string, name: string) {
     const headers = new Headers()
     headers.append("accept", "text/plain")
     headers.append("Content-Type", "text/plain")
 
     try {
-        const response = await fetch(`http://` + path +`/Organizations/${orgId}/repositories`, {
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories`, {
             method: "POST",
             headers: headers,
             body: name
@@ -341,7 +341,7 @@ export async function putRepository(orgId: string, name:string) {
         const getData = async (ticketId: string): Promise<any> => {
             const maxRetries = 10;
             const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        
+
             for (let retries = 0; retries < maxRetries; retries++) {
                 try {
                     const data = await fetchStatus(ticketId);
@@ -368,7 +368,7 @@ export async function putRepository(orgId: string, name:string) {
 
 export async function putResource(orgId: string, repId: string, formData: FormData) {
     try {
-        const response = await fetch(`http://` + path +`/Organizations/${orgId}/repositories/${repId}/resources`, {
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}/resources`, {
             method: "POST",
             body: formData
         });
@@ -383,7 +383,7 @@ export async function putResource(orgId: string, repId: string, formData: FormDa
         const getData = async (ticketId: string): Promise<any> => {
             const maxRetries = 10;
             const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        
+
             for (let retries = 0; retries < maxRetries; retries++) {
                 try {
                     const data = await fetchStatus(ticketId);
@@ -408,7 +408,7 @@ export async function putResource(orgId: string, repId: string, formData: FormDa
     }
 }
 
-export async function putPipeline(orgId: string, repId: string, pipeline:string) {
+export async function putPipeline(orgId: string, repId: string, pipeline: string) {
     console.log(pipeline)
     try {
         const response = await fetch(`http://${path}/Organizations/${orgId}/repositories/${repId}/pipelines`, {
@@ -468,7 +468,7 @@ export async function putPipeline(orgId: string, repId: string, pipeline:string)
         const getData = async (ticketId: string): Promise<any> => {
             const maxRetries = 10;
             const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        
+
             for (let retries = 0; retries < maxRetries; retries++) {
                 try {
                     const data = await fetchStatus(ticketId);
