@@ -44,7 +44,7 @@ export default function PersistentDrawerLeft() {
 
 
 
-  useEffect(() => {
+  /*useEffect(() => {
     const postPipeline = async () => {
       const pipelineData = {
         name: "pipeline1",
@@ -97,7 +97,7 @@ export default function PersistentDrawerLeft() {
     };
 
     postPipeline();
-  }, []);
+  }, [])*/
 
 
 
