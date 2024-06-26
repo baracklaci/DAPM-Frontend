@@ -190,7 +190,7 @@ export async function fetchRepositoryResources(orgId: string, repId: string) {
                     if (data.status) {
                         return data;
                     }
-                    console.log(data)
+                    //console.log(data)
                     await delay(1000); // Wait for 1 second before retrying
                 } catch (error) {
                     if (retries === maxRetries - 1) {
@@ -320,7 +320,6 @@ export async function fetchPipeline(orgId: string, repId: string, pipId: string)
     }
 }
 
-//NOT DONE!
 export async function putRepository(orgId: string, repositoryName: string) {
     
     const headers = new Headers()
@@ -412,8 +411,8 @@ export async function putResource(orgId: string, repId: string, formData: FormDa
     }
 }
 
-export async function putPipeline(orgId: string, repId: string, pipeline: string) {
-    console.log(pipeline)
+export async function putPipeline(orgId: string, repId: string, pipelineData:any) {
+    console.log(pipelineData)
     try {
         const response = await fetch(`http://${path}/Organizations/${orgId}/repositories/${repId}/pipelines`, {
             method: "POST",
@@ -421,7 +420,7 @@ export async function putPipeline(orgId: string, repId: string, pipeline: string
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             },
-            body: JSON.stringify(pipeline)
+            body: JSON.stringify(pipelineData)
         });
 
         if (!response.ok) {

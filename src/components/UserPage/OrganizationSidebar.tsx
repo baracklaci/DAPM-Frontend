@@ -42,78 +42,62 @@ export default function PersistentDrawerLeft() {
 
   }, [dispatch]);
 
-  
-   /* useEffect(() => {
-      const postRepository = async () => {
-        const repositoryName = "rep1"
-  
-        try {
-          console.log("post repository")
-          const testpost = await putRepository("d87bc490-828f-46c8-aa44-ded7729eaa82", repositoryName)
-          console.log("repository post: " + testpost)
-        } catch (error) {
-          console.error("Error posting pipeline:", error);
-        }
-      }
-      postRepository()
-    }, [])
-    */
 
 
- /* useEffect(() => {
+  useEffect(() => {
     const postPipeline = async () => {
-
-      const json = `{
-    "name": "string",
-    "pipeline": {
-      "nodes": [
-        {
-          "type": "string",
-          "templateData": {
-            "sourceHandles": [
-              {
-                "handleData": {
-                  "id": "string"
+      const pipelineData = {
+        name: "pipeline1",
+        pipeline: {
+          "nodes": [
+            {
+              "type": "string",
+              "templateData": {
+                "sourceHandles": [
+                  {
+                    "handleData": {
+                      "id": "string"
+                    }
+                  }
+                ],
+                "targetHandles": [
+                  {
+                    "handleData": {
+                      "id": "string"
+                    }
+                  }
+                ]
+              },
+              "instantiationData": {
+                "resource": {
+                  "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                  "repositoryId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                  "resourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                  "name": "string"
                 }
               }
-            ],
-            "targetHandles": [
-              {
-                "handleData": {
-                  "id": "string"
-                }
-              }
-            ]
-          },
-          "instantiationData": {
-            "resource": {
-              "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-              "repositoryId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-              "resourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-              "name": "string"
             }
-          }
+          ],
+          "edges": [
+            {
+              "sourceHandle": "string",
+              "targetHandle": "string"
+            }
+          ]
         }
-      ],
-      "edges": [
-        {
-          "sourceHandle": "string",
-          "targetHandle": "string"
-        }
-      ]
-    }
-  }`
+      };
 
       try {
-        console.log("post pipeline")
-        const testpost = await putPipeline("24dc98f8-702a-4846-b9a7-612fcbb858f4", "cc014430-c1be-46fd-bdf4-a417d51348bb", json)
-        console.log("pipeline: " + testpost)
+        console.log("post pipeline");
+        const testpost = await putPipeline("d87bc490-828f-46c8-aa44-ded7729eaa82", "365570d5-4fc2-44a9-9476-4b03b623b8e7", pipelineData);
+        console.log("pipeline: ", testpost);
       } catch (error) {
         console.error("Error fetching pipeline data:", error);
       }
-    }
-    postPipeline()
-  }, [])*/
+    };
+
+    postPipeline();
+  }, []);
 
 
 
