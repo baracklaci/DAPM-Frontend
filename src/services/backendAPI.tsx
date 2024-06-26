@@ -1,7 +1,9 @@
+import { json } from "stream/consumers";
+
 const vmPath = `dapm1.compute.dtu.dk:5000`
 const localPath = `localhost:5000`
 
-const path = vmPath
+const path = localPath
 
 export async function fetchStatus(ticket: string) {
 
@@ -11,6 +13,7 @@ export async function fetchStatus(ticket: string) {
             throw new Error('Network response was not ok');
         }
         const jsonData = await response.json();
+        //console.log(jsonData)
         return jsonData;
     } catch (error) {
         console.error('Error fetching status:', error);
@@ -318,18 +321,18 @@ export async function fetchPipeline(orgId: string, repId: string, pipId: string)
 }
 
 //NOT DONE!
-export async function putRepository(orgId: string, formData: any) {
-    /*
+export async function putRepository(orgId: string, repositoryName: string) {
+    
     const headers = new Headers()
     headers.append("accept", "application/json")
     headers.append("Content-Type", "application/json")
-    */
+    
 
     try {
         const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories`, {
             method: "POST",
-            //headers: headers,
-            body: JSON.stringify(`{"name": "Repository1"}`)
+            headers: headers,
+            body: JSON.stringify({ name: repositoryName })
         });
 
         if (!response.ok) {

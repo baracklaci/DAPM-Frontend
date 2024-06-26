@@ -40,69 +40,27 @@ export default function PersistentDrawerLeft() {
     dispatch(repositoryThunk(organizations));
     dispatch(resourceThunk({ organizations, repositories }));
 
-    /*const fetchResources = async () => {
-        try {
-            console.log('Fetching repository resources...');
-            const testpipeline = await fetchRepositoryResources("43b2c65f-f82c-4aff-b049-ccdac4e02671","8746e302-e56e-46d2-83a2-dda343689a77");
-            console.log("Pipeline data:", testpipeline);
-          } catch (error) {
-            console.error("Error fetching pipeline data:", error);
-          }
-    }
-    
-
-    fetchResources()*/
-
   }, [dispatch]);
 
-
-  /* // fetch pipelines test
-   //Remember to change the IDs
-   useEffect(() => {
-       const fetchTestPipelines = async () => {
-         try {
-           console.log('Fetching repository pipelines...');
-           const testpipeline = await fetchRepositoryPipelines("d87bc490-828f-46c8-aa44-ded7729eaa82", "19da2219-6a12-48b4-a09a-de96444ef81d");
-           console.log("Pipeline data:", testpipeline);
-         } catch (error) {
-           console.error("Error fetching pipeline data:", error);
-         }
-       };
-
-         const fetchTestPipeline = async () => {
-           try {
-             console.log('Fetching pipeline with id...');
-             const testPipeline = await fetchPipeline("d87bc490-828f-46c8-aa44-ded7729eaa82", "19da2219-6a12-48b4-a09a-de96444ef81d", "16c26b8a-c007-4ba0-a0f0-5e1c32fc909a");
-             console.log("pipelineById:", testPipeline);
-           } catch (error) {
-             console.error("Error fetching pipeline data:", error);
-           }
-         };
-   
-       fetchTestPipelines();
-       fetchTestPipeline();
-     }, []);
-*/
   
-    /*useEffect(() => {
+   /* useEffect(() => {
       const postRepository = async () => {
-        const formData = new FormData()
-        formData.append("name", "Pipeline")
+        const repositoryName = "rep1"
   
         try {
           console.log("post repository")
-          const testpost = await putRepository("24dc98f8-702a-4846-b9a7-612fcbb858f4", formData)
+          const testpost = await putRepository("d87bc490-828f-46c8-aa44-ded7729eaa82", repositoryName)
           console.log("repository post: " + testpost)
         } catch (error) {
           console.error("Error posting pipeline:", error);
         }
       }
       postRepository()
-    }, [])*/
-    
+    }, [])
+    */
 
 
-  useEffect(() => {
+ /* useEffect(() => {
     const postPipeline = async () => {
 
       const json = `{
@@ -155,7 +113,7 @@ export default function PersistentDrawerLeft() {
       }
     }
     postPipeline()
-  }, [])
+  }, [])*/
 
 
 

@@ -18,32 +18,6 @@ const UploadButton = ({ orgId, repId }: UploadButtonProps) => {
         setAnchor(anchor ? null : event.currentTarget);
     };
 
-    const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
-
-        if (e.target.files) {
-
-            const file = e.target.files[0];
-            const { name } = file;
-            console.log(name)
-            console.log(orgId)
-            console.log(repId)
-
-            const formData = new FormData();
-            formData.append('Name', name);
-            formData.append('ResourceType', "EventLog")
-            formData.append('ResourceFile', e.target.files[0]);
-
-            try {
-                const result = await putResource(orgId, repId, formData);
-                console.log('Resource successfully uploaded:', result);
-            } catch (error) {
-                console.error('Error uploading resource:', error);
-            }
-        } else {
-            console.error('No file selected.');
-        }
-    }
-
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
