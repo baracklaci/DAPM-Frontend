@@ -13,12 +13,12 @@ import { organizationThunk, repositoryThunk, resourceThunk } from '../../redux/s
 import { Organization, Repository } from '../../redux/states/apiState';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { Box } from '@mui/material';
-import ResourceUploadButton from './ResourceUploadButton';
+import ResourceUploadButton from './Buttons/ResourceUploadButton';
 import { fetchOrganisation, fetchOrganisationRepositories, fetchOrganisations, fetchPipeline, fetchRepositoryPipelines, fetchRepositoryResources, fetchResource, putPipeline, putRepository } from '../../services/backendAPI';
-import CreateRepositoryButton from './CreateRepositoryButton';
-import AddOrganizationButton from './AddOrganizationButton';
+import CreateRepositoryButton from './Buttons/CreateRepositoryButton';
+import AddOrganizationButton from './Buttons/AddOrganizationButton';
 import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
-import OperatorUploadButton from './OperatorUploadButton';
+import OperatorUploadButton from './Buttons/OperatorUploadButton';
 
 const drawerWidth = 240;
 
@@ -133,26 +133,24 @@ export default function PersistentDrawerLeft() {
       <List>
         {organizations.map((organization) => (
           <>
-            <ListItem key={organization.id} disablePadding>
-              <ListItemButton>
-                <ListItemText primary={organization.name} />
-                <CreateRepositoryButton orgId={organization.id} />
-              </ListItemButton>
+            <ListItem sx={{ justifyContent: 'center' }} key={organization.id} disablePadding>
+              <p style={{marginBlock: '0rem'}}>{organization.name}</p>
             </ListItem>
+            <div style={{ display: 'flex', alignItems: 'center', paddingInline: '0.5rem' }}>
+            </div>
             {repositories.map((repository) => (repository.organizationId === organization.id ?
               <>
-                <Box sx={{ display: "flex" }}>
-                  <ListItem key={repository.id}>
-                    <ListItemText secondary={repository.name} />
+                <ListItem key={repository.id}>
+                  <p>{repository.name}</p>
+                </ListItem>
 
-                  </ListItem>
-                </Box>
-
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <p style={{ marginRight: '10px' }}>Resources</p>
-                  <ResourceUploadButton orgId={repository.organizationId} repId={repository.id} />
+                <div style={{ display: 'flex', alignItems: 'center', paddingInline: '0.5rem' }}>
+                  <p style={{fontSize: '0.9rem'}}>Resources</p>
+                  <Box sx={{ marginLeft: 'auto' }}>
+                    <ResourceUploadButton orgId={repository.organizationId} repId={repository.id} />
+                  </Box>
                 </div>
-                {resources.map((resource) => (resource.repositoryId === repository.id && resource.type !== "operator"?
+                {resources.map((resource) => (resource.repositoryId === repository.id && resource.type !== "operator" ?
                   <>
                     <ListItem key={resource.id} disablePadding>
                       <ListItemButton sx={{ paddingBlock: 0 }}>
@@ -162,9 +160,11 @@ export default function PersistentDrawerLeft() {
                   </> : ""
                 ))}
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <p style={{ marginRight: '10px' }}>Operators</p>
-                  <OperatorUploadButton orgId={repository.organizationId} repId={repository.id} />
+                <div style={{ display: 'flex', alignItems: 'center', paddingInline: '0.5rem' }}>
+                  <p style={{fontSize: '0.9rem'}}>Operators</p>
+                  <Box sx={{ marginLeft: 'auto' }}>
+                    <OperatorUploadButton orgId={repository.organizationId} repId={repository.id} />
+                  </Box>
                 </div>
                 {resources.map((resource) => (resource.repositoryId === repository.id && resource.type === "operator" ?
                   <>
@@ -177,6 +177,11 @@ export default function PersistentDrawerLeft() {
                 ))}
               </> : ""
             ))}
+            <ListItem sx={{ justifyContent: 'center' }}>
+              <Box sx={{ width: 'auto', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                <CreateRepositoryButton orgId={organization.id} />
+              </Box>
+            </ListItem>
           </>
         ))}
       </List>
