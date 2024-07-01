@@ -6,7 +6,8 @@ import ReactFlow, {
   useReactFlow,
   useOnSelectionChange,
   Edge,
-  Connection
+  Connection,
+  getOutgoers
 } from "reactflow";
 
 import { onNodesChange, onEdgesChange, onConnect, addNode, removeNode, setNodes, removeEdge, undo, createSnapShot, redo } from "../../redux/slices/pipelineSlice";
@@ -293,14 +294,36 @@ const BasicFlow = () => {
     const sourceHandle = sourceNode?.data.templateData.sourceHandles.find(handle => handle.id === connection.sourceHandle)
     const targetHandle = targetNode?.data.templateData.targetHandles.find(handle => handle.id === connection.targetHandle)
 
+    if (hasCycles(connection)) {
+      return false
+    }
+
     if ( targetNode?.type === "dataSink") {
       return true
     } else {
       if (targetHandle?.type === undefined || sourceHandle?.type  === undefined) {
-        return false
+        return true
       }
       return sourceHandle?.type === targetHandle?.type
     }
+  }
+
+  const hasCycles = (connection: Connection) => {
+    const target = nodes!.find((node) => node.id === connection.target);
+
+    const hasCycle = (node: Node, visited = new Set()) => {
+      if (visited.has(node.id)) return false;
+
+      visited.add(node.id);
+
+      for (const outgoer of getOutgoers(node, nodes!, edges!)) {
+        if (outgoer.id === connection.source) return true;
+        if (hasCycle(outgoer, visited)) return true;
+      }
+    };
+
+    if (target?.id === connection.source) return false;
+    return hasCycle(target!);
   }
 
   return (

@@ -16,6 +16,7 @@ import { Box } from '@mui/material';
 import UploadButton from './UploadButton';
 import { fetchOrganisation, fetchOrganisationRepositories, fetchOrganisations, fetchPipeline, fetchRepositoryPipelines, fetchRepositoryResources, fetchResource, putPipeline, putRepository } from '../../services/backendAPI';
 import CreateRepositoryButton from './CreateRepositoryButton';
+import AddOrganizationButton from './AddOrganizationButton';
 
 const drawerWidth = 240;
 
@@ -125,6 +126,7 @@ export default function PersistentDrawerLeft() {
         <Typography sx={{ width: '100%', textAlign: 'center' }} variant="h6" noWrap component="div">
           Organisations
         </Typography>
+        <AddOrganizationButton />
       </DrawerHeader>
       <List>
         {organizations.map((organization) => (

@@ -69,44 +69,44 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
   }
 
   return (
-    <List sx={{height: 'calc(100vh - 64px)'}}>
+    <List sx={{ height: 'calc(100vh - 64px)' }}>
       <>
-      <header>Template Data</header>
-
+        <header>Template Data</header>
+        <TextField inputProps={{ maxLength: 30 }} value={node?.data.templateData.hint} id="outlined-basic" label="Hint" variant="outlined" onChange={(event) => setHint(event?.target.value as string)} />
         {node?.data.templateData.sourceHandles.map((handle) => {
           return (
-          <ListItem>
-          <Box sx={{ width: '100%', display: "flex", flexDirection: "column" }}>
-            <InputLabel id="demo-simple-select-standard-label">Please select the output type</InputLabel>
-            <Select
-              labelId="algorithm-simple-select-label"
-              id="algorithm-simple-select"
-              value={handle.type}
-              sx={{ width: '100%' }}
-              onChange={(event) => setSourceType(event?.target.value as string, handle.id)}
-            >
-            {dataTypes.map((resource) => <MenuItem value={resource}>{resource}</MenuItem>)}
-            </Select>
-          </Box>
-        </ListItem>
+            <ListItem>
+              <Box sx={{ width: '100%', display: "flex", flexDirection: "column" }}>
+                <InputLabel id="demo-simple-select-standard-label">Please select the output type</InputLabel>
+                <Select
+                  labelId="algorithm-simple-select-label"
+                  id="algorithm-simple-select"
+                  value={handle.type}
+                  sx={{ width: '100%' }}
+                  onChange={(event) => setSourceType(event?.target.value as string, handle.id)}
+                >
+                  {dataTypes.map((resource) => <MenuItem value={resource}>{resource}</MenuItem>)}
+                </Select>
+              </Box>
+            </ListItem>
           )
         })}
         {node?.data.templateData.targetHandles.map((handle) => {
-          return(
-          <ListItem>
-          <Box sx={{ width: '100%', display: "flex", flexDirection: "column" }}>
-            <InputLabel id="demo-simple-select-standard-label">Please select the input type</InputLabel>
-            <Select
-              labelId="algorithm-simple-select-label"
-              id="algorithm-simple-select"
-              value={handle.type}
-              sx={{ width: '100%' }}
-              onChange={(event) => setTargetType(event?.target.value as string, handle.id)}
-            >
-            {dataTypes.map((resource) => <MenuItem value={resource}>{resource}</MenuItem>)}
-            </Select>
-          </Box>
-        </ListItem>
+          return (
+            <ListItem>
+              <Box sx={{ width: '100%', display: "flex", flexDirection: "column" }}>
+                <InputLabel id="demo-simple-select-standard-label">Please select the input type</InputLabel>
+                <Select
+                  labelId="algorithm-simple-select-label"
+                  id="algorithm-simple-select"
+                  value={handle.type}
+                  sx={{ width: '100%' }}
+                  onChange={(event) => setTargetType(event?.target.value as string, handle.id)}
+                >
+                  {dataTypes.map((resource) => <MenuItem value={resource}>{resource}</MenuItem>)}
+                </Select>
+              </Box>
+            </ListItem>
           )
         })}
 
@@ -116,7 +116,6 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
         </ListItem>
         <ListItem>
           <Box sx={{ width: '100%', display: "flex", flexDirection: "column" }}>
-            <TextField inputProps={{ maxLength:30 }} value={node?.data.label} id="outlined-basic" label="Hint" variant="outlined" onChange={(event) => setHint(event?.target.value as string)} />
             <InputLabel id="demo-simple-select-standard-label">Please select algorithm</InputLabel>
             <Select
               labelId="algorithm-simple-select-label"

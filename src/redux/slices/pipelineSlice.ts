@@ -11,7 +11,7 @@ export const initialState: PipelineState = {
 const takeSnapshot = (state: PipelineState) => {
   var activePipeline = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)
   if (!activePipeline) return
-  activePipeline?.history?.past?.push({nodes: activePipeline.flowData.nodes, edges: activePipeline.flowData.edges})
+  activePipeline?.history?.past?.push({nodes: activePipeline.pipeline.nodes, edges: activePipeline.pipeline.edges})
 }
 
 const pipelineSlice = createSlice({
@@ -19,7 +19,7 @@ const pipelineSlice = createSlice({
   initialState: initialState,
   reducers: {
     addNewPipeline: (state, { payload }: PayloadAction<{ id: string, flowData: NodeState }>) => {
-      state.pipelines.push({ id: payload.id, name: 'unnamed pipeline', flowData: payload.flowData, history: { past: [], future: []}, imgData: '' } as PipelineData)
+      state.pipelines.push({ id: payload.id, name: 'unnamed pipeline', pipeline: payload.flowData, history: { past: [], future: []}, imgData: '' } as PipelineData)
       state.activePipelineId = payload.id
     },
     setActivePipeline: (state, { payload }: PayloadAction<string>) => {
@@ -39,9 +39,9 @@ const pipelineSlice = createSlice({
       const pastState = activePipeline?.history?.past?.pop()
       if (!pastState) return
 
-      activePipeline.history.future.push({nodes: activePipeline.flowData.nodes, edges: activePipeline.flowData.edges})
-      activePipeline.flowData.nodes = pastState.nodes
-      activePipeline.flowData.edges = pastState.edges
+      activePipeline.history.future.push({nodes: activePipeline.pipeline.nodes, edges: activePipeline.pipeline.edges})
+      activePipeline.pipeline.nodes = pastState.nodes
+      activePipeline.pipeline.edges = pastState.edges
     },
     redo(state){
       var activePipeline = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)
@@ -49,8 +49,8 @@ const pipelineSlice = createSlice({
       const futureState = activePipeline?.history?.future?.pop()
       if (!futureState) return
 
-      activePipeline.flowData.nodes = futureState.nodes
-      activePipeline.flowData.edges = futureState.edges
+      activePipeline.pipeline.nodes = futureState.nodes
+      activePipeline.pipeline.edges = futureState.edges
     },
     createSnapShot(state){
       takeSnapshot(state)
@@ -64,13 +64,13 @@ const pipelineSlice = createSlice({
       activePipeline!.name = payload
     },
     addHandle: (state, { payload }: PayloadAction<string>) => {
-      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
+      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.pipeline
       activeFlowData?.nodes.find(node => node.id === payload)?.data?.templateData?.sourceHandles.push({ type: 'source', id: "1" })
     },
     updateSourceHandle: (state, { payload }: PayloadAction<{ nodeId?: string, handleId?: string, newType?: string }>) => {
       const { nodeId, handleId, newType } = payload;
       // Find the active pipeline based on the activePipelineId
-      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
+      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.pipeline
       
       if (!activeFlowData) return; // Early exit if no active pipeline is found
     
@@ -93,7 +93,7 @@ const pipelineSlice = createSlice({
     updateTargetHandle: (state, { payload }: PayloadAction<{ nodeId?: string, handleId?: string, newType?: string }>) => {
       const { nodeId, handleId, newType } = payload;
       // Find the active pipeline based on the activePipelineId
-      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
+      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.pipeline
       
       if (!activeFlowData) return; // Early exit if no active pipeline is found
     
@@ -116,19 +116,19 @@ const pipelineSlice = createSlice({
     
     updateNode: (state, { payload }: PayloadAction<Node<NodeData> | undefined>) => {
       if (!payload) return
-      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
+      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.pipeline
       if (!activeFlowData) return
       const index = activeFlowData?.nodes.findIndex(node => node.id === payload.id)
       activeFlowData.nodes[index] = payload
     },
     addNode: (state, { payload }: PayloadAction<Node>) => {
-      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
+      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.pipeline
       if (!activeFlowData) return
       
       activeFlowData.nodes.push(payload)
     },
     removeNode: (state, { payload }: PayloadAction<Node<NodeData>>) => {
-      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
+      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.pipeline
       if (!activeFlowData) return
       //takeSnapshot(state)
 
@@ -138,7 +138,7 @@ const pipelineSlice = createSlice({
         !payload.data?.templateData?.targetHandles.find(data => data.id === edge.targetHandle))
     },
     removeEdge: (state, { payload }: PayloadAction<Edge>) => {
-      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
+      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.pipeline
       if (!activeFlowData) return
       //takeSnapshot(state)
 
@@ -146,7 +146,7 @@ const pipelineSlice = createSlice({
     },
     updateEdge: (state, { payload }: PayloadAction<Edge<EdgeData> | undefined>) => {
       if (!payload) return
-      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
+      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.pipeline
       if (!activeFlowData) return
       const index = activeFlowData.edges.findIndex(edge => edge.id === payload.id)
       const strokeColor = payload.data?.filename === undefined || payload.data?.filename === '' || payload.data?.filename === null ? 'red' : 'white'
@@ -154,19 +154,19 @@ const pipelineSlice = createSlice({
     },
     // From react flow example
     onNodesChange: (state, { payload }: PayloadAction<NodeChange[]>) => {
-      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
+      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.pipeline
       if (!activeFlowData) return
 
       activeFlowData.nodes = applyNodeChanges(payload, activeFlowData.nodes);
     },
     onEdgesChange: (state, { payload }: PayloadAction<EdgeChange[]>) => {
-      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
+      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.pipeline
       if (!activeFlowData) return
 
       activeFlowData.edges = applyEdgeChanges(payload, activeFlowData.edges);
     },
     onConnect: (state, { payload }: PayloadAction<Connection>) => {
-      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
+      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.pipeline
       if (!activeFlowData) return
       takeSnapshot(state)
 
@@ -175,13 +175,13 @@ const pipelineSlice = createSlice({
       activeFlowData.edges = addFlowEdge({ ...payload, type: 'default'}, activeFlowData.edges);
     },
     setNodes: (state, { payload }: PayloadAction<Node[]>) => {
-      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
+      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.pipeline
       if (!activeFlowData) return
 
       activeFlowData.nodes = payload;
     },
     setEdges: (state, { payload }: PayloadAction<Edge[]>) => {
-      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.flowData
+      var activeFlowData = state.pipelines.find(pipeline => pipeline.id === state.activePipelineId)?.pipeline
       if (!activeFlowData) return
 
       activeFlowData.edges = payload;
