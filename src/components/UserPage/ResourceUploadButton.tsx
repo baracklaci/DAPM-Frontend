@@ -8,7 +8,7 @@ export interface UploadButtonProps {
     repId: string,
 }
 
-const UploadButton = ({ orgId, repId }: UploadButtonProps) => {
+const ResourceUploadButton = ({ orgId, repId }: UploadButtonProps) => {
 
     const dataTypes = ["eventLog", "bpmnModel", "petriNet"]
 
@@ -58,7 +58,7 @@ const UploadButton = ({ orgId, repId }: UploadButtonProps) => {
                 open={open}
                 anchor={anchor}
                 placement="right"
-                offset={30}
+                offset={60}
             >
                 <div
                     style={{
@@ -94,4 +94,4 @@ const UploadButton = ({ orgId, repId }: UploadButtonProps) => {
     );
 }
 
-export default UploadButton;
+export default ResourceUploadButton;

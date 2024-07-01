@@ -538,3 +538,45 @@ export async function putCommandStart(orgId: string, repId: string, pipeId: stri
         throw error; // Propagate error to the caller
     }
 }
+
+export async function putOperator(orgId: string, repId: string, formData: FormData) {
+    try {
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}/resources/operators`, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error('put res, Network response was not ok');
+        }
+
+        const jsonData = await response.json();
+
+        // Fetch additional data recursively
+        const getData = async (ticketId: string): Promise<any> => {
+            const maxRetries = 10;
+            const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+            for (let retries = 0; retries < maxRetries; retries++) {
+                try {
+                    const data = await fetchStatus(ticketId);
+                    if (data.status) {
+                        return data;
+                    }
+                    await delay(1000); // Wait for 1 second before retrying
+                } catch (error) {
+                    if (retries === maxRetries - 1) {
+                        throw new Error('Max retries reached');
+                    }
+                }
+            }
+            throw new Error('Failed to fetch data');
+        };
+
+        // Call getData function with the ticketId obtained from fetchOrganisations
+        return await getData(jsonData.ticketId);
+    } catch (error) {
+        console.error('put res, Error fetching data:', error);
+        throw error; // Propagate error to the caller
+    }
+}
