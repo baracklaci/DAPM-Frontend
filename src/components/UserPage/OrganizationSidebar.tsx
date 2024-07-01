@@ -13,10 +13,12 @@ import { organizationThunk, repositoryThunk, resourceThunk } from '../../redux/s
 import { Organization, Repository } from '../../redux/states/apiState';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { Box } from '@mui/material';
-import UploadButton from './UploadButton';
+import ResourceUploadButton from './ResourceUploadButton';
 import { fetchOrganisation, fetchOrganisationRepositories, fetchOrganisations, fetchPipeline, fetchRepositoryPipelines, fetchRepositoryResources, fetchResource, putPipeline, putRepository } from '../../services/backendAPI';
 import CreateRepositoryButton from './CreateRepositoryButton';
 import AddOrganizationButton from './AddOrganizationButton';
+import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
+import OperatorUploadButton from './OperatorUploadButton';
 
 const drawerWidth = 240;
 
@@ -142,9 +144,28 @@ export default function PersistentDrawerLeft() {
                 <Box sx={{ display: "flex" }}>
                   <ListItem key={repository.id}>
                     <ListItemText secondary={repository.name} />
-                    <UploadButton orgId={repository.organizationId} repId={repository.id} />
+
                   </ListItem>
                 </Box>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <p style={{ marginRight: '10px' }}>Resources</p>
+                  <ResourceUploadButton orgId={repository.organizationId} repId={repository.id} />
+                </div>
+                {resources.map((resource) => (resource.repositoryId === repository.id ?
+                  <>
+                    <ListItem key={resource.id} disablePadding>
+                      <ListItemButton sx={{ paddingBlock: 0 }}>
+                        <ListItemText secondary={resource.name} secondaryTypographyProps={{ fontSize: "0.8rem" }} />
+                      </ListItemButton>
+                    </ListItem>
+                  </> : ""
+                ))}
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <p style={{ marginRight: '10px' }}>Operators</p>
+                  <OperatorUploadButton orgId={repository.organizationId} repId={repository.id} />
+                </div>
                 {resources.map((resource) => (resource.repositoryId === repository.id ?
                   <>
                     <ListItem key={resource.id} disablePadding>
