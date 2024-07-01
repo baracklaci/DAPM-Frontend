@@ -152,7 +152,7 @@ export default function PersistentDrawerLeft() {
                   <p style={{ marginRight: '10px' }}>Resources</p>
                   <ResourceUploadButton orgId={repository.organizationId} repId={repository.id} />
                 </div>
-                {resources.map((resource) => (resource.repositoryId === repository.id ?
+                {resources.map((resource) => (resource.repositoryId === repository.id && resource.type !== "operator"?
                   <>
                     <ListItem key={resource.id} disablePadding>
                       <ListItemButton sx={{ paddingBlock: 0 }}>
@@ -166,7 +166,7 @@ export default function PersistentDrawerLeft() {
                   <p style={{ marginRight: '10px' }}>Operators</p>
                   <OperatorUploadButton orgId={repository.organizationId} repId={repository.id} />
                 </div>
-                {resources.map((resource) => (resource.repositoryId === repository.id ?
+                {resources.map((resource) => (resource.repositoryId === repository.id && resource.type === "operator" ?
                   <>
                     <ListItem key={resource.id} disablePadding>
                       <ListItemButton sx={{ paddingBlock: 0 }}>

@@ -6,9 +6,10 @@ import ListItemText from '@mui/material/ListItemText';
 import { Node, useUpdateNodeInternals } from "reactflow";
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import { Algorithm, NodeData, OperatorNodeData, OperatorTemplateData } from '../../../redux/states/pipelineState';
+import { Algorithm, NodeData, OperatorNodeData, OperatorTemplateData, OrganizationNodeData } from '../../../redux/states/pipelineState';
 import { getNodes } from '../../../redux/selectors';
 import { addHandle, updateNode, updateSourceHandle, updateTargetHandle } from '../../../redux/slices/pipelineSlice';
+import { getResources } from '../../../redux/selectors/apiSelector';
 
 
 export interface AlgorithmConfugurationProps {
@@ -23,9 +24,12 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
 
   const node = useSelector(getNodes)?.find(node => node.id === nodeprop?.id) as Node<OperatorNodeData> | undefined;
 
-  const parentNode = useSelector(getNodes)?.find(n => n.id === node?.parentNode);
+  const parentNode = useSelector(getNodes)?.find(n => n.id === node?.parentNode) as Node<OrganizationNodeData> | undefined;
 
-  const dataTypes = ["eventLog", "bpmnModel", "petriNet"]
+  const resources = useSelector(getResources).filter(resource => resource.type === "operator" && resource.organizationId === parentNode?.data?.instantiationData.organization?.id);
+
+
+  const dataTypes = ["eventlog", "bpmnmodel", "petrinet"]
 
 
   const setAlgorithm = (algorithm: string) => {
@@ -124,36 +128,10 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
               sx={{ width: '100%' }}
               onChange={(event) => setAlgorithm(event?.target.value as string)}
             >
-              <MenuItem value={"Alpha Miner"}>Alpha Miner</MenuItem>
-              <MenuItem value={"Heuristic Miner"}>Heuristic Miner</MenuItem>
-              <MenuItem value={"Fuzzy Miner"}>Fuzzy Miner</MenuItem>
+              {resources.map((resource) => <MenuItem value={resource.name}>{resource.name}</MenuItem>)}
             </Select>
           </Box>
         </ListItem>
-        <ListItem>
-          <ListItemText primary={"Inputs"} />
-        </ListItem>
-        {node?.data.templateData.sourceHandles?.map(handle =>
-          <ListItem>
-            <ListItemText primary={`type: ${handle.type}`} />
-          </ListItem>
-        )}
-        <ListItem>
-          <ListItemButton onClick={() => {
-            dispatch(addHandle(node?.id ?? ""))
-            updateNodesInternal(node?.id ?? "")
-          }}>
-            <ListItemText primary={"Add more"} />
-          </ListItemButton>
-        </ListItem>
-        <ListItem>
-          <ListItemText primary={"Outputs"} />
-        </ListItem>
-        {node?.data.templateData.targetHandles?.map(handle =>
-          <ListItem>
-            <ListItemText primary={`type: ${handle.type}`} />
-          </ListItem>
-        )}
       </>
     </List>
   );
