@@ -39,7 +39,7 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
         data: {
           ...node?.data!,
           instantiationData: {
-            algorithm: { name: algorithm, organizationId: "", repositoryId: "", algorithmId: "" } as Algorithm
+            algorithm: resources.find(r => r.id === algorithm) as Algorithm
           }
         }
       }))
@@ -128,7 +128,7 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
               sx={{ width: '100%' }}
               onChange={(event) => setAlgorithm(event?.target.value as string)}
             >
-              {resources.map((resource) => <MenuItem value={resource.name}>{resource.name}</MenuItem>)}
+              {resources.map((resource) => <MenuItem value={resource.id}>{resource.name}</MenuItem>)}
             </Select>
           </Box>
         </ListItem>

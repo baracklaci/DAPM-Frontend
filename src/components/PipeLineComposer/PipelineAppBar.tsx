@@ -39,6 +39,8 @@ export default function PipelineAppBar() {
 
   const generateJson = () => {
 
+    console.log(flowData)
+
     const dataSinks = flowData?.edges.map((edge) => {
       if (edge.data?.filename) {
         const originalDataSink = flowData.nodes.find(node => node.id === edge.target)
@@ -49,7 +51,9 @@ export default function PipelineAppBar() {
           label: ''
         } as DataSinkNodeData
       }
-    })
+    }).filter(node => node !== undefined) as DataSinkNodeData[]
+
+    console.log(JSON.stringify(dataSinks))
 
     const requestData = {
       name: pipelineName,

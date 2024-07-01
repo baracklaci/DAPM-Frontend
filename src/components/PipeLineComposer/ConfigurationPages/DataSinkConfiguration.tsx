@@ -30,7 +30,7 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
         data: {
           ...node?.data!,
           instantiationData: {
-            repository: { name: repository, organizationId: 1, id: 1 }
+            repository: repositories.find(r => r.id === repository)
           }
         }
       }))
@@ -52,7 +52,7 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
               sx={{ width: '100%' }}
               onChange={(event) => setLogData(event?.target.value as string)}
             >
-              {repositories.map((repository) => <MenuItem value={repository.name}>{repository.name}</MenuItem>)}
+              {repositories.map((repository) => <MenuItem value={repository.id}>{repository.name}</MenuItem>)}
             </Select>
           </Box>
         </ListItem>

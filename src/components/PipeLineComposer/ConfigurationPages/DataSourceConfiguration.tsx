@@ -32,7 +32,7 @@ export default function DataSourceConfiguration({ nodeprop }: AlgorithmConfugura
         data: {
           ...node?.data!,
           instantiationData: {
-            resource: { name: resource, organizationId: 1, repositoryId: 1, id: 1, type: "eventlog" }
+            resource: resources.find(r => r.id === resource)
           }
         }
       }))
@@ -84,7 +84,7 @@ export default function DataSourceConfiguration({ nodeprop }: AlgorithmConfugura
                 sx={{ width: '100%' }}
                 onChange={(event) => setLogData(event?.target.value as string)}
               >
-              {resources.map((resource) => <MenuItem value={resource.name}>{resource.name}</MenuItem>)}
+              {resources.map((resource) => <MenuItem value={resource.id}>{resource.name}</MenuItem>)}
               </Select>
             </Box>
           </ListItem>
