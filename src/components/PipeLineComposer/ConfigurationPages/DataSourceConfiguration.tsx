@@ -21,9 +21,9 @@ export default function DataSourceConfiguration({ nodeprop }: AlgorithmConfugura
 
   const parentNode = useSelector(getNodes)?.find(n => n.id === node?.parentNode) as Node<OrganizationNodeData> | undefined;
 
-  const resources = useSelector(getResources).filter(resource => resource.organizationId === parentNode?.data?.instantiationData.organization?.id);
+  const resources = useSelector(getResources).filter(resource => resource.type !== "operator" && resource.organizationId === parentNode?.data?.instantiationData.organization?.id);
 
-  const dataTypes = ["eventLog", "bpmnModel", "petriNet"]
+  const dataTypes = ["eventlog", "bpmnmodel", "petrinet"]
 
   const setLogData = (resource: string) => {
     dispatch(updateNode(
@@ -32,7 +32,7 @@ export default function DataSourceConfiguration({ nodeprop }: AlgorithmConfugura
         data: {
           ...node?.data!,
           instantiationData: {
-            resource: { name: resource, organizationId: 1, repositoryId: 1, id: 1, type: "eventLog" }
+            resource: { name: resource, organizationId: 1, repositoryId: 1, id: 1, type: "eventlog" }
           }
         }
       }))
