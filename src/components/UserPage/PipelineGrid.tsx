@@ -35,7 +35,7 @@ export default function AutoGrid() {
     { navigate("/pipeline") }
   }
 
-  pipelines.map(({ flowData, id, name }) => {
+  pipelines.map(({ pipeline: flowData, id, name }) => {
     const nodes = flowData.nodes;
     const edges = flowData.edges;
     //console.log(name, nodes, edges);

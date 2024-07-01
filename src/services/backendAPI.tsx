@@ -456,3 +456,47 @@ export async function putPipeline(orgId: string, repId: string, pipelineData:any
         throw error; // Propagate error to the caller
     }
 }
+
+export async function PostNewPeer(domainName: string) {
+    try {
+        const formData = new FormData();
+        formData.append('targetPeerDomain', domainName);
+
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+
+        const response = await fetch(`http://` + path +`/system/collab-handshake`, {
+            method: "POST",
+            body: JSON.stringify({targetPeerDomain: domainName}),
+            headers: headers
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const jsonData = await response.json();
+
+        // Fetch additional data recursively
+        var retryNumber = 0;
+        const getData = async (ticketId: string): Promise<any> => {
+            try {
+                const data = await fetchStatus(ticketId);
+                if (!data.status && retryNumber < 10) {
+                    retryNumber++;
+                    return await getData(ticketId); // Recursive call
+                } else {
+                    return data; // Return data once condition is met
+                }
+            } catch (error) {
+                throw error; // Propagate error to the outer catch block
+            }
+        };
+
+        // Call getData function with the ticketId obtained from fetchOrganisations
+        return await getData(jsonData.ticketId);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error; // Propagate error to the caller
+    }
+}

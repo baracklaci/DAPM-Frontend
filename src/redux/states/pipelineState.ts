@@ -20,7 +20,7 @@ export interface HistoryItem {
 export interface PipelineData {
     id: string;
     name: string;
-    flowData: NodeState;
+    pipeline: NodeState;
     imgData: string;
     history: HistoryData;
 }
@@ -87,6 +87,7 @@ export interface DataSourceInstantiationData extends BaseInstantiationData {
 
 export interface DataSinkInstantiationData extends BaseInstantiationData {
   repository?: Repository;
+  name?: string;
 }
 
 export interface OperatorInstantiationData extends BaseInstantiationData {
