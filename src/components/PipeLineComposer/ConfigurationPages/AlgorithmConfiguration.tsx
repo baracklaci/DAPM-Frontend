@@ -124,7 +124,7 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
             <Select
               labelId="algorithm-simple-select-label"
               id="algorithm-simple-select"
-              value={node?.data?.instantiationData?.algorithm?.name ?? ""}
+              value={node?.data?.instantiationData?.algorithm?.id ?? ""}
               sx={{ width: '100%' }}
               onChange={(event) => setAlgorithm(event?.target.value as string)}
             >

@@ -100,7 +100,7 @@ export interface OrganizationInstantiationData extends BaseInstantiationData {
 export interface Algorithm {
   organizationId?: string;
   repositoryId?: string;
-  algorithmId?: string;
+  id?: string;
   name: string;
 }
 

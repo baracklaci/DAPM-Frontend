@@ -26,6 +26,7 @@ export default function DataSourceConfiguration({ nodeprop }: AlgorithmConfugura
   const dataTypes = ["eventlog", "bpmnmodel", "petrinet"]
 
   const setLogData = (resource: string) => {
+    console.log(resource)
     dispatch(updateNode(
       {
         ...node!,
@@ -80,7 +81,7 @@ export default function DataSourceConfiguration({ nodeprop }: AlgorithmConfugura
               <Select
                 labelId="algorithm-simple-select-label"
                 id="algorithm-simple-select"
-                value={node?.data.instantiationData?.resource?.name ?? ""}
+                value={node?.data.instantiationData?.resource?.id ?? ""}
                 sx={{ width: '100%' }}
                 onChange={(event) => setLogData(event?.target.value as string)}
               >

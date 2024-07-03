@@ -48,7 +48,7 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
             <Select
               labelId="algorithm-simple-select-label"
               id="algorithm-simple-select"
-              value={node?.data.instantiationData?.repository?.name ?? ""}
+              value={node?.data.instantiationData?.repository?.id ?? ""}
               sx={{ width: '100%' }}
               onChange={(event) => setLogData(event?.target.value as string)}
             >
