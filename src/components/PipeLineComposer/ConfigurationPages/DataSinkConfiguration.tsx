@@ -2,7 +2,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import { Node } from "reactflow";
 import { Box, InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
-import { DataSinkNodeData, NodeData } from '../../../redux/states/pipelineState';
+import { DataSinkNodeData, NodeData, OrganizationNodeData } from '../../../redux/states/pipelineState';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateNode } from '../../../redux/slices/pipelineSlice';
 import { getNodes } from '../../../redux/selectors';
@@ -19,9 +19,9 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
 
   const node = useSelector(getNodes)?.find(node => node.id === nodeprop?.id)  as Node<DataSinkNodeData> | undefined;;
 
-  const parentNode = useSelector(getNodes)?.find(n => n.id === node?.parentNode);
+  const parentNode = useSelector(getNodes)?.find(n => n.id === node?.parentNode) as Node<OrganizationNodeData> | undefined;
 
-  const repositories = useSelector(getRepositories);
+  const repositories = useSelector(getRepositories).filter(repository => repository.organizationId === parentNode?.data?.instantiationData?.organization?.id);
 
   const setLogData = (repository: string) => {
     dispatch(updateNode(
