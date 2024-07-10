@@ -411,7 +411,7 @@ export async function putResource(orgId: string, repId: string, formData: FormDa
     }
 }
 
-export async function putPipeline(orgId: string, repId: string, pipelineData:any) {
+export async function putPipeline(orgId: string, repId: string, pipelineData:any){
     console.log(pipelineData)
     try {
         const response = await fetch(`http://${path}/Organizations/${orgId}/repositories/${repId}/pipelines`, {
@@ -437,7 +437,7 @@ export async function putPipeline(orgId: string, repId: string, pipelineData:any
                 try {
                     const data = await fetchStatus(ticketId);
                     if (data.status) {
-                        return data;
+                        return data.result.itemIds.pipelineId as string;
                     }
                     await delay(1000); // Wait for 1 second before retrying
                 } catch (error) {
@@ -478,7 +478,7 @@ export async function putExecution(orgId: string, repId: string, pipeId: string)
                 try {
                     const data = await fetchStatus(ticketId);
                     if (data.status) {
-                        return data;
+                        return data.result.itemIds.executionId as string;;
                     }
                     await delay(1000); // Wait for 1 second before retrying
                 } catch (error) {

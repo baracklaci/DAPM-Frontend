@@ -48,7 +48,7 @@ const ReactFlowStyled = styled(ReactFlow)`
 
 const getId = () => `node-${uuidv4()}`;
 
-const getHandleId = () => `handle-${uuidv4()}`;
+export const getHandleId = () => `handle-${uuidv4()}`;
 
 const BasicFlow = () => {
   const dispatch = useDispatch()
