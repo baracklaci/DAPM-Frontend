@@ -46,7 +46,7 @@ const ReactFlowStyled = styled(ReactFlow)`
   background-color: #333;
 `;
 
-const getId = () => `node-${uuidv4()}`;
+export const getNodeId = () => `node-${uuidv4()}`;
 
 export const getHandleId = () => `handle-${uuidv4()}`;
 
@@ -170,7 +170,7 @@ const BasicFlow = () => {
       const nodeStyle = type === 'organization' ? { width: 400, height: 200, zIndex: -1000 } : undefined;
 
       const newNode: Node<NodeData> = {
-        id: getId(),
+        id: getNodeId(),
         type,
         position,
         style: nodeStyle,

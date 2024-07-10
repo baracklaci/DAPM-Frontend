@@ -10,7 +10,7 @@ import { Node } from "reactflow";
 import { DataSinkNodeData, DataSourceNodeData, OperatorNodeData } from "../../redux/states/pipelineState";
 import { putCommandStart, putExecution, putPipeline } from "../../services/backendAPI";
 import { getOrganizations, getRepositories } from "../../redux/selectors/apiSelector";
-import { getHandleId } from "./Flow";
+import { getHandleId, getNodeId } from "./Flow";
 
 export default function PipelineAppBar() {
   const navigate = useNavigate();
@@ -56,9 +56,20 @@ export default function PipelineAppBar() {
         const originalDataSink = flowData!.nodes.find(node => node.id === edge.target) as Node<DataSinkNodeData>
         return {
           type: originalDataSink?.type,
-          data: { ...originalDataSink?.data, templateData: { targetHandles: [{ id: newTarget }], sourceHandles: [] }, instantiationData: { resource: { ...originalDataSink?.data?.instantiationData.repository, name: edge?.data?.filename } } },
+          data: {
+            ...originalDataSink?.data,
+            templateData: { sourceHandles: [], targetHandles: [{ id: newTarget }] },
+            instantiationData: {
+              resource: {
+                //...originalDataSink?.data?.instantiationData.repository, 
+                organizationId: originalDataSink?.data?.instantiationData.repository?.organizationId,
+                repositoryId: originalDataSink?.data?.instantiationData.repository?.id,
+                name: edge?.data?.filename
+              }
+            }
+          },
           position: { x: 100, y: 100 },
-          id: "id1",
+          id: getNodeId(),
           width: 100,
           height: 100,
         }
@@ -72,14 +83,35 @@ export default function PipelineAppBar() {
       pipeline: {
         nodes: flowData?.nodes?.filter(node => node.type === 'dataSource').map(node => node as Node<DataSourceNodeData>).map(node => {
           return {
-            type: node.type, data: { ...node.data, instantiationData: { resource: { ...node?.data?.instantiationData.resource }, label: "" } },
-            width: 100, height: 100, position: { x: 100, y: 100 }, id: "id1", label: "",
+            type: node.type,
+            data: {
+              ...node.data,
+              instantiationData: {
+                resource: {
+                  //...node?.data?.instantiationData.resource,
+                  organizationId: node?.data?.instantiationData.resource?.organizationId,
+                  repositoryId: node?.data?.instantiationData.resource?.repositoryId,
+                  resourceId: node?.data?.instantiationData.resource?.id,
+                },
+              }
+            },
+            width: 100, height: 100, position: { x: 100, y: 100 }, id: node.id, label: "",
           } as any
         }).concat(
           flowData?.nodes?.filter(node => node.type === 'operator').map(node => node as Node<OperatorNodeData>).map(node => {
             return {
-              type: node.type, data: { ...node.data, instantiationData: { resource: { ...node?.data?.instantiationData.algorithm }, label: "" } },
-              width: 100, height: 100, position: { x: 100, y: 100 }, id: "id1", label: "",
+              type: node.type, data: {
+                ...node.data,
+                instantiationData: {
+                  resource: {
+                    //...node?.data?.instantiationData.algorithm,
+                    organizationId: node?.data?.instantiationData.algorithm?.organizationId,
+                    repositoryId: node?.data?.instantiationData.algorithm?.repositoryId,
+                    resourceId: node?.data?.instantiationData.algorithm?.id,
+                  }
+                }
+              },
+              width: 100, height: 100, position: { x: 100, y: 100 }, id: node.id, label: "",
             } as any
           })
         ).concat(dataSinks),
@@ -90,7 +122,7 @@ export default function PipelineAppBar() {
     }
 
     console.log(JSON.stringify(requestData))
-    
+
     const selectedOrg = organizations[0]
     const selectedRepo = repositories.filter(repo => repo.organizationId === selectedOrg.id)[0]
 
@@ -123,7 +155,7 @@ export default function PipelineAppBar() {
           )}
         </Box>
         <Button onClick={() => generateJson()}>
-          <Typography variant="body1" sx={{ color: "white" }}>Generate json</Typography>
+          <Typography variant="body1" sx={{ color: "white" }}>Deploy pipeline</Typography>
         </Button>
       </Toolbar>
     </AppBar>
