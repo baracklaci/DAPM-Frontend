@@ -7,10 +7,15 @@ import rootReducer from "./redux/slices";
 
 import { persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
-import { RouterProvider, createBrowserRouter, createHashRouter } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import PipelineComposer from "./routes/PipeLineComposer";
 import UserPage from "./routes/UserPage";
+import Login from "./routes/Login";
+import Register from "./routes/Register";
+import Account from "./routes/Account";
+import { useEffect, useState } from "react";
 import { loadState, saveState } from "./redux/browser-storage";
+import { getAuth } from "./services/authAPI";
 
 // Configure redux-persist
 const persistConfig = {
@@ -43,25 +48,75 @@ export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
 
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <UserPage/>,
-
-  },
-  {
-    path: "/pipeline",
-    element: <PipelineComposer/>,
-  }
-]);
-
 export default function App() {
+
+  
+
+  const routes = [
+    {
+      path: "/",
+      element: <UserPage/>,
+
+    },
+    {
+      path: "/pipeline",
+      element: <PipelineComposer/>,
+    },
+    {
+      path: "/login",
+      element: <Login />,
+    },
+    {
+      path: "/register",
+      element: <Register />,
+    },
+    {
+      path: "/account",
+      element: <Account />,
+    },
+  ];
+
+  useEffect(() => {
+    // queryAuth();
+    setPath(window.location.pathname);
+  }, []);
+
+  const [path, setPath] = useState('');
+  const [auth, setAuth] = useState(true);
+
+  const queryAuth = () => {
+    const path = window.location.pathname;
+    if (path !== '/login' && path !== '/register' && path !== '/') {
+      getAuth().then((result) => {
+        result.json().then(response => {
+          const { code } = response;
+          if (code !== 200) {
+            console.log('Current authentication failure');
+            setAuth(false);
+          }
+        });
+      });
+    }
+  };
+
   return (
     <ThemeProvider theme={darkTheme}>
       <div className="App">
         <Provider store={store}>
-          <RouterProvider router={router} />
+        <BrowserRouter>
+            <Routes>
+              {
+                routes.map(({ path, element, ...route }) =>
+                  <Route
+                    key={path}
+                    path={path}
+                    element={(auth || path === '/login' || path === '/register' || path === '/') ? element : <Navigate to='/login' />}
+                    {...route}
+                  />
+                )
+              }
+            </Routes>
+          </BrowserRouter>
         </Provider>
       </div>
     </ThemeProvider>
