@@ -23,7 +23,9 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { queryAccount } from '../services/user'
+import { queryAccount, updataPermission, UpdateUserRole } from '../services/user'
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -78,6 +80,14 @@ const ActionItems = ({record: { row }, ...props}: any) => {
     const [open, setOpen] = React.useState(false);
     const [type, setType] = React.useState('');
     const [item, setItem] = React.useState({})
+    const [load, setLoad] = useState(false)
+
+    useEffect(() => {
+        if (load && typeof props.load === 'function') {
+                props.load()
+        }
+    }, [load])
+
 
     return (
         <React.Fragment>
@@ -95,27 +105,75 @@ const ActionItems = ({record: { row }, ...props}: any) => {
                 openCallBack={(state: any) => setOpen(state)}
                 typeCallBack={(type: any) => setType(type)} 
                 itemCallBack={(item: any) => setItem(item)} 
+                loadCallback={(state: any)=> setLoad(state)}
             />
         </React.Fragment>
     )
 }
-
 const CustomDialog = (props: any) => {
     
     const validateForm = (values: any) => {
         const errors: any = {};
-        if (!values.lastName) {
-            errors.lastName = 'Required';
-        }
-        if (!values.firstName) {
-            errors.firstName = 'Required';
+
+
+        if (props.type === 'permission') {
+            if (!values.field) {
+                errors.field = 'Required';
+            }
+            if (!values.code) {
+                errors.code = 'Required';
+            }
+        } else {
+
         }
         return errors;
     }
 
-    // 点击提交
-    const handleSubmit = (value: any) => {
-        console.log('handleSubmit', value);
+    
+   
+    const handleSubmit = (values: any) => {
+
+        if (props.type === "permission") {
+
+            const params:any = {
+                // permission_repositoryID: null,
+                // permission_repository_createID: null,
+                // permission_repository_readID: null,
+                // permission_resource_readID: null,
+                // permission_resource_downloadID: null,
+            };
+            params.Id = values.id;
+            params[values.field] = values.code;
+            console.log('Parameters for current permission', params);
+            updataPermission(params).then(response => {
+                console.log('Update current permissions', response)
+                if (response.code === 200) {
+                    props.loadCallback(true)
+                    props.openCallBack(false)
+                    // props.itemCallback({})
+                    // props.typeCallback('');
+                }
+            })
+        } else if (props.type === 'role') {
+            console.log('Modify the current user role', values)
+            const params:any = {};
+            params.id = values.Id;
+            params.RoleName = values.role;
+            params.Status = 1;
+            params.UserName = values.UserName;
+            UpdateUserRole(params).then(response => {
+                console.log('Finish modifying user roles', response)
+                if (response.code === 200) {
+                    
+                    props.loadCallback(true)
+                    props.openCallBack(false)
+                    // props.itemCallback({})
+                    // props.typeCallback('');
+                }
+            })
+        }
+
+        console.log('handleSubmit', values);
     }
 
     return (
@@ -130,38 +188,67 @@ const CustomDialog = (props: any) => {
                         validate={validateForm}
                         onSubmit={handleSubmit}
                     >
+
+                    {/* 
+                    
+                    
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={age}
+          label="Age"
+          onChange={handleChange}
+        >
+          <MenuItem value={10}>Ten</MenuItem>
+        </Select>
+
+        "administrator"
+"normal user"
+                    */}
                         <Form>
                             {
                                 props.type === 'role' ? 
                                 <Field
-                                    as={TextField}
+                                    as={Select}
                                     size="small"
                                     fullWidth
-                                    name="firstName"
-                                    label="firstName"
-                                    id="firstName"
+                                    name="role"
+                                    label="User Role"
                                     sx={{mt: 2}}
                                     helperText={<ErrorMessage name="firstName" >{(msg: String) => <span style={{color: "red"}}>{msg}</span>}</ErrorMessage>}
-                                />
+                                >
+
+                                    <MenuItem value={"administrator"}>administrator</MenuItem>
+                                    <MenuItem value={'normal user'}>normal user</MenuItem>
+
+                                </Field>
                                 : (
                                     <React.Fragment>
+
+                                        {/* 
+                                        permission_repositoryID
+permission_repository_createID
+permission_repository_readID
+permission_resource_readID
+permission_resource_downloadID
+                                        */}
         
-                                        <Field name="color" row as={RadioGroup}> 
-                                            <FormControlLabel value="repository（all）" control={<Radio />} label="repository（all）" />
-                                            <FormControlLabel value="repository（create）" control={<Radio />} label="repository（create）" />
-                                            <FormControlLabel value="repository（read）" control={<Radio />} label="repository（read）" />
-                                            <FormControlLabel value="resource（read）" control={<Radio />} label="resource（read）" />
-                                            <FormControlLabel value="resource（download）" control={<Radio />} label="resource（download）" />
+                                        <Field row as={RadioGroup} name="field"> 
+                                            <FormControlLabel value="permission_repositoryID" control={<Radio />} label="repository（all）" />
+                                            <FormControlLabel value="permission_repository_createID" control={<Radio />} label="repository（create）" />
+                                            <FormControlLabel value="permission_repository_readID" control={<Radio />} label="repository（read）" />
+                                            <FormControlLabel value="permission_resource_readID" control={<Radio />} label="resource（read）" />
+                                            <FormControlLabel value="permission_resource_downloadID" control={<Radio />} label="resource（download）" />
                                         </Field>       
                                         <Field
                                             as={TextField}
                                             size="small"
                                             fullWidth
-                                            id="RoleName"
-                                            label="RoleName"
-                                            name="RoleName"
+                                            id="code"
+                                            label="code"
+                                            name="code"
                                             sx={{mt: 2}}
-                                            helperText={<ErrorMessage name="RoleName">{(msg: String) => <span style={{color: 'red'}}>{msg}</span>}</ErrorMessage>}
+                                            helperText={<ErrorMessage name="code">{(msg: String) => <span style={{color: 'red'}}>{msg}</span>}</ErrorMessage>}
                                         /> 
                                     </React.Fragment>)
                             }
@@ -196,20 +283,23 @@ const Account = () => {
     const [list, setList] = useState([]);
 
     useEffect(() => {
-
-    const Token = sessionStorage.getItem('Token');
-        if (Token) {
-            queryData({token: Token});
-        }
+        queryData()
 
     }, [])
 
-    const queryData = async (data: any) => {
-        const res = await queryAccount(data);
+    const queryData = async () => {
+        
+        const Token = sessionStorage.getItem('Token');
+        
+        if(Token) {
+            // queryData();
+            
+            const res = await queryAccount({token: Token});
 
 
-        if (res.code === 200) {
-            setList(res.data.map((item: any) => ({...item, id: item.Id})))
+            if (res.code === 200) {
+                setList(res.data.map((item: any) => ({...item, id: item.Id})))
+            }
         }
     }
 
@@ -248,6 +338,7 @@ const Account = () => {
                 <ActionItems 
                     variant="outlined" 
                     size="small" 
+                    load={() => queryData()}
                     record={params}
                 />
             ],
@@ -298,8 +389,8 @@ const Account = () => {
                     onChange={handleChange}
                     sx={{ pt: '100px', width: 200 }}
                 >
-                    <AntTab label="Item One" />
-                    <AntTab label="Item Two" />
+                    <AntTab label="access control" />
+                    <AntTab label="personal information" />
                 </Tabs>
             </Box>
             <Box sx={{m: '20px', mt: "30px", display: 'flex', flex: '1', bgcolor: '#121212' }}>

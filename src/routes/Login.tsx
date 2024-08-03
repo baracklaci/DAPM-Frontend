@@ -10,6 +10,8 @@ const Login: React.FC = () => {
     const navigate = useNavigate();
     const [rememberMe, setRememberMe] = React.useState<boolean>(false);
     const [open, setOpen] = React.useState(false);
+    const [loginOpen, setLoginOpen] = React.useState(false);
+    const [error, setError] = React.useState('');
 
     interface UserLogin {
         username: string;
@@ -25,6 +27,12 @@ const Login: React.FC = () => {
     }, []);
 
     const handleSubmit = (values: UserLogin, { setSubmitting }: FormikHelpers<UserLogin>) => {
+        
+        if (values.password.length < 8) {
+            setLoginOpen(true);
+            setError('Incorrect user name or password') 
+            return 
+        }
         if (rememberMe) {
             localStorage.setItem('username', values.username);
             localStorage.setItem('password', values.password);
@@ -71,9 +79,26 @@ const Login: React.FC = () => {
         return errors;
     }
 
+    
+    React.useEffect(() => {
+        let timer:any = null;
+        if (!!loginOpen) {
+            timer = setTimeout(() => {
+                setLoginOpen(false)
+                setError('')
+            }, 3000)
+        } else {
+            clearTimeout(timer);
+        }
+    }, [loginOpen])
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
          
+         <Dialog open={loginOpen}>
+            <Alert severity="error">{error}</Alert>
+        </Dialog>
+
          <Dialog open={open}
             onClose={handleclose}
             aria-labelledby="alert-dialog-title"
