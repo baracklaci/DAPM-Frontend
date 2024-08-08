@@ -43,11 +43,13 @@ const Login: React.FC = () => {
 
         login({ ...values }).then((result) => {
             result.json().then((response) => {
-                const { code, data } = response;
+                const { code, data, userId } = response;
                 if (code === 200) {
                     setOpen(true);
+                    console.log(data);
                     console.log('login successful');
                     sessionStorage.setItem("Token", data);
+                    sessionStorage.setItem("userId", userId);
                     setTimeout(() => {
                         navigate('/');
                         window.location.reload();

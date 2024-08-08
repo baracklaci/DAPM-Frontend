@@ -92,3 +92,28 @@ export async function UpdateUserRole (data: any) {
         
     }
 }
+export async function GetUserFile () {
+    const userId = sessionStorage.getItem('userId')
+
+    console.log(userId)
+
+    try {
+        
+        const res = await fetch(`http://localhost:5025/UserAuthorization/UserInfo/GetUserFile/${userId}`, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json",
+                 token: sessionStorage.getItem('Token') || ""
+            },
+        })
+
+        console.log('----res', res)
+        
+        return res.json()
+
+    } catch (error) {
+        
+    }
+}
+
+// UserAuthorization/UserInfo/GetUserFile

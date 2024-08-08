@@ -23,7 +23,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { queryAccount, updataPermission, UpdateUserRole } from '../services/user'
+import { queryAccount, updataPermission, UpdateUserRole,GetUserFile } from '../services/user'
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
@@ -281,6 +281,8 @@ const Account = () => {
 
     const [value, setValue] = React.useState(0);
     const [list, setList] = useState([]);
+    
+    const [data, setData] = useState<any>({})
 
     useEffect(() => {
         queryData()
@@ -300,6 +302,29 @@ const Account = () => {
             if (res.code === 200) {
                 setList(res.data.map((item: any) => ({...item, id: item.Id})))
             }
+
+            const response = await GetUserFile(); // 查询当前用户信息
+
+            // const { data } = response;
+
+            if (response.code = 200) {
+
+                const defaultData:any = {
+                    "Id": "",
+                    "permission_repositoryID": "",
+                    "permission_repository_createID": "",
+                    "permission_repository_readID": "",
+                    "permission_resource_readID": "",
+                    "permission_resource_downloadID": ""
+                };
+                const data = response.data && response.data.length ? response.data[0] : {...defaultData};
+
+                setData(data);
+            }
+
+            
+
+            console.log("当前的用户信息", response);
         }
     }
 
@@ -398,7 +423,28 @@ const Account = () => {
                     <DataGrid rows={list} columns={columns} sx={{width: '100%'}}/>
                 </TabPanel>
                 <TabPanel value={value} index={1}>
-                    <DataGrid rows={list} columns={columns} />
+                    <Box sx={{display: 'flex', flexDirection: "column"}}>
+
+{/* 
+
+                                            <FormControlLabel value="permission_repositoryID" control={<Radio />} label="repository（all）" />
+                                            <FormControlLabel value="permission_repository_createID" control={<Radio />} label="repository（create）" />
+                                            <FormControlLabel value="permission_repository_readID" control={<Radio />} label="repository（read）" />
+                                            <FormControlLabel value="permission_resource_readID" control={<Radio />} label="resource（read）" />
+                                            <FormControlLabel value="permission_resource_downloadID" control={<Radio />} label="resource（download）" />
+*/}
+
+                        <TextField label={<span style={{fontSize: '18px'}}>repository（all）</span>} value={data.permission_repositoryID || 'null'} disabled sx={{mt: '20px', display: 'flex', flex: '1'}}/>
+                        <TextField label={<span style={{fontSize: '18px'}}>repository（create）</span>} value={data.permission_repository_createID || 'null'} disabled sx={{mt: '20px', display: 'flex', flex: '1'}}/>
+                    </Box>
+                    <Box sx={{display: 'flex', flexDirection: "column"}}>
+                        <TextField label={<span style={{fontSize: '18px'}}>repository（read）</span>} value={data.permission_repository_readID || "null"} disabled sx={{mt: '20px', display: 'flex', flex: '1'}}/>
+                        <TextField label={<span style={{fontSize: '18px'}}>resource（read）</span>} value={data.permission_resource_readID || "null"} disabled sx={{mt: '20px', display: 'flex', flex: '1'}}/>
+                    </Box>
+                    <Box sx={{display: 'flex', flexDirection: "column"}}>
+                        <TextField label={<span style={{fontSize: '18px'}}>resource（download）</span>} value={data.permission_resource_downloadID || "null"} disabled sx={{mt: '20px', display: 'flex', flex: '1'}}/>
+                        <TextField label={<span style={{fontSize: '18px'}}>userId</span>} value={data.Id || "null"} disabled sx={{mt: '20px', display: 'flex', flex: '1'}}/>
+                    </Box>
                 </TabPanel>
             </Box>
         </div>
