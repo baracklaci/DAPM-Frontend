@@ -125,7 +125,7 @@ export async function fetchOrganisationRepositories(orgId: string) {
         console.log('---->response----json', jsonData);
 
         if (jsonData.code === 500) {
-            throw new Error("请登录。。。");
+            throw new Error("pleace login。。。");
         }
         const getData = async (ticketId: string): Promise<any> => {
             const maxRetries = 10;
