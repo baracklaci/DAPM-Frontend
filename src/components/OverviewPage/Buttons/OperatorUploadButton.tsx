@@ -1,7 +1,6 @@
 import { Box, Button, FormControl, FormLabel, MenuItem, Modal, Select, TextField, Typography } from '@mui/material';
 import React, { ChangeEvent } from 'react';
 import { putOperator, putResource } from '../../../services/backendAPI';
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 
 export interface UploadButtonProps {
     orgId: string,

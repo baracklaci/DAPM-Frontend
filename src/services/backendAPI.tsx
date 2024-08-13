@@ -1,3 +1,4 @@
+import { Stream } from "stream";
 import { json } from "stream/consumers";
 
 const vmPath = `dapm1.compute.dtu.dk:5000`
@@ -15,6 +16,21 @@ export async function fetchStatus(ticket: string) {
         const jsonData = await response.json();
         //console.log(jsonData)
         return jsonData;
+    } catch (error) {
+        console.error('Error fetching status:', error);
+        return error;
+    }
+}
+
+export async function fetchFile(ticket: string) {
+
+    try {
+        const response = await fetch(`http://` + path + `/status/${ticket}`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        //console.log(jsonData)
+        return response;
     } catch (error) {
         console.error('Error fetching status:', error);
         return error;
@@ -625,3 +641,40 @@ export async function PostNewPeer(domainName: string) {
     }
 }
 
+export async function downloadResource(organizationId: string, repositoryId: string, resourceId: string) {
+    try {
+        const response = await fetch(`http://` + path + `/organizations/${organizationId}/repositories/${repositoryId}/resources/${resourceId}/file`);
+        if (!response.ok) {
+            throw new Error('Fetching orgs, Network response was not ok');
+        }
+        const jsonData = await response.json();
+
+        // Fetch additional data recursively
+        const getData = async (ticketId: string): Promise<any> => {
+            const maxRetries = 10;
+            const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+            for (let retries = 0; retries < maxRetries; retries++) {
+                try {
+                    const response = await fetchFile(ticketId) as any;
+                    console.log(response)
+                    if (response.ok) {
+                        return response.blob();
+                    }
+                    await delay(1000); // Wait for 1 second before retrying
+                } catch (error) {
+                    if (retries === maxRetries - 1) {
+                        throw new Error('Max retries reached');
+                    }
+                }
+            }
+            throw new Error('Failed to fetch data');
+        };
+
+        // Call getData function with the ticketId obtained from fetchOrganisations
+        return await getData(jsonData.ticketId);
+    } catch (error) {
+        console.error('Fetching orgs, Error fetching data:', error);
+        throw error; // Propagate error to the caller
+    }
+}

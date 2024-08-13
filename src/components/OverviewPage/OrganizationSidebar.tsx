@@ -10,11 +10,11 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { getOrganizations, getRepositories, getResources } from '../../redux/selectors/apiSelector';
 import { organizationThunk, repositoryThunk, resourceThunk } from '../../redux/slices/apiSlice';
-import { Organization, Repository } from '../../redux/states/apiState';
+import { Organization, Repository, Resource } from '../../redux/states/apiState';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { Box } from '@mui/material';
 import ResourceUploadButton from './Buttons/ResourceUploadButton';
-import { fetchOrganisation, fetchOrganisationRepositories, fetchOrganisations, fetchPipeline, fetchRepositoryPipelines, fetchRepositoryResources, fetchResource, putPipeline, putRepository } from '../../services/backendAPI';
+import { downloadResource, fetchOrganisation, fetchOrganisationRepositories, fetchOrganisations, fetchPipeline, fetchRepositoryPipelines, fetchRepositoryResources, fetchResource, putPipeline, putRepository } from '../../services/backendAPI';
 import CreateRepositoryButton from './Buttons/CreateRepositoryButton';
 import AddOrganizationButton from './Buttons/AddOrganizationButton';
 import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
@@ -46,63 +46,32 @@ export default function PersistentDrawerLeft() {
   }, [dispatch]);
 
 
+  const handleDownload = async (resource: Resource) => {
+    const file = await downloadResource(resource.organizationId, resource.repositoryId, resource.id) 
+    await downloadReadableStream(file, resource.name)
+  }
 
-  /*useEffect(() => {
-    const postPipeline = async () => {
-      const pipelineData = {
-        name: "pipeline1",
-        pipeline: {
-          "nodes": [
-            {
-              "type": "string",
-              "templateData": {
-                "sourceHandles": [
-                  {
-                    "handleData": {
-                      "id": "string"
-                    }
-                  }
-                ],
-                "targetHandles": [
-                  {
-                    "handleData": {
-                      "id": "string"
-                    }
-                  }
-                ]
-              },
-              "instantiationData": {
-                "resource": {
-                  "organizationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                  "repositoryId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                  "resourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                  "name": "string"
-                }
-              }
-            }
-          ],
-          "edges": [
-            {
-              "sourceHandle": "string",
-              "targetHandle": "string"
-            }
-          ]
-        }
-      };
+  async function downloadReadableStream(blob: Blob, filename: string): Promise<void> {
+    try {
+        // Create a URL for the Blob
+        const url = window.URL.createObjectURL(blob);
 
-      try {
-        console.log("post pipeline");
-        const testpost = await putPipeline("d87bc490-828f-46c8-aa44-ded7729eaa82", "365570d5-4fc2-44a9-9476-4b03b623b8e7", pipelineData);
-        console.log("pipeline: ", testpost);
-      } catch (error) {
-        console.error("Error fetching pipeline data:", error);
-      }
-    };
+        // Create an anchor element and trigger the download
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
 
-    postPipeline();
-  }, [])*/
-
-
+        // Clean up
+        setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 0);
+    } catch (error) {
+        console.error('Failed to download file:', error);
+    }
+}
 
   return (
     <Drawer
@@ -153,7 +122,7 @@ export default function PersistentDrawerLeft() {
                 {resources.map((resource) => (resource.repositoryId === repository.id && resource.type !== "operator" ?
                   <>
                     <ListItem key={resource.id} disablePadding>
-                      <ListItemButton sx={{ paddingBlock: 0 }}>
+                      <ListItemButton sx={{ paddingBlock: 0 }} onClick={_ => handleDownload(resource)}>
                         <ListItemText secondary={resource.name} secondaryTypographyProps={{ fontSize: "0.8rem" }} />
                       </ListItemButton>
                     </ListItem>

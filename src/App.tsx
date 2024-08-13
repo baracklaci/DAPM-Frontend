@@ -9,7 +9,7 @@ import { persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
 import { RouterProvider, createBrowserRouter, createHashRouter } from "react-router-dom";
 import PipelineComposer from "./routes/PipeLineComposer";
-import UserPage from "./routes/UserPage";
+import UserPage from "./routes/OverviewPage";
 import { loadState, saveState } from "./redux/browser-storage";
 
 // Configure redux-persist

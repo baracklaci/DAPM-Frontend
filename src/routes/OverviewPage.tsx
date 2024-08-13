@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
-import OrganizationSidebar from "../components/UserPage/OrganizationSidebar";
+import OrganizationSidebar from "../components/OverviewPage/OrganizationSidebar";
 import PipelineAppBar from "../components/PipeLineComposer/PipelineAppBar";
-import PipelineGrid from "../components/UserPage/PipelineGrid";
+import PipelineGrid from "../components/OverviewPage/PipelineGrid";
 
 export default function UserPage() {
     return (
