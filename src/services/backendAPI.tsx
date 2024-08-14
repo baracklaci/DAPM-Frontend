@@ -1,7 +1,7 @@
 const vmPath = `localhost:5025/platform`;
-const localPath = `localhost:5000/platform`;
+const localPath = `localhost:5025/platform`;
 
-const path = vmPath;
+const path = localPath;
 
 export async function fetchStatus(ticket: string) {
     const headers = new Headers({
