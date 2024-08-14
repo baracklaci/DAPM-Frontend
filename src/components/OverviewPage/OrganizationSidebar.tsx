@@ -19,6 +19,7 @@ import CreateRepositoryButton from './Buttons/CreateRepositoryButton';
 import AddOrganizationButton from './Buttons/AddOrganizationButton';
 import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
 import OperatorUploadButton from './Buttons/OperatorUploadButton';
+import { Padding } from '@mui/icons-material';
 
 const drawerWidth = 240;
 
@@ -47,30 +48,13 @@ export default function PersistentDrawerLeft() {
 
 
   const handleDownload = async (resource: Resource) => {
-    const file = await downloadResource(resource.organizationId, resource.repositoryId, resource.id) 
-    await downloadReadableStream(file, resource.name)
+    const response = await downloadResource(resource.organizationId, resource.repositoryId, resource.id) 
+    await downloadReadableStream(response.url, resource.name)
   }
 
-  async function downloadReadableStream(blob: Blob, filename: string): Promise<void> {
-    try {
-        // Create a URL for the Blob
-        const url = window.URL.createObjectURL(blob);
+async function downloadReadableStream(url: string, fileName: string) {
 
-        // Create an anchor element and trigger the download
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-
-        // Clean up
-        setTimeout(() => {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }, 0);
-    } catch (error) {
-        console.error('Failed to download file:', error);
-    }
+  window.open(url, '_blank');
 }
 
   return (
@@ -103,18 +87,18 @@ export default function PersistentDrawerLeft() {
         {organizations.map((organization) => (
           <>
             <ListItem sx={{ justifyContent: 'center' }} key={organization.id} disablePadding>
-              <p style={{marginBlock: '0rem'}}>{organization.name}</p>
+              <p style={{marginBlock: '0rem', fontSize: '25px'}}>{organization.name}</p>
             </ListItem>
             <div style={{ display: 'flex', alignItems: 'center', paddingInline: '0.5rem' }}>
             </div>
             {repositories.map((repository) => (repository.organizationId === organization.id ?
               <>
-                <ListItem key={repository.id}>
-                  <p>{repository.name}</p>
+                <ListItem key={repository.id} sx={{paddingInline: '5px'}}>
+                  <p style={{padding: '0', fontSize: '25px', marginBlock: '10px'}}>{repository.name}</p>
                 </ListItem>
 
                 <div style={{ display: 'flex', alignItems: 'center', paddingInline: '0.5rem' }}>
-                  <p style={{fontSize: '0.9rem'}}>Resources</p>
+                  <p style={{fontSize: '0.9rem' }}>Resources</p>
                   <Box sx={{ marginLeft: 'auto' }}>
                     <ResourceUploadButton orgId={repository.organizationId} repId={repository.id} />
                   </Box>

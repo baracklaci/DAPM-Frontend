@@ -659,7 +659,7 @@ export async function downloadResource(organizationId: string, repositoryId: str
                     const response = await fetchFile(ticketId) as any;
                     console.log(response)
                     if (response.ok) {
-                        return response.blob();
+                        return response;
                     }
                     await delay(1000); // Wait for 1 second before retrying
                 } catch (error) {
