@@ -1,6 +1,7 @@
+import { FormEvent, useState } from "react";
 import { Box, Button, FormControl, FormLabel, MenuItem, Modal, Select, TextField, Typography } from '@mui/material';
-import React from 'react';
-import { putResource } from '../../../services/backendAPI';
+
+import { useBackendAPI } from '../../../services/backendAPI';
 
 export interface UploadButtonProps {
     orgId: string,
@@ -20,14 +21,15 @@ const style = {
 };
 
 const ResourceUploadButton = ({ orgId, repId }: UploadButtonProps) => {
-
+    const { createResource } = useBackendAPI();
     const dataTypes = ["eventLog", "bpmnModel", "petriNet"]
 
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    // TODO: need to be tested
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
@@ -37,7 +39,7 @@ const ResourceUploadButton = ({ orgId, repId }: UploadButtonProps) => {
 
         if (formData.get('ResourceFile')) {
             try {
-                const result = await putResource(orgId, repId, formData);
+                const result = await createResource(orgId, repId, formData);
                 console.log('Resource successfully uploaded:', result);
             } catch (error) {
                 console.error('Error uploading resource:', error);

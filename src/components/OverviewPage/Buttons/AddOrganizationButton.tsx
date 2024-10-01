@@ -1,6 +1,7 @@
+import {ChangeEvent, useState} from "react";
 import { Box, Button, Modal, TextField, Typography } from "@mui/material";
-import React from "react";
-import { PostNewPeer } from "../../../services/backendAPI";
+
+import { useBackendAPI } from "../../../services/backendAPI";
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -15,14 +16,15 @@ const style = {
 };
 
 export default function AddOrganizationButton() {
-    const [domainName, setDomainName] = React.useState('');
-    
-    const [open, setOpen] = React.useState(false);
+    const { PostNewPeer } = useBackendAPI();
+    const [domainName, setDomainName] = useState('');
+    const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const handleUpload = () => {
-        PostNewPeer(domainName)
+    // TODO: need to be tested
+    const handleUpload = async () => {
+        await PostNewPeer(domainName)
     }
 
     return (
@@ -43,7 +45,7 @@ export default function AddOrganizationButton() {
                         id="outlined-controlled"
                         label="Domain Name"
                         value={domainName}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => {
                             setDomainName(event.target.value);
                         }}
                         sx={{marginBlock: '2rem'}}

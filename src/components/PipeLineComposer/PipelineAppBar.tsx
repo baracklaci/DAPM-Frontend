@@ -1,18 +1,20 @@
-import { AppBar, Box, Button, TextField, Toolbar, Typography } from "@mui/material";
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getActiveFlowData, getActivePipeline } from "../../redux/selectors";
-import { useState } from "react";
-import { updatePipelineName } from "../../redux/slices/pipelineSlice";
-import EditIcon from '@mui/icons-material/Edit';
 import { Node } from "reactflow";
+import { AppBar, Box, Button, TextField, Toolbar, Typography } from "@mui/material";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import EditIcon from '@mui/icons-material/Edit';
+
+import { getActiveFlowData, getActivePipeline } from "../../redux/selectors";
+import { updatePipelineName } from "../../redux/slices/pipelineSlice";
 import { DataSinkNodeData, DataSourceNodeData, OperatorNodeData } from "../../redux/states/pipelineState";
-import { putCommandStart, putExecution, putPipeline } from "../../services/backendAPI";
 import { getOrganizations, getRepositories } from "../../redux/selectors/apiSelector";
 import { getHandleId, getNodeId } from "./Flow";
+import { useBackendAPI } from "../../services/backendAPI";
 
 export default function PipelineAppBar() {
+  const { createPipeline, createExecution, createCommandStart } = useBackendAPI();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -37,13 +39,12 @@ export default function PipelineAppBar() {
 
   const flowData = useSelector(getActiveFlowData)
 
+  // TODO: need to be tested
   const generateJson = async () => {
 
-    //console.log(flowData)
-
-    var edges = flowData!.edges.map(edge => {
-      return { sourceHandle: edge.sourceHandle, targetHandle: edge.targetHandle }
-    })
+    const edges = flowData!.edges.map(edge => {
+      return {sourceHandle: edge.sourceHandle, targetHandle: edge.targetHandle}
+    });
 
     console.log("copied", edges)
 
@@ -126,9 +127,10 @@ export default function PipelineAppBar() {
     const selectedOrg = organizations[0]
     const selectedRepo = repositories.filter(repo => repo.organizationId === selectedOrg.id)[0]
 
-    const pipelineId = await putPipeline(selectedOrg.id, selectedRepo.id, requestData)
-    const executionId = await putExecution(selectedOrg.id, selectedRepo.id, pipelineId)
-    await putCommandStart(selectedOrg.id, selectedRepo.id, pipelineId, executionId)
+    // TODO: need to be tested
+    const pipelineId = await createPipeline(selectedOrg.id, selectedRepo.id, requestData)
+    const executionId = await createExecution(selectedOrg.id, selectedRepo.id, pipelineId)
+    await createCommandStart(selectedOrg.id, selectedRepo.id, pipelineId, executionId)
 
   }
 
@@ -161,4 +163,3 @@ export default function PipelineAppBar() {
     </AppBar>
   )
 }
-

@@ -1,6 +1,7 @@
-import { Box, Button, FormControl, FormLabel, MenuItem, Modal, Select, TextField, Typography } from '@mui/material';
-import React, { ChangeEvent } from 'react';
-import { putOperator, putResource } from '../../../services/backendAPI';
+import {FormEvent, useState} from "react";
+import { Box, Button, FormControl, FormLabel, Modal, TextField, Typography } from '@mui/material';
+
+import { useBackendAPI } from "../../../services/backendAPI";
 
 export interface UploadButtonProps {
     orgId: string,
@@ -20,12 +21,13 @@ const style = {
 };
 
 const OperatorUploadButton = ({ orgId, repId }: UploadButtonProps) => {
-
-    const [open, setOpen] = React.useState(false);
+    const { createOperator } = useBackendAPI();
+    const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    // TODO: need to be tested
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
@@ -36,7 +38,7 @@ const OperatorUploadButton = ({ orgId, repId }: UploadButtonProps) => {
 
         if (formData.get('SourceCodeFile')) {
             try {
-                const result = await putOperator(orgId, repId, formData);
+                const result = await createOperator(orgId, repId, formData);
                 console.log('Resource successfully uploaded:', result);
             } catch (error) {
                 console.error('Error uploading resource:', error);

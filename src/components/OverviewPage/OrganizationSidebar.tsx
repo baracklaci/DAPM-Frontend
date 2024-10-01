@@ -1,25 +1,17 @@
-import { styled } from '@mui/material/styles';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { styled } from '@mui/material/styles';
+import { Box, Drawer, Divider, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
+
 import { getOrganizations, getRepositories, getResources } from '../../redux/selectors/apiSelector';
 import { organizationThunk, repositoryThunk, resourceThunk } from '../../redux/slices/apiSlice';
 import { Organization, Repository, Resource } from '../../redux/states/apiState';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { Box } from '@mui/material';
 import ResourceUploadButton from './Buttons/ResourceUploadButton';
-import { downloadResource, fetchOrganisation, fetchOrganisationRepositories, fetchOrganisations, fetchPipeline, fetchRepositoryPipelines, fetchRepositoryResources, fetchResource, putPipeline, putRepository } from '../../services/backendAPI';
 import CreateRepositoryButton from './Buttons/CreateRepositoryButton';
 import AddOrganizationButton from './Buttons/AddOrganizationButton';
-import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
 import OperatorUploadButton from './Buttons/OperatorUploadButton';
-import { Padding } from '@mui/icons-material';
+import { useBackendAPI } from "../../services/backendAPI";
 
 const drawerWidth = 240;
 
@@ -33,7 +25,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function PersistentDrawerLeft() {
-
+  const { downloadResource } = useBackendAPI();
   const dispatch = useAppDispatch()
   const organizations: Organization[] = useAppSelector(getOrganizations)
   const repositories: Repository[] = useAppSelector(getRepositories)
@@ -46,7 +38,7 @@ export default function PersistentDrawerLeft() {
 
   }, [dispatch]);
 
-
+  // TODO: need to be tested
   const handleDownload = async (resource: Resource) => {
     const response = await downloadResource(resource.organizationId, resource.repositoryId, resource.id) 
     await downloadReadableStream(response.url, resource.name)

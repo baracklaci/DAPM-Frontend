@@ -1,7 +1,7 @@
+import {FormEvent, useState} from "react";
 import { Box, Button, FormControl, FormLabel, Modal, TextField, Typography } from '@mui/material';
-import React from 'react';
-import { putRepository } from '../../../services/backendAPI';
 
+import { useBackendAPI } from "../../../services/backendAPI";
 
 export interface CreateRepositoryButtonProps {
     orgId: string,
@@ -20,29 +20,26 @@ const style = {
 };
 
 const CreateRepositoryButton = ({ orgId }: CreateRepositoryButtonProps) => {
-
-    const [open, setOpen] = React.useState(false);
+    const { createRepository } = useBackendAPI();
+    const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    // TODO: need to be tested
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
-        const repositoryName = formData.get("Name") as string
+        const repositoryName = formData.get("Name") as string;
 
-        if (repositoryName) {
-            try {
-                const result = await putRepository(orgId, repositoryName);
-                console.log('repository successfully created:', result);
-            } catch (error) {
-                console.error('Error creating repository:', error);
-            }
-        } else {
-            console.error('No repository name given.');
+        if (!repositoryName) return;
+
+        try {
+            const result = await createRepository(orgId, repositoryName);
+            console.log('repository successfully created:', result);
+        } catch (error) {
+            console.error('Error creating repository:', error);
         }
-
-        alert("Form Submitted");
     };
 
     return (
@@ -64,7 +61,6 @@ const CreateRepositoryButton = ({ orgId }: CreateRepositoryButtonProps) => {
                                 <FormLabel>Repository name</FormLabel>
                                 <TextField name="Name" />
                             </FormControl>
-
                             <Button type="submit" sx={{ backgroundColor: "gray", padding: "1px", color: "black" }}>Submit</Button>
                         </form>
                     </Box>
@@ -72,6 +68,6 @@ const CreateRepositoryButton = ({ orgId }: CreateRepositoryButtonProps) => {
             </Modal>
         </div>
     );
-}
+};
 
 export default CreateRepositoryButton;
