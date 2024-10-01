@@ -7,7 +7,7 @@ import { useState } from "react";
 import { updatePipelineName } from "../../redux/slices/pipelineSlice";
 import EditIcon from '@mui/icons-material/Edit';
 import { Node } from "reactflow";
-import { DataSinkNodeData, DataSourceNodeData, OperatorNodeData } from "../../redux/states/pipelineState";
+import { DataSinkNodeData, DataSourceNodeData, OperatorNodeData, PipelineData } from "../../redux/states/pipelineState";
 import { putCommandStart, putExecution, putPipeline } from "../../services/backendAPI";
 import { getOrganizations, getRepositories } from "../../redux/selectors/apiSelector";
 import { getHandleId, getNodeId } from "./Flow";
@@ -37,10 +37,7 @@ export default function PipelineAppBar() {
 
   const flowData = useSelector(getActiveFlowData)
 
-  const generateJson = async () => {
-
-    //console.log(flowData)
-
+  const generateJson = () => {
     var edges = flowData!.edges.map(edge => {
       return { sourceHandle: edge.sourceHandle, targetHandle: edge.targetHandle }
     })
@@ -78,7 +75,7 @@ export default function PipelineAppBar() {
 
     console.log(JSON.stringify(dataSinks))
 
-    const requestData = {
+    const pipeline = {
       name: pipelineName,
       pipeline: {
         nodes: flowData?.nodes?.filter(node => node.type === 'dataSource').map(node => node as Node<DataSourceNodeData>).map(node => {
@@ -121,16 +118,31 @@ export default function PipelineAppBar() {
       }
     }
 
-    console.log(JSON.stringify(requestData))
-
     const selectedOrg = organizations[0]
     const selectedRepo = repositories.filter(repo => repo.organizationId === selectedOrg.id)[0]
 
-    const pipelineId = await putPipeline(selectedOrg.id, selectedRepo.id, requestData)
-    const executionId = await putExecution(selectedOrg.id, selectedRepo.id, pipelineId)
-    await putCommandStart(selectedOrg.id, selectedRepo.id, pipelineId, executionId)
-
+    return {
+      org: selectedOrg,
+      repo: selectedRepo,
+      pipeline: pipeline
+    };
   }
+
+  const savePipeline = async () => {
+    const {org, repo, pipeline} = generateJson();
+
+    const pipelineId = await putPipeline(org.id, repo.id, pipeline);    
+    console.log(`Pipeline with id: ${pipelineId} has been saved successfully!`);
+  };
+
+  const deployPipeline = async () => {
+    const {org, repo, pipeline} = generateJson();
+
+    /// TODO: don't save it twice
+    const pipelineId = await putPipeline(org.id, repo.id, pipeline)
+    const executionId = await putExecution(org.id, repo.id, pipelineId)
+    await putCommandStart(org.id, repo.id, pipelineId, executionId)
+  };
 
   return (
     <AppBar position="fixed">
@@ -154,7 +166,10 @@ export default function PipelineAppBar() {
             </Box>
           )}
         </Box>
-        <Button onClick={() => generateJson()}>
+        <Button onClick={() => savePipeline()}>
+          <Typography variant="body1" sx={{ color: "white" }}>Save pipeline</Typography>
+        </Button>
+        <Button onClick={() => deployPipeline()}>
           <Typography variant="body1" sx={{ color: "white" }}>Deploy pipeline</Typography>
         </Button>
       </Toolbar>
