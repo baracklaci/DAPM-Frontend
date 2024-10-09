@@ -83,7 +83,7 @@ export default function AutoGrid() {
       <Grid container spacing={{ xs: 1, md: 1 }} sx={{ padding: "10px" }}>
         {pipelines.map(({ id, name, imgData }) => (
           <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-            <PipelineCard id={id} name={name} imgData={imgData}></PipelineCard>
+            <PipelineCard id={id} name={name} imgData={imgData} status={'completed'} output={"placeholder for the pipeline output"} ></PipelineCard>
           </Grid>
         ))}
       </Grid>
