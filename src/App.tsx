@@ -1,16 +1,20 @@
 import { ThemeProvider, createTheme } from "@mui/material";
 
 import "./index.css";
+import "./App.css";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./redux/slices";
 
 import { persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
-import { RouterProvider, createBrowserRouter, createHashRouter } from "react-router-dom";
+import { RouterProvider, createBrowserRouter, createHashRouter, BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import PipelineComposer from "./routes/PipeLineComposer";
 import UserPage from "./routes/OverviewPage";
 import { loadState, saveState } from "./redux/browser-storage";
+import AuthProvider from "./auth/authProvider";
+import PrivateRoute from "./router/privateRoute";
+import Login from "./routes/LoginPage";
 
 // Configure redux-persist
 const persistConfig = {
@@ -47,23 +51,35 @@ export type AppDispatch = typeof store.dispatch
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <UserPage/>,
+    element: <UserPage />,
 
   },
   {
     path: "/pipeline",
-    element: <PipelineComposer/>,
+    element: <PipelineComposer />,
   }
 ]);
+
 
 export default function App() {
   return (
     <ThemeProvider theme={darkTheme}>
-      <div className="App">
-        <Provider store={store}>
-          <RouterProvider router={router} />
-        </Provider>
-      </div>
+      <Router>
+        <AuthProvider>
+          <div className="App">
+            <Provider store={store}>
+              {/* <RouterProvider router={router} /> */}
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route element={<PrivateRoute />}>
+                  <Route path="/pipeline" element={<PipelineComposer />} />
+                  <Route path="/" element={<UserPage />} />
+                </Route>
+              </Routes>
+            </Provider>
+          </div>
+        </AuthProvider>
+      </Router>
     </ThemeProvider>
   );
 }

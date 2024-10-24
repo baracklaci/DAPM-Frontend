@@ -18,6 +18,16 @@ const pipelineSlice = createSlice({
   name: 'pipelines',
   initialState: initialState,
   reducers: {
+    /**
+    * Author:
+    * - Raihanullah Mehran
+    *
+    * Description:
+    * This setPipelines method stores the pipelines fetched from database.
+    */
+    setPipelines: (state, { payload }: PayloadAction<PipelineData[]>) => {
+      state.pipelines = payload;
+    },
     addNewPipeline: (state, { payload }: PayloadAction<{ id: string, flowData: NodeState }>) => {
       state.pipelines.push({ id: payload.id, name: 'unnamed pipeline', pipeline: payload.flowData, history: { past: [], future: []}, imgData: '' } as PipelineData)
       state.activePipelineId = payload.id
@@ -191,6 +201,7 @@ const pipelineSlice = createSlice({
 
 export const { 
   //actions for all pipelines
+  setPipelines,
   addNewPipeline, 
   setActivePipeline, 
   setImageData, 
