@@ -10,6 +10,7 @@ import storage from 'redux-persist/lib/storage' // defaults to localStorage for 
 import { RouterProvider, createBrowserRouter, createHashRouter } from "react-router-dom";
 import PipelineComposer from "./routes/PipeLineComposer";
 import UserPage from "./routes/OverviewPage";
+import LoginPage from "./routes/LoginPage";
 import { loadState, saveState } from "./redux/browser-storage";
 
 // Configure redux-persist
@@ -42,17 +43,19 @@ store.subscribe(
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
-
-
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <UserPage/>,
+    element: <LoginPage/>,
 
   },
   {
     path: "/pipeline",
     element: <PipelineComposer/>,
+  },
+  {
+    path: "/userpage",
+    element: <UserPage/>,
   }
 ]);
 

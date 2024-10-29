@@ -52,10 +52,10 @@ export default function PersistentDrawerLeft() {
     await downloadReadableStream(response.url, resource.name)
   }
 
-async function downloadReadableStream(url: string, fileName: string) {
+  async function downloadReadableStream(url: string, fileName: string) {
 
-  window.open(url, '_blank');
-}
+    window.open(url, '_blank');
+  }
 
   return (
     <Drawer

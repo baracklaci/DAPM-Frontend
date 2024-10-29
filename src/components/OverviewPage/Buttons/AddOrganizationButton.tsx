@@ -48,7 +48,7 @@ export default function AddOrganizationButton() {
                         }}
                         sx={{marginBlock: '2rem'}}
                     />
-                    <Button onClick={handleUpload}>Upload</Button>
+                    <Button onClick={handleUpload} style={{fontSize:"20px"}}>Upload</Button>
                     </Box>
                 </Box>
             </Modal>

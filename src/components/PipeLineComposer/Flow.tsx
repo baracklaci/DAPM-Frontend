@@ -28,6 +28,7 @@ import { getNodePositionInsideParent, sortNodes } from "./utils";
 import { BaseTemplateData, NodeData, OperatorNodeData, OperatorTemplateData } from "../../redux/states/pipelineState";
 import DataSourceNode from "./Nodes/DataSourceNode";
 import { getEdges, getNodes } from "../../redux/selectors";
+import { getShowStatusEnable } from "../../redux/selectors/apiSelector";
 import { DefaultEdge } from "./Edges/DefaultEdge";
 import { v4 as uuidv4 } from "uuid";
 
@@ -57,6 +58,7 @@ const BasicFlow = () => {
 
   const nodes = useSelector(getNodes);
   const edges = useSelector(getEdges);
+  const showStatusEnable = useSelector(getShowStatusEnable);
   const reactFlow = useReactFlow();
 
   const [lastSelected, setLastSelected] = useState<Node | Edge | undefined>();
@@ -350,6 +352,7 @@ const BasicFlow = () => {
       connectionLineStyle={connectionLineStyle}
     >
       <Background variant={BackgroundVariant.Dots} color="#d9d9d9" />
+      {showStatusEnable && <ConfigurationSidebar selectableProp={undefined} />}
       {lastSelected && <ConfigurationSidebar selectableProp={lastSelected} />}
     </ReactFlowStyled>
   );
