@@ -60,13 +60,15 @@ const CreateRepositoryButton = ({ orgId }: CreateRepositoryButtonProps) => {
                             Create repository
                         </Typography>
                         <form onSubmit={handleSubmit}>
-                            <FormControl fullWidth margin="normal">
+                            <FormControl fullWidth margin="normal" style={{display: "flex", flexDirection: "column", gap: "15px"}}>
                                 <FormLabel>Repository name</FormLabel>
                                 <TextField name="Name" />
                             </FormControl>
+                            <div style={{textAlign: "center"}}>
+                                <Button type="submit" sx={{ backgroundColor: "grey", padding: "3px 7px", color: "white", display: "inline-block", verticalAlign: "middle" , marginTop: "20px", fontSize: "20px", fontWeight: "bolder"}}>Submit</Button>
+                            </div>
+                         </form>
 
-                            <Button type="submit" sx={{ backgroundColor: "gray", padding: "1px", color: "black" }}>Submit</Button>
-                        </form>
                     </Box>
                 </Box>
             </Modal>

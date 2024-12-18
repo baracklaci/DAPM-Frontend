@@ -1,11 +1,66 @@
 import { Stream } from "stream";
 import { json } from "stream/consumers";
+import { adminInfo, User, userInfo } from '../redux/slices/userSlice';
 
-const vmPath = `dapm1.compute.dtu.dk:5000`
+const vmPath = `se2-g.compute.dtu.dk:5000`
 const localPath = `localhost:5000`
-
 const path = vmPath
 
+export function getPath() {
+    return `http://`+path
+}
+function getAuthHeaders(): Record<string, string> {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        console.warn('Authorization token is missing or undefined.');
+        return {};
+    }
+    return {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+    };
+}
+
+
+
+export async function fetchActivityLogs(): Promise<any[]> {
+    try {
+        const response = await fetch(`${getPath()}/api/activitylog/getLogs`, {
+            method: 'GET',
+            headers: getAuthHeaders(), 
+        });
+        if (!response.ok) {
+            throw new Error('Failed to fetch activity logs');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching activity logs:', error);
+        return [];
+    }
+}
+
+export async function downloadActivityLogs() {
+    try {
+        const response = await fetch(`${getPath()}/api/activitylog/downloadLogs`, {
+            method: 'GET',
+            headers: getAuthHeaders(), 
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to download activity logs');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'ActivityLog.txt';
+        a.click();
+        console.log('Download triggered');
+    } catch (error) {
+        console.error('Error downloading activity logs:', error);
+    }
+}
 export async function fetchStatus(ticket: string) {
 
     try {
@@ -19,6 +74,42 @@ export async function fetchStatus(ticket: string) {
     } catch (error) {
         console.error('Error fetching status:', error);
         return error;
+    }
+}
+
+export async function fetchMessageLoop(ticketId: string) {
+    try {
+        const maxRetries = 10;
+        const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+        for (let retries = 0; retries < maxRetries; retries++) {
+            const data = await fetchStatus(ticketId);
+            if (data.status) {
+                return data.result.message;
+            }
+            await delay(1000); 
+        }
+
+    } catch (error) {
+        return error
+    }
+}
+
+export async function fetchStatusLoop(ticketId: string) {
+    try {
+        const maxRetries = 10;
+        const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+        for (let retries = 0; retries < maxRetries; retries++) {
+            const data = await fetchStatus(ticketId);
+            if (data.status) {
+                return data;
+            }
+            await delay(1000); 
+        }
+
+    } catch (error) {
+        return error
     }
 }
 
@@ -40,10 +131,17 @@ export async function fetchFile(ticket: string) {
 
 export async function fetchOrganisations() {
     try {
-        const response = await fetch(`http://` + path + `/organizations`);
+        // Fetching organizations with the Authorization header
+        const response = await fetch(`http://` + path + `/organizations`, {
+            method: 'GET',
+            headers: getAuthHeaders(), // Adding the Authorization header
+        });
+
+        // Check if the response is not OK
         if (!response.ok) {
-            throw new Error('Fetching orgs, Network response was not ok');
+            throw new Error('Fetching organizations failed. Network response was not ok');
         }
+
         const jsonData = await response.json();
 
         // Fetch additional data recursively
@@ -67,22 +165,29 @@ export async function fetchOrganisations() {
             throw new Error('Failed to fetch data');
         };
 
-        // Call getData function with the ticketId obtained from fetchOrganisations
+        // Call getData function with the ticketId obtained from the organizations API
         return await getData(jsonData.ticketId);
     } catch (error) {
-        console.error('Fetching orgs, Error fetching data:', error);
-        throw error; // Propagate error to the caller
+        // Log the error and rethrow it for the caller
+        console.error('Error fetching organizations:', error);
+        throw error;
     }
 }
 
 
 
+
 export async function fetchOrganisation(orgId: string) {
     try {
-        const response = await fetch(`http://` + path + `/Organizations/${orgId}`);
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}`, {
+            method: 'GET',
+            headers: getAuthHeaders(), // Adding the Authorization header
+        });
+
         if (!response.ok) {
             throw new Error('Fetching org, Network response was not ok');
         }
+
         const jsonData = await response.json();
 
         // Fetch additional data recursively
@@ -116,10 +221,15 @@ export async function fetchOrganisation(orgId: string) {
 
 export async function fetchOrganisationRepositories(orgId: string) {
     try {
-        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories`);
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories`, {
+            method: 'GET',
+            headers: getAuthHeaders(), // Adding the Authorization header
+        });
+
         if (!response.ok) {
             throw new Error('Fecthing reps, Network response was not ok');
         }
+
         const jsonData = await response.json();
 
         // Fetch additional data recursively
@@ -153,10 +263,15 @@ export async function fetchOrganisationRepositories(orgId: string) {
 
 export async function fetchRepository(orgId: string, repId: string) {
     try {
-        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}`);
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}`, {
+            method: 'GET',
+            headers: getAuthHeaders(), // Adding the Authorization header
+        });
+
         if (!response.ok) {
             throw new Error('Fecthing rep, Network response was not ok');
         }
+
         const jsonData = await response.json();
 
         // Fetch additional data recursively
@@ -179,6 +294,7 @@ export async function fetchRepository(orgId: string, repId: string) {
             }
             throw new Error('Failed to fetch data');
         };
+
         // Call getData function with the ticketId obtained from fetchOrganisations
         return await getData(jsonData.ticketId);
     } catch (error) {
@@ -189,10 +305,15 @@ export async function fetchRepository(orgId: string, repId: string) {
 
 export async function fetchRepositoryResources(orgId: string, repId: string) {
     try {
-        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}/resources`);
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}/resources`, {
+            method: 'GET',
+            headers: getAuthHeaders(), 
+        });
+
         if (!response.ok) {
             throw new Error('Fetching resources, Network response was not ok');
         }
+
         const jsonData = await response.json();
 
         // Fetch additional data recursively
@@ -227,13 +348,15 @@ export async function fetchRepositoryResources(orgId: string, repId: string) {
 
 export async function fetchResource(orgId: string, repId: string, resId: string) {
     try {
-        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}/resources/${resId}`);
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}/resources/${resId}`, {
+            method: 'GET',
+            headers: getAuthHeaders(), // Adding Authorization header
+        });
         if (!response.ok) {
-            throw new Error('Fetching resource, Feching Network response was not ok');
+            throw new Error('Fetching resource, Network response was not ok');
         }
         const jsonData = await response.json();
 
-        // Fetch additional data recursively
         const getData = async (ticketId: string): Promise<any> => {
             const maxRetries = 10;
             const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -254,23 +377,24 @@ export async function fetchResource(orgId: string, repId: string, resId: string)
             throw new Error('Failed to fetch data');
         };
 
-        // Call getData function with the ticketId obtained from fetchOrganisations
         return await getData(jsonData.ticketId);
     } catch (error) {
         console.error('Fetching resource, Error fetching data:', error);
-        throw error; // Propagate error to the caller
+        throw error;
     }
 }
 
 export async function fetchRepositoryPipelines(orgId: string, repId: string) {
     try {
-        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}/pipelines`);
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}/pipelines`, {
+            method: 'GET',
+            headers: getAuthHeaders(), // Adding Authorization header
+        });
         if (!response.ok) {
             throw new Error('fetching pipelines, Network response was not ok');
         }
         const jsonData = await response.json();
 
-        // Fetch additional data recursively
         const getData = async (ticketId: string): Promise<any> => {
             const maxRetries = 10;
             const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -291,23 +415,23 @@ export async function fetchRepositoryPipelines(orgId: string, repId: string) {
             throw new Error('Failed to fetch data');
         };
 
-        // Call getData function with the ticketId obtained from fetchOrganisations
         return await getData(jsonData.ticketId);
     } catch (error) {
         console.error('fetching pipelines, Error fetching data:', error);
-        throw error; // Propagate error to the caller
+        throw error;
     }
 }
-
 export async function fetchPipeline(orgId: string, repId: string, pipId: string) {
     try {
-        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}/pipelines/${pipId}`);
+        const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}/pipelines/${pipId}`, {
+            method: 'GET',
+            headers: getAuthHeaders(), // Adding Authorization header
+        });
         if (!response.ok) {
             throw new Error('fetching pipeline, Network response was not ok');
         }
         const jsonData = await response.json();
 
-        // Fetch additional data recursively
         const getData = async (ticketId: string): Promise<any> => {
             const maxRetries = 10;
             const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -328,26 +452,18 @@ export async function fetchPipeline(orgId: string, repId: string, pipId: string)
             throw new Error('Failed to fetch data');
         };
 
-        // Call getData function with the ticketId obtained from fetchOrganisations
         return await getData(jsonData.ticketId);
     } catch (error) {
         console.error('fetching pipeline, Error fetching data:', error);
-        throw error; // Propagate error to the caller
+        throw error;
     }
 }
-
 export async function putRepository(orgId: string, repositoryName: string) {
-    
-    const headers = new Headers()
-    headers.append("accept", "application/json")
-    headers.append("Content-Type", "application/json")
-    
-
     try {
         const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories`, {
-            method: "POST",
-            headers: headers,
-            body: JSON.stringify({ name: repositoryName })
+            method: 'POST',
+            headers: getAuthHeaders(), // Adding Authorization header
+            body: JSON.stringify({ name: repositoryName }),
         });
 
         if (!response.ok) {
@@ -356,7 +472,6 @@ export async function putRepository(orgId: string, repositoryName: string) {
 
         const jsonData = await response.json();
 
-        // Fetch additional data recursively
         const getData = async (ticketId: string): Promise<any> => {
             const maxRetries = 10;
             const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -377,19 +492,18 @@ export async function putRepository(orgId: string, repositoryName: string) {
             throw new Error('Failed to fetch data');
         };
 
-        // Call getData function with the ticketId obtained from fetchOrganisations
         return await getData(jsonData.ticketId);
     } catch (error) {
         console.error('put rep, Error fetching data:', error);
-        throw error; // Propagate error to the caller
+        throw error;
     }
 }
-
 export async function putResource(orgId: string, repId: string, formData: FormData) {
     try {
         const response = await fetch(`http://` + path + `/Organizations/${orgId}/repositories/${repId}/resources`, {
-            method: "POST",
-            body: formData
+            method: 'POST',
+            headers: getAuthHeaders(), // Adding Authorization header
+            body: formData,
         });
 
         if (!response.ok) {
@@ -398,7 +512,6 @@ export async function putResource(orgId: string, repId: string, formData: FormDa
 
         const jsonData = await response.json();
 
-        // Fetch additional data recursively
         const getData = async (ticketId: string): Promise<any> => {
             const maxRetries = 10;
             const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -419,11 +532,10 @@ export async function putResource(orgId: string, repId: string, formData: FormDa
             throw new Error('Failed to fetch data');
         };
 
-        // Call getData function with the ticketId obtained from fetchOrganisations
         return await getData(jsonData.ticketId);
     } catch (error) {
         console.error('put res, Error fetching data:', error);
-        throw error; // Propagate error to the caller
+        throw error;
     }
 }
 

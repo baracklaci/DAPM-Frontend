@@ -4,13 +4,18 @@ import "./index.css";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./redux/slices";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 import { persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
 import { RouterProvider, createBrowserRouter, createHashRouter } from "react-router-dom";
 import PipelineComposer from "./routes/PipeLineComposer";
 import UserPage from "./routes/OverviewPage";
+import LoginPage from "./routes/LoginPage";
+import {AdminEditRoute, AdminListRoute} from "./routes/AdminPageRoute";
 import { loadState, saveState } from "./redux/browser-storage";
+import AdminActivityLogPage from "./components/AdminPage/AdminActivityLogPage";
+import PipelineInstantiation from "./routes/PipeLineInstantiation";
 
 // Configure redux-persist
 const persistConfig = {
@@ -42,19 +47,61 @@ store.subscribe(
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
-
-
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <UserPage/>,
-
+    element: <LoginPage/>,
   },
   {
-    path: "/pipeline",
-    element: <PipelineComposer/>,
-  }
+    path: "/pipelineInstantiation",
+    element: (
+      <ProtectedRoute>
+        <PipelineInstantiation/>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/pipelineTemplate",
+    element: (
+      <ProtectedRoute>
+        <PipelineComposer/>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/admineditpage",
+    element: (
+      <ProtectedRoute>
+        <AdminEditRoute/>
+      </ProtectedRoute>
+      ),
+  },
+  {
+    path: "/adminlistpage",
+    element: (
+      <ProtectedRoute>
+        <AdminListRoute/>
+      </ProtectedRoute>
+      ),
+  },
+  {
+    path: "/userpage",
+    element: (
+      <ProtectedRoute>
+        <UserPage/>
+      </ProtectedRoute>
+      ),
+  },
+  {
+    path: "/adminactivitylogpage", // Add the route here
+    element: (
+        <ProtectedRoute>
+            <AdminActivityLogPage />
+        </ProtectedRoute>
+    ),
+},
 ]);
+
 
 export default function App() {
   return (

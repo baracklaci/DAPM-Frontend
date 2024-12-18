@@ -10,6 +10,7 @@ import { Algorithm, NodeData, OperatorNodeData, OperatorTemplateData, Organizati
 import { getNodes } from '../../../redux/selectors';
 import { addHandle, updateNode, updateSourceHandle, updateTargetHandle } from '../../../redux/slices/pipelineSlice';
 import { getResources } from '../../../redux/selectors/apiSelector';
+import { RootState } from '../../../redux/states';
 
 
 export interface AlgorithmConfugurationProps {
@@ -30,6 +31,8 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
 
 
   const dataTypes = ["eventlog", "bpmnmodel", "petrinet"]
+
+  const showTemplateData = useSelector((state:RootState) => state.pipelineState.showTemplateDataEnable);
 
 
   const setAlgorithm = (algorithm: string) => {
@@ -75,6 +78,7 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
   return (
     <List sx={{ height: 'calc(100vh - 64px)' }}>
       <>
+      {showTemplateData ?(<>
         <header>Template Data</header>
         <TextField inputProps={{ maxLength: 30 }} value={node?.data.templateData.hint} id="outlined-basic" label="Hint" variant="outlined" onChange={(event) => setHint(event?.target.value as string)} />
         {node?.data.templateData.sourceHandles.map((handle) => {
@@ -112,8 +116,8 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
               </Box>
             </ListItem>
           )
-        })}
-
+        })} </>
+      ) : (<>
         <header>Instantiation Data</header>
         <ListItem>
           <ListItemText primary={`Organization - ${parentNode?.data?.label}`} />
@@ -132,6 +136,7 @@ export default function AlgorithmConfiguration({ nodeprop }: AlgorithmConfugurat
             </Select>
           </Box>
         </ListItem>
+        </>)}
       </>
     </List>
   );

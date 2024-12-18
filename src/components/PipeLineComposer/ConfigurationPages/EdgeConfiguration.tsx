@@ -5,6 +5,7 @@ import { Box, TextField } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateEdge } from '../../../redux/slices/pipelineSlice';
 import { getActiveFlowData, getNodes } from '../../../redux/selectors';
+import { RootState } from '../../../redux/states';
 
 
 export interface AlgorithmConfugurationProps {
@@ -20,6 +21,9 @@ export default function EdgeConfiguration({ edgeProp }: AlgorithmConfugurationPr
     const setFilename = (edgeText: string) => {
         dispatch(updateEdge({ ...edge!, data: { filename: edgeText } }))
     }
+
+    const showTemplateData = useSelector((state:RootState) => state.pipelineState.showTemplateDataEnable);
+    
     return (
         <List>
             <>

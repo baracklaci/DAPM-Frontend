@@ -44,3 +44,4 @@ html, body, #root, .App {
 *::-webkit-scrollbar-thumb:hover {
   background-color: var(--scrollbar-thumb-hover);
 }
+

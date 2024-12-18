@@ -8,6 +8,7 @@ import { updateNode } from '../../../redux/slices/pipelineSlice';
 import { getOrganizations } from '../../../redux/selectors/apiSelector';
 import { getNodes } from '../../../redux/selectors';
 import { useEffect } from 'react';
+import { RootState } from '../../../redux/states';
 
 
 export interface AlgorithmConfugurationProps {
@@ -26,6 +27,8 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
     const organization = organizations.find(org => org.id === organizationId);
     dispatch(updateNode({ ...node!, data: { ...node?.data!, instantiationData: {organization} } }))
   }
+
+  const showTemplateData = useSelector((state:RootState) => state.pipelineState.showTemplateDataEnable);
 
 
   return (

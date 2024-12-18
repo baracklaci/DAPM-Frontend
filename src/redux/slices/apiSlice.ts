@@ -4,7 +4,6 @@ import { fetchOrganisationRepositories, fetchOrganisations, fetchRepository, fet
 import { useAppSelector } from "../../hooks";
 import { getOrganizations } from "../selectors/apiSelector";
 
-
 export const initialState: ApiState = {
     organizations: [],
     repositories: [{

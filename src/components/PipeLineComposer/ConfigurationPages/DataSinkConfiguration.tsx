@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateNode } from '../../../redux/slices/pipelineSlice';
 import { getNodes } from '../../../redux/selectors';
 import { getRepositories } from '../../../redux/selectors/apiSelector';
+import { RootState } from '../../../redux/states';
 
 
 export interface AlgorithmConfugurationProps {
@@ -35,10 +36,12 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
         }
       }))
   }
+  const showTemplateData = useSelector((state:RootState) => state.pipelineState.showTemplateDataEnable);
 
   return (
     <List>
       <>
+        
         <ListItem>
           <ListItemText primary={`Organization - ${parentNode?.data?.label}`} />
         </ListItem>
@@ -56,6 +59,7 @@ export default function DataSinkConfiguration({ nodeprop }: AlgorithmConfugurati
             </Select>
           </Box>
         </ListItem>
+    
       </>
     </List>
   );

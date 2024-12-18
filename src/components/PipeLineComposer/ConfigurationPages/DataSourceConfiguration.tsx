@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getNodes } from '../../../redux/selectors';
 import { updateNode, updateSourceHandle } from '../../../redux/slices/pipelineSlice';
 import { getResources } from '../../../redux/selectors/apiSelector';
+import { RootState } from '../../../redux/states';
 
 
 export interface AlgorithmConfugurationProps {
@@ -47,9 +48,12 @@ export default function DataSourceConfiguration({ nodeprop }: AlgorithmConfugura
       }))
     }
 
+    const showTemplateData = useSelector((state:RootState) => state.pipelineState.showTemplateDataEnable);
+
     return (
-      <List>
-        <>
+      <List>  
+        {showTemplateData ?(
+          <>
         <header>Template Data</header>
 
         {node?.data.templateData.sourceHandles.map((handle) => {
@@ -70,7 +74,9 @@ export default function DataSourceConfiguration({ nodeprop }: AlgorithmConfugura
         </ListItem>
           )
         })}
-
+        </>
+      ) : (
+      <>
         <header>Instantiation Data</header>
           <ListItem>
             <ListItemText primary={`Organization - ${parentNode?.data?.label}`} />
@@ -89,7 +95,8 @@ export default function DataSourceConfiguration({ nodeprop }: AlgorithmConfugura
               </Select>
             </Box>
           </ListItem>
-        </>
+          </>
+        )}
       </List>
     );
   }

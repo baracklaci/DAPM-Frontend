@@ -1,6 +1,7 @@
 import { Box, Button, FormControl, FormLabel, MenuItem, Modal, Select, TextField, Typography } from '@mui/material';
 import React from 'react';
 import { putResource } from '../../../services/backendAPI';
+import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
 
 export interface UploadButtonProps {
     orgId: string,
@@ -64,7 +65,7 @@ const ResourceUploadButton = ({ orgId, repId }: UploadButtonProps) => {
                             Upload Resource
                         </Typography>
                         <form onSubmit={handleSubmit}>
-                            <FormControl fullWidth margin="normal">
+                            <FormControl fullWidth margin="normal" style={{display: "flex", flexDirection: "column", gap: "15px"}}>
                                 <FormLabel>Resource name</FormLabel>
                                 <TextField name="Name" />
 
@@ -78,10 +79,13 @@ const ResourceUploadButton = ({ orgId, repId }: UploadButtonProps) => {
                                 </Select>
 
                                 <FormLabel>Upload File</FormLabel>
-                                <input type="file" name="ResourceFile" />
+                                <input type="file" name="ResourceFile" style={{fontSize: "18px"}}/>
                             </FormControl>
 
-                            <Button type="submit" sx={{ backgroundColor: "gray", padding: "1px", color: "black" }}>Submit</Button>
+                            <div style={{textAlign: "center"}}>
+                                <Button type="submit" sx={{ backgroundColor: "grey", padding: "3px 7px", color: "white", display: "inline-block", verticalAlign: "middle" , marginTop: "20px", fontSize: "20px", fontWeight: "bold"}}>Submit</Button>
+                            </div>
+
                         </form>
                     </Box>
                 </Box>
